@@ -1,0 +1,21 @@
+{
+  "firestore": {
+    "database": "ai-studio-capitolhillcolle-0c3abae4-02fd-4a25-8811-b6876eb25b32",
+    "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.zip"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

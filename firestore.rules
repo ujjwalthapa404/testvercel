@@ -1,0 +1,544 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 0: Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Core Primitives
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string &&
+        id.size() >= 1 &&
+        id.size() <= 128 &&
+        id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidEmail(val) {
+      return val is string &&
+        val.size() >= 3 &&
+        val.size() <= 160 &&
+        val.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$');
+    }
+
+    function isBootstrappedAdmin() {
+      return isVerifiedUser() &&
+        request.auth.token.email == 'thapaujjwal20@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isVerifiedUser() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Entity Blueprints (Synchronized verbatim with firebase-blueprint.json)
+    function isValidUserPublicProfile(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'photoURL', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'createdAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        data.uid == request.auth.uid &&
+        data.displayName is string &&
+        data.displayName.size() >= 1 &&
+        data.displayName.size() <= 100 &&
+        data.photoURL is string &&
+        data.photoURL.size() >= 0 &&
+        data.photoURL.size() <= 500 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidUserPrivateInfo(data) {
+      return data.keys().hasAll(['uid', 'email', 'savedNoticeIds', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'savedNoticeIds', 'createdAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        data.uid == request.auth.uid &&
+        isValidEmail(data.email) &&
+        data.savedNoticeIds is list &&
+        data.savedNoticeIds.size() <= 50 &&
+        (
+          data.savedNoticeIds.size() == 0 ||
+          (
+            data.savedNoticeIds[0] is string &&
+            data.savedNoticeIds[0].size() >= 1 &&
+            data.savedNoticeIds[0].size() <= 128 &&
+            data.savedNoticeIds[0].matches('^[a-zA-Z0-9_\\-]+$')
+          )
+        ) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAdminRole(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'grantedBy', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'role', 'grantedBy', 'createdAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        isValidEmail(data.email) &&
+        data.role is string &&
+        data.role.size() <= 20 &&
+        (data.role == 'ADMIN' || data.role == 'EDITOR') &&
+        isValidId(data.grantedBy) &&
+        data.grantedBy == request.auth.uid &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidNotice(data) {
+      return data.keys().hasAll([
+          'title',
+          'slug',
+          'excerpt',
+          'content',
+          'category',
+          'status',
+          'priority',
+          'isPinned',
+          'showInAnnouncementBar',
+          'showAsPopup',
+          'publishedAtIso',
+          'expiresAtIso',
+          'authorUid',
+          'updatedByUid',
+          'authorName',
+          'attachmentName',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'title',
+          'slug',
+          'excerpt',
+          'content',
+          'category',
+          'status',
+          'priority',
+          'isPinned',
+          'showInAnnouncementBar',
+          'showAsPopup',
+          'publishedAtIso',
+          'expiresAtIso',
+          'authorUid',
+          'updatedByUid',
+          'authorName',
+          'attachmentName',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.title is string &&
+        data.title.size() >= 5 &&
+        data.title.size() <= 180 &&
+        data.slug is string &&
+        data.slug.size() >= 3 &&
+        data.slug.size() <= 140 &&
+        data.slug.matches('^[a-z0-9\\-]+$') &&
+        data.excerpt is string &&
+        data.excerpt.size() >= 10 &&
+        data.excerpt.size() <= 400 &&
+        data.content is string &&
+        data.content.size() >= 10 &&
+        data.content.size() <= 8000 &&
+        data.category is string &&
+        data.category.size() <= 30 &&
+        (
+          data.category == 'Admissions' ||
+          data.category == 'Examinations' ||
+          data.category == 'Results' ||
+          data.category == 'Events' ||
+          data.category == 'Urgent' ||
+          data.category == 'General'
+        ) &&
+        data.status is string &&
+        data.status.size() <= 20 &&
+        (
+          data.status == 'DRAFT' ||
+          data.status == 'PUBLISHED' ||
+          data.status == 'ARCHIVED'
+        ) &&
+        data.priority is string &&
+        data.priority.size() <= 20 &&
+        (data.priority == 'HIGH' || data.priority == 'NORMAL') &&
+        data.isPinned is bool &&
+        data.showInAnnouncementBar is bool &&
+        data.showAsPopup is bool &&
+        data.publishedAtIso is string &&
+        data.publishedAtIso.size() >= 10 &&
+        data.publishedAtIso.size() <= 40 &&
+        data.expiresAtIso is string &&
+        data.expiresAtIso.size() >= 0 &&
+        data.expiresAtIso.size() <= 40 &&
+        isValidId(data.authorUid) &&
+        isValidId(data.updatedByUid) &&
+        data.updatedByUid == request.auth.uid &&
+        data.authorName is string &&
+        data.authorName.size() >= 2 &&
+        data.authorName.size() <= 100 &&
+        data.attachmentName is string &&
+        data.attachmentName.size() >= 0 &&
+        data.attachmentName.size() <= 160 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAdmissionEnquiry(data) {
+      return data.keys().hasAll([
+          'userId',
+          'fullName',
+          'phone',
+          'email',
+          'program',
+          'message',
+          'status',
+          'adminNotes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'userId',
+          'fullName',
+          'phone',
+          'email',
+          'program',
+          'message',
+          'status',
+          'adminNotes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        isValidId(data.userId) &&
+        data.fullName is string &&
+        data.fullName.size() >= 2 &&
+        data.fullName.size() <= 100 &&
+        data.phone is string &&
+        data.phone.size() >= 7 &&
+        data.phone.size() <= 25 &&
+        data.phone.matches('^[0-9+\\-()\\s]+$') &&
+        isValidEmail(data.email) &&
+        data.program is string &&
+        data.program.size() >= 2 &&
+        data.program.size() <= 100 &&
+        data.message is string &&
+        data.message.size() >= 0 &&
+        data.message.size() <= 2000 &&
+        data.status is string &&
+        data.status.size() <= 20 &&
+        (
+          data.status == 'NEW' ||
+          data.status == 'IN_REVIEW' ||
+          data.status == 'CONTACTED' ||
+          data.status == 'CLOSED'
+        ) &&
+        data.adminNotes is string &&
+        data.adminNotes.size() >= 0 &&
+        data.adminNotes.size() <= 1000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidFaqItem(data) {
+      return data.keys().hasAll([
+          'question',
+          'answer',
+          'category',
+          'status',
+          'sortOrder',
+          'authorUid',
+          'updatedByUid',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'question',
+          'answer',
+          'category',
+          'status',
+          'sortOrder',
+          'authorUid',
+          'updatedByUid',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.question is string &&
+        data.question.size() >= 8 &&
+        data.question.size() <= 240 &&
+        data.answer is string &&
+        data.answer.size() >= 10 &&
+        data.answer.size() <= 3000 &&
+        data.category is string &&
+        data.category.size() <= 30 &&
+        (
+          data.category == 'Admissions' ||
+          data.category == 'Academics' ||
+          data.category == 'Campus & Facilities' ||
+          data.category == 'Examinations' ||
+          data.category == 'General'
+        ) &&
+        data.status is string &&
+        data.status.size() <= 20 &&
+        (
+          data.status == 'DRAFT' ||
+          data.status == 'PUBLISHED' ||
+          data.status == 'ARCHIVED'
+        ) &&
+        data.sortOrder is int &&
+        data.sortOrder >= 0 &&
+        data.sortOrder <= 9999 &&
+        isValidId(data.authorUid) &&
+        isValidId(data.updatedByUid) &&
+        data.updatedByUid == request.auth.uid &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // 1. Non-PII User Public Profiles
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
+      allow list: if false;
+
+      allow create: if isVerifiedUser() &&
+        isValidId(userId) &&
+        request.auth.uid == userId &&
+        isValidUserPublicProfile(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        existsAfter(/databases/$(database)/documents/users/$(userId)/private/info);
+
+      allow update: if isVerifiedUser() &&
+        isValidId(userId) &&
+        isValidUserPublicProfile(incoming()) &&
+        request.auth.uid == userId &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          isAdmin() ||
+          incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt'])
+        );
+
+      allow delete: if false;
+
+      // 2. Isolated Private User Info & Saved Bookmarks
+      match /private/{docId} {
+        allow get: if isSignedIn() &&
+          isValidId(userId) &&
+          docId == 'info' &&
+          request.auth.uid == userId &&
+          exists(/databases/$(database)/documents/users/$(userId));
+        allow list: if false;
+
+        allow create: if isVerifiedUser() &&
+          isValidId(userId) &&
+          docId == 'info' &&
+          request.auth.uid == userId &&
+          isValidUserPrivateInfo(incoming()) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time &&
+          existsAfter(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if isVerifiedUser() &&
+          isValidId(userId) &&
+          docId == 'info' &&
+          isValidUserPrivateInfo(incoming()) &&
+          request.auth.uid == userId &&
+          incoming().uid == existing().uid &&
+          incoming().email == existing().email &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['savedNoticeIds', 'updatedAt']) &&
+          existsAfter(/databases/$(database)/documents/users/$(userId));
+
+        allow delete: if false;
+      }
+    }
+
+    // 3. Trusted RBAC Admin Role Grants
+    match /admins/{adminUid} {
+      allow get: if isVerifiedUser() &&
+        isValidId(adminUid) &&
+        (request.auth.uid == adminUid || isAdmin());
+      allow list: if false;
+
+      allow create: if isVerifiedUser() &&
+        isValidId(adminUid) &&
+        isValidAdminRole(incoming()) &&
+        incoming().uid == adminUid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        exists(/databases/$(database)/documents/users/$(adminUid));
+
+      allow update: if isVerifiedUser() &&
+        isValidId(adminUid) &&
+        isValidAdminRole(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['role', 'grantedBy', 'updatedAt']);
+
+      allow delete: if isVerifiedUser() && isValidId(adminUid) && isAdmin();
+    }
+
+    // 4. College Notices & Announcements
+    match /notices/{noticeId} {
+      allow get: if isValidId(noticeId) &&
+        (existing().status == 'PUBLISHED' || isAdmin());
+      allow list: if existing().status == 'PUBLISHED' || isBootstrappedAdmin();
+
+      allow create: if isVerifiedUser() &&
+        isValidId(noticeId) &&
+        isValidNotice(incoming()) &&
+        incoming().authorUid == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid));
+
+      allow update: if isVerifiedUser() &&
+        isValidId(noticeId) &&
+        isValidNotice(incoming()) &&
+        incoming().authorUid == existing().authorUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'title',
+          'slug',
+          'excerpt',
+          'content',
+          'category',
+          'status',
+          'priority',
+          'isPinned',
+          'showInAnnouncementBar',
+          'showAsPopup',
+          'publishedAtIso',
+          'expiresAtIso',
+          'updatedByUid',
+          'authorName',
+          'attachmentName',
+          'updatedAt'
+        ]);
+
+      allow delete: if isVerifiedUser() && isValidId(noticeId) && isAdmin();
+    }
+
+    // 5. Admission Enquiries
+    match /enquiries/{enquiryId} {
+      allow get: if isVerifiedUser() &&
+        isValidId(enquiryId) &&
+        (existing().userId == request.auth.uid || isAdmin());
+      allow list: if (isVerifiedUser() && existing().userId == request.auth.uid) ||
+        isBootstrappedAdmin();
+
+      allow create: if isVerifiedUser() &&
+        isValidId(enquiryId) &&
+        isValidAdmissionEnquiry(incoming()) &&
+        incoming().userId == request.auth.uid &&
+        incoming().status == 'NEW' &&
+        incoming().adminNotes == '' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid));
+
+      allow update: if isVerifiedUser() &&
+        isValidId(enquiryId) &&
+        isValidAdmissionEnquiry(incoming()) &&
+        incoming().userId == existing().userId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (
+            isAdmin() &&
+            incoming().fullName == existing().fullName &&
+            incoming().phone == existing().phone &&
+            incoming().email == existing().email &&
+            incoming().program == existing().program &&
+            incoming().message == existing().message &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['status', 'adminNotes', 'updatedAt'])
+          ) ||
+          (
+            request.auth.uid == existing().userId &&
+            existing().status != 'CLOSED' &&
+            incoming().status == existing().status &&
+            incoming().adminNotes == existing().adminNotes &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'fullName',
+              'phone',
+              'email',
+              'program',
+              'message',
+              'updatedAt'
+            ])
+          )
+        );
+
+      allow delete: if isVerifiedUser() && isValidId(enquiryId) && isAdmin();
+    }
+
+    // 6. Frequently Asked Questions
+    match /faqs/{faqId} {
+      allow get: if isValidId(faqId) &&
+        (existing().status == 'PUBLISHED' || isAdmin());
+      allow list: if existing().status == 'PUBLISHED' || isBootstrappedAdmin();
+
+      allow create: if isVerifiedUser() &&
+        isValidId(faqId) &&
+        isValidFaqItem(incoming()) &&
+        incoming().authorUid == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid));
+
+      allow update: if isVerifiedUser() &&
+        isValidId(faqId) &&
+        isValidFaqItem(incoming()) &&
+        incoming().authorUid == existing().authorUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        isAdmin() &&
+        (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'question',
+            'answer',
+            'category',
+            'status',
+            'sortOrder',
+            'updatedByUid',
+            'updatedAt'
+          ]) ||
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'status',
+            'updatedByUid',
+            'updatedAt'
+          ]) ||
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'sortOrder',
+            'updatedByUid',
+            'updatedAt'
+          ])
+        );
+
+      allow delete: if isVerifiedUser() && isValidId(faqId) && isAdmin();
+    }
+  }
+}

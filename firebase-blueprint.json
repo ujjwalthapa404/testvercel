@@ -1,0 +1,428 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Non-PII public profile record for an authenticated Capitol Hill College portal user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the account owner."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Display name shown in user account header."
+        },
+        "photoURL": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 500,
+          "description": "Optional Google profile avatar URL."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": ["uid", "displayName", "photoURL", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII and personal saved notice preferences for an authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID matching parent user document."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Verified Google account email address."
+        },
+        "savedNoticeIds": {
+          "type": "array",
+          "description": "Bounded list (max 50) of bookmarked notice document IDs."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": ["uid", "email", "savedNoticeIds", "createdAt", "updatedAt"]
+    },
+    "AdminRole": {
+      "title": "AdminRole",
+      "description": "Trusted RBAC administrator or editor role grant managed strictly by administrators.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the staff member granted administrative access."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Staff email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["ADMIN", "EDITOR"],
+          "maxLength": 20,
+          "description": "Assigned administrative role."
+        },
+        "grantedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the administrator who granted this role."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": ["uid", "email", "role", "grantedBy", "createdAt", "updatedAt"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Official Capitol Hill College notice supporting categories, publication status, expiry, announcement bar, and popup flags.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 180,
+          "description": "Headline of the college notice."
+        },
+        "slug": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 140,
+          "pattern": "^[a-z0-9\\-]+$",
+          "description": "URL-safe slug for notice sharing."
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 400,
+          "description": "Concise summary shown in notice cards and popups."
+        },
+        "content": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 8000,
+          "description": "Full notice body paragraphs."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Admissions", "Examinations", "Results", "Events", "Urgent", "General"],
+          "maxLength": 30,
+          "description": "Classification category used for filtering."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"],
+          "maxLength": 20,
+          "description": "Publication lifecycle status."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["HIGH", "NORMAL"],
+          "maxLength": 20,
+          "description": "Priority indicator."
+        },
+        "isPinned": {
+          "type": "boolean",
+          "description": "Whether the notice is pinned to the top of lists."
+        },
+        "showInAnnouncementBar": {
+          "type": "boolean",
+          "description": "Whether the notice is eligible for the top announcement bar."
+        },
+        "showAsPopup": {
+          "type": "boolean",
+          "description": "Whether the notice triggers the controlled announcement modal."
+        },
+        "publishedAtIso": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 40,
+          "description": "ISO publication timestamp string."
+        },
+        "expiresAtIso": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40,
+          "description": "Optional ISO expiry timestamp string (empty string if none)."
+        },
+        "authorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Immutable Firebase Auth UID of the administrator who created the notice."
+        },
+        "updatedByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the administrator who last modified the notice."
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Department or administrator attribution name."
+        },
+        "attachmentName": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 160,
+          "description": "Optional downloadable filename label."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "excerpt",
+        "content",
+        "category",
+        "status",
+        "priority",
+        "isPinned",
+        "showInAnnouncementBar",
+        "showAsPopup",
+        "publishedAtIso",
+        "expiresAtIso",
+        "authorUid",
+        "updatedByUid",
+        "authorName",
+        "attachmentName",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdmissionEnquiry": {
+      "title": "AdmissionEnquiry",
+      "description": "Student admission or general contact enquiry persisted for administrative follow-up.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the authenticated prospective student."
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Prospective student's full name."
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 25,
+          "pattern": "^[0-9+\\-()\\s]+$",
+          "description": "Contact telephone number."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Contact email address."
+        },
+        "program": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100,
+          "description": "Academic program of interest."
+        },
+        "message": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000,
+          "description": "Optional questions or counselling request."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["NEW", "IN_REVIEW", "CONTACTED", "CLOSED"],
+          "maxLength": 20,
+          "description": "Administrative review status."
+        },
+        "adminNotes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1000,
+          "description": "Internal follow-up notes managed strictly by college administrators."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "fullName",
+        "phone",
+        "email",
+        "program",
+        "message",
+        "status",
+        "adminNotes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FaqItem": {
+      "title": "FaqItem",
+      "description": "Frequently asked student and applicant question managed by college administrators.",
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 240,
+          "description": "Student question prompt displayed in the accordion header."
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 3000,
+          "description": "Detailed answer revealed when the accordion item is expanded."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Admissions", "Academics", "Campus & Facilities", "Examinations", "General"],
+          "maxLength": 30,
+          "description": "Topic category for grouping and filtering FAQs."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"],
+          "maxLength": 20,
+          "description": "Publication visibility status."
+        },
+        "sortOrder": {
+          "type": "integer",
+          "description": "Numeric display order index (0 to 9999)."
+        },
+        "authorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Immutable UID of the administrator who created the FAQ."
+        },
+        "updatedByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the administrator who last updated the FAQ."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last-modified timestamp."
+        }
+      },
+      "required": [
+        "question",
+        "answer",
+        "category",
+        "status",
+        "sortOrder",
+        "authorUid",
+        "updatedByUid",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserPublicProfile",
+      "description": "Non-PII profile records keyed by Firebase Auth UID."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": "UserPrivateInfo",
+      "description": "Isolated PII email and saved notice bookmarks (docId = 'info')."
+    },
+    "/admins/{adminUid}": {
+      "schema": "AdminRole",
+      "description": "RBAC administrator and editor grants."
+    },
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "College notices and announcements managed by administrators."
+    },
+    "/enquiries/{enquiryId}": {
+      "schema": "AdmissionEnquiry",
+      "description": "Prospective student admission enquiries isolated to owner and administrators."
+    },
+    "/faqs/{faqId}": {
+      "schema": "FaqItem",
+      "description": "Frequently asked questions displayed on the public website and managed by administrators."
+    }
+  }
+}

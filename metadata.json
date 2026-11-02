@@ -1,0 +1,6 @@
+{
+  "name": "Capitol Hill College",
+  "description": "Official website, academic program directory, and notice management platform for Capitol Hill College, Teku, Kathmandu, Nepal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
