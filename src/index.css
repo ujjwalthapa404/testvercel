@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Official Capitol Hill College Centralized Brand System (Red, Black/Charcoal, White & Light Grey) */
+  --color-brand: #A6192E;
+  --color-brand-dark: #801326;
+  --color-brand-deeper: #5C0D1B;
+  --color-brand-soft: #FCF2F4;
+  --color-brand-border: #F2CCD2;
+  --color-brand-on-dark: #F79DA9;
+
+  --color-primary-ink: #171717;
+  --color-charcoal: #242424;
+  --color-ink: #262626;
+  --color-muted: #575757;
+
+  --color-surface: #FFFFFF;
+  --color-canvas: #F4F4F4;
+  --color-hairline: #E2E2E2;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: #FFFFFF;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

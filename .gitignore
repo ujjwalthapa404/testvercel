@@ -4,6 +4,19 @@ dist/
 dist-ssr/
 *.local
 
+# Enforce single package manager (pnpm) — prevent conflicting lockfiles on Vercel
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+bun.lock
+bun.lockb
+package-lock.json
+yarn.lock
+
+# Ensure application source and HTML entry point are always tracked
+!index.html
+!src/
+!src/**
+
 # Vercel & deployment artifacts
 .vercel/
 
