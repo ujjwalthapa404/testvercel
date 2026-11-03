@@ -1,3 +1,4 @@
+import { OFFICIAL_GOOGLE_MAPS_URL } from './academicPrograms';
 import {
   ChatbotCategoryId,
   ChatbotCategoryMeta,
@@ -16,7 +17,7 @@ import {
 
 export const CHATBOT_WELCOME_MESSAGE: string[] = [
   "Hello! How can I help you today? Welcome to CHC Campus Guide—your interactive companion for Capitol Hill College in Teku, Kathmandu.",
-  'Ask me anything in your own words about +2 Science, +2 Management, BBS, admissions, our Teku location, or even campus life and light-hearted student questions!',
+  'Ask me anything in your own words about our NEB (+2 Management, +2 Humanities, +2 Science, +2 Law) and Tribhuvan University (BBS & MBS) programs, our Teku location on Google Maps, admissions, or campus life!',
 ];
 
 export const CHATBOT_INITIAL_SUGGESTIONS: string[] = [
@@ -98,7 +99,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     primaryAction: {
       label: 'Explore Academic Programs',
-      action: 'scroll-programs',
+      action: 'open-programs',
     },
   },
   {
@@ -111,46 +112,63 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'where is your college',
       'where is chc located',
       'what is the location of capitol hill',
+      'can you share the college location',
       'can you tell me your address',
       'college address',
       'campus location',
       'where are you situated',
+      'how can i reach the college',
       'how to reach capitol hill college',
       'directions to college',
       'exact location in kathmandu',
       'how do i get to teku campus',
+      'google maps location',
     ],
-    keywords: ['where', 'location', 'located', 'address', 'teku', 'kathmandu', 'situated', 'map', 'direction', 'directions', 'place', 'reach'],
+    keywords: [
+      'where',
+      'location',
+      'located',
+      'address',
+      'teku',
+      'kathmandu',
+      'situated',
+      'map',
+      'maps',
+      'direction',
+      'directions',
+      'place',
+    ],
     answer: [
-      'Capitol Hill College is centrally located in Teku, Kathmandu, Nepal (within Kathmandu Metropolitan City).',
-      'Because Teku connects major city routes—including Tripureshwor, Kalimati, Kuleshwor, Kalanki, New Road, and Lalitpur/Sanepa—the campus is convenient to reach by public bus, microbus, or private vehicle.',
-      'Students and parents are warmly welcome to visit Sunday through Friday during regular college hours, or call 01-5312399 for step-by-step landmark directions!',
+      'Capitol Hill College is located in Teku, Kathmandu, Nepal. You can find our exact location and directions on Google Maps using the link below.',
+      OFFICIAL_GOOGLE_MAPS_URL,
     ],
     relatedIds: [
-      'gen-teku-commute',
       'adm-visit-before-applying',
       'gen-contact',
+      'prog-available-programs',
     ],
     primaryAction: {
-      label: 'View Location & Contact',
-      action: 'scroll-contact',
+      label: 'View on Google Maps',
+      action: 'external-link',
+      externalHref: OFFICIAL_GOOGLE_MAPS_URL,
     },
   },
   {
     id: 'gen-teku-commute',
     category: ChatbotCategoryId.GENERAL,
     categoryLabel: 'Campus Location',
-    question: 'Is the Teku campus easy to commute to from around Kathmandu Valley?',
+    question: 'How can I find directions or commute to the Teku campus?',
     questionVariants: [
       'how to commute to teku campus',
       'public transport to capitol hill college',
-      'is teku easy to reach from lalitpur or kalanki',
+      'how can i reach capitol hill college',
       'bus route to teku college',
     ],
-    keywords: ['commute', 'teku', 'tripureshwor', 'kalimati', 'kalanki', 'lalitpur', 'reachable', 'accessible'],
+    keywords: ['commute', 'teku', 'reachable', 'accessible'],
     answer: [
-      'Yes—Teku is one of central Kathmandu’s best-connected academic neighborhoods, directly linked to Tripureshwor, Kalimati, Kalanki, Kuleshwor, New Road, and Patan/Sanepa corridors.',
-      'If you are inquiring about dedicated college bus pickup for a specific neighborhood, please call our front desk at 01-5312399 to confirm current transport arrangements.',
+      'Capitol Hill College is located in Teku, Kathmandu, Nepal. You can find our exact location and directions on Google Maps using the link below.',
+      OFFICIAL_GOOGLE_MAPS_URL,
+      'If you are inquiring about college transport arrangements, please call our front desk at 01-5312399 to confirm current session details.',
     ],
     relatedIds: [
       'gen-location',
@@ -158,8 +176,9 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'gen-contact',
     ],
     primaryAction: {
-      label: 'Contact Front Desk',
-      action: 'scroll-contact',
+      label: 'View on Google Maps',
+      action: 'external-link',
+      externalHref: OFFICIAL_GOOGLE_MAPS_URL,
     },
   },
   {
@@ -173,9 +192,8 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'contact number of capitol hill college',
       'how do i call the college',
       'official telephone and email',
-      'reach capitol hill college',
     ],
-    keywords: ['contact', 'phone', 'telephone', 'call', 'email', 'mail', 'number', 'reach'],
+    keywords: ['contact', 'phone', 'telephone', 'call', 'email', 'mail', 'number'],
     answer: [
       'You can reach Capitol Hill College through our official channels:',
       '• Location: Teku, Kathmandu, Nepal\n• Telephone: 01-5312399\n• Email: info.capitolhillcollege@gmail.com',
@@ -233,18 +251,16 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: ['affiliated', 'affiliation', 'board', 'university', 'neb', 'tu', 'tribhuvan', 'recognized'],
     answer: [
       'Capitol Hill College programs operate under recognized national academic boards and universities in Nepal:',
-      '• Higher Secondary (+2 Science & +2 Management): Affiliated with the National Examinations Board (NEB).\n• Bachelor of Business Studies (BBS): Affiliated with Tribhuvan University (TU).',
+      '• NEB (+2) Programs: +2 Management, +2 Humanities, +2 Science, and +2 Law — affiliated with the National Examinations Board (NEB).\n• University Degrees: Bachelor of Business Studies (BBS, 4 Years) and Master of Business Studies (MBS, 2 Years) — affiliated with Tribhuvan University (TU).',
     ],
-    verificationNote:
-      'Specific affiliation details for any additional or graduate-level specializations are subject to administrative verification.',
     relatedIds: [
       'prog-available-programs',
       'prog-bbs',
       'prog-plus2-science',
     ],
     primaryAction: {
-      label: 'View Academic Programs',
-      action: 'scroll-programs',
+      label: 'Explore Academic Programs',
+      action: 'open-programs',
     },
   },
   {
@@ -278,12 +294,14 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     id: 'gen-leadership-team',
     category: ChatbotCategoryId.GENERAL,
     categoryLabel: 'Leadership & Governance',
-    question: 'Who are the Chairman, Principal, and leadership team of Capitol Hill College?',
+    question: 'Who are the Chairman, CEO & Director, and Principal of Capitol Hill College?',
     questionVariants: [
       'who is the principal',
       'who is the chairman',
+      'who is the ceo',
       'who is pawan bista',
-      'who is the vice principal',
+      'who is nischal gautam',
+      'who is sagar raj khanal',
       'board of directors and governance',
       'leadership and governance',
       'college leadership',
@@ -291,19 +309,20 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: [
       'principal',
       'chairman',
+      'ceo',
       'pawan bista',
+      'nischal gautam',
       'governance',
-      'vice principal',
       'director',
       'board',
       'faculty',
       'teachers',
-      'toya nath',
       'sagar raj',
+      'khanal',
     ],
     answer: [
       'Capitol Hill College is guided by accountable institutional governance and experienced academic administration:',
-      '• Chairman: Mr. Pawan Bista\n• Principal: Mr. Toya Nath Adhikari\n• Vice-Principal: Mr. Sagar Raj Khanal',
+      '• Chairman: Mr. Pawan Bista\n• CEO & Director: Mr. Nischal Gautam\n• Principal: Mr. Sagar Raj Khanal',
       'Our academic delivery is supported by 45 faculty listings across 15 departments alongside dedicated administrative staff at our Teku, Kathmandu campus.',
     ],
     relatedIds: [
@@ -335,19 +354,17 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     keywords: ['programs', 'courses', 'streams', 'degrees', 'study', 'academic offerings', 'subjects'],
     answer: [
-      'Capitol Hill College offers the following core academic programs:',
-      '• +2 Science (Higher Secondary — NEB Affiliation)\n• +2 Management (Higher Secondary — NEB Affiliation)\n• Bachelor of Business Studies / BBS (4-Year Undergraduate — Tribhuvan University Affiliation)',
+      'Capitol Hill College offers six official academic programs across Higher Secondary (+2), Undergraduate, and Postgraduate levels:',
+      '• NEB (+2) Programs: +2 Management, +2 Humanities, +2 Science, and +2 Law\n• Tribhuvan University Programs: Bachelor of Business Studies (BBS — 4 Years) and Master of Business Studies (MBS — 2 Years)',
     ],
-    verificationNote:
-      'Postgraduate / Master’s specializations and active intakes are subject to confirmation from Capitol Hill College administration.',
     relatedIds: [
-      'prog-plus2-science',
       'prog-plus2-management',
+      'prog-plus2-science',
       'prog-bbs',
     ],
     primaryAction: {
-      label: 'View Programs Section',
-      action: 'scroll-programs',
+      label: 'Explore Academic Programs',
+      action: 'open-programs',
     },
   },
   {
@@ -365,7 +382,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: ['plustwo science', 'science stream', 'physics', 'chemistry', 'biology', 'grade 11 science', 'neb science'],
     answer: [
       'Yes. Capitol Hill College offers the Higher Secondary +2 Science program affiliated with the National Examinations Board (NEB).',
-      'The curriculum builds a strong foundation in Physics, Chemistry, Biology, Mathematics, and Computer Science, supported by separate, faculty-supervised Physics, Chemistry, Biology, and Computer laboratories.',
+      'The curriculum builds a strong foundation in Physics, Chemistry, Mathematics, and Biology or Computer Science, supported by separate, faculty-supervised Physics, Chemistry, Biology, and Computer laboratories.',
     ],
     relatedIds: [
       'prog-after-science',
@@ -373,9 +390,9 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'adm-how-to-apply',
     ],
     primaryAction: {
-      label: 'Enquire About +2 Science',
-      action: 'open-enquiry',
-      programTitle: '+2 Science',
+      label: 'View +2 Science Page',
+      action: 'open-program-detail',
+      programSlug: 'science',
     },
   },
   {
@@ -390,10 +407,10 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'is +2 management available',
       '10+2 management commerce',
     ],
-    keywords: ['plustwo management', 'management stream', 'commerce', 'accounting', 'economics', 'business studies', 'hotel management'],
+    keywords: ['plustwo management', 'management stream', 'commerce', 'accounting', 'business studies', 'hotel management'],
     answer: [
       'Yes. Capitol Hill College offers the Higher Secondary +2 Management program under NEB affiliation.',
-      'It provides practical grounding in Accounting, Economics, Business Studies, and optional subjects such as Computer Science or Hotel Management—supported by dedicated Computer Science and Hotel Management practical labs.',
+      'It covers Accounting, Business Studies, Computer Science, Hotel Management, Business Mathematics, and Tourism & Mountaineering—supported by dedicated Computer Science and Hotel Management practical labs.',
     ],
     relatedIds: [
       'prog-after-management',
@@ -401,9 +418,63 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'adm-how-to-apply',
     ],
     primaryAction: {
-      label: 'Enquire About +2 Management',
-      action: 'open-enquiry',
-      programTitle: '+2 Management',
+      label: 'View +2 Management Page',
+      action: 'open-program-detail',
+      programSlug: 'management',
+    },
+  },
+  {
+    id: 'prog-plus2-humanities',
+    category: ChatbotCategoryId.PROGRAMS,
+    categoryLabel: 'Academic Programs',
+    question: 'Does the college offer +2 Humanities?',
+    questionVariants: [
+      'tell me about +2 humanities',
+      'grade 11 and 12 humanities stream',
+      'plus two humanities subjects',
+      'is +2 humanities available',
+    ],
+    keywords: ['plustwo humanities', 'humanities stream', 'humanities', 'sociology', 'mass communication', 'population studies', 'optional english'],
+    answer: [
+      'Yes. Capitol Hill College offers the NEB-affiliated +2 Humanities program for Grade 11 and Grade 12 students.',
+      'Stream subjects include Sociology, Mass Communication, Population Studies, Optional English, and Tourism & Mountaineering Studies—developing critical thinking, media literacy, and social inquiry skills.',
+    ],
+    relatedIds: [
+      'prog-available-programs',
+      'prog-plus2-law',
+      'adm-how-to-apply',
+    ],
+    primaryAction: {
+      label: 'View +2 Humanities Page',
+      action: 'open-program-detail',
+      programSlug: 'humanities',
+    },
+  },
+  {
+    id: 'prog-plus2-law',
+    category: ChatbotCategoryId.PROGRAMS,
+    categoryLabel: 'Academic Programs',
+    question: 'Does the college offer +2 Law?',
+    questionVariants: [
+      'tell me about +2 law',
+      'grade 11 and 12 law stream',
+      'plus two law subjects',
+      'is +2 law available',
+    ],
+    keywords: ['plustwo law', 'law stream', 'constitutional law', 'civil law', 'procedural law', 'legal drafting'],
+    answer: [
+      'Yes. Capitol Hill College offers the NEB-affiliated +2 Law program for Grade 11 and Grade 12 students.',
+      'Major legal subjects include Constitutional Law, Civil Law and Justice, Procedural Law, and Legal Drafting—building a strong foundation for five-year B.A. LL.B. degrees, legal practice, and public service.',
+    ],
+    relatedIds: [
+      'prog-available-programs',
+      'prog-plus2-humanities',
+      'adm-how-to-apply',
+    ],
+    primaryAction: {
+      label: 'View +2 Law Page',
+      action: 'open-program-detail',
+      programSlug: 'law',
     },
   },
   {
@@ -421,17 +492,45 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: ['bbs', 'bachelor', 'business studies', 'undergraduate', 'four year', 'tu bbs'],
     answer: [
       'Yes. Capitol Hill College offers the four-year Bachelor of Business Studies (BBS) undergraduate program affiliated with Tribhuvan University (TU).',
-      'The BBS program combines analytical management principles, accounting, finance, taxation, economics, and organizational leadership to prepare students for corporate, banking, public service, and entrepreneurial careers.',
+      'The BBS program covers Accounting, Finance, Marketing, Business Management, Human Resource Management, Business Mathematics & Statistics, Business Economics, and Business Communication.',
     ],
     relatedIds: [
       'prog-after-bbs',
-      'adm-requirements',
+      'prog-mbs',
       'adm-how-to-apply',
     ],
     primaryAction: {
-      label: 'Enquire About BBS',
-      action: 'open-enquiry',
-      programTitle: 'Bachelor of Business Studies (BBS)',
+      label: 'View BBS Program Page',
+      action: 'open-program-detail',
+      programSlug: 'bbs',
+    },
+  },
+  {
+    id: 'prog-mbs',
+    category: ChatbotCategoryId.PROGRAMS,
+    categoryLabel: 'Academic Programs',
+    question: 'Does the college offer MBS (Master of Business Studies)?',
+    questionVariants: [
+      'master of business studies',
+      'tell me about mbs program',
+      'tu mbs course',
+      'postgraduate masters program at capitol hill',
+      'two year mbs degree',
+    ],
+    keywords: ['mbs', 'masters', 'postgraduate', 'master of business studies', 'tu mbs', 'strategic management'],
+    answer: [
+      'Yes. Capitol Hill College offers the two-year Master of Business Studies (MBS) postgraduate program affiliated with Tribhuvan University (TU).',
+      'Key subject areas include Managerial Economics, Financial Management, Marketing Management, Human Resource Management, Strategic Management, Research Methodology, International Business, and Organizational Behavior.',
+    ],
+    relatedIds: [
+      'prog-bbs',
+      'prog-available-programs',
+      'adm-how-to-apply',
+    ],
+    primaryAction: {
+      label: 'View MBS Program Page',
+      action: 'open-program-detail',
+      programSlug: 'mbs',
     },
   },
   {

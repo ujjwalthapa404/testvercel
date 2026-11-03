@@ -138,11 +138,11 @@ const UNOFFERED_PROGRAM_PATTERNS: Array<[RegExp, string]> = [
   [/\bbhm\b|\bbachelor of hotel management\b/, 'BHM'],
   [/\bmbbs\b|\bbds\b|\bnursing\b/, 'Medical / Nursing degrees'],
   [/\bengineering\b|\bbarch\b/, 'Engineering degrees'],
-  [/\bhumanities\b|\barts stream\b|\bplustwo arts\b/, '+2 Humanities / Arts'],
-  [/\blaw stream\b|\bplustwo law\b|\bballb\b|\bllb\b/, 'Law (+2 Law / BALLB)'],
+  [/\bballb\b|\bba llb\b|\bllb\b/, 'B.A. LL.B. / LL.B. (Note: we offer Higher Secondary +2 Law under NEB)'],
   [/\beducation stream\b|\bplustwo education\b|\bb\s*ed\b/, 'Education (+2 Education / B.Ed)'],
   [/\bchartered accountancy\b|\baccu?\b/, 'CA / ACCA'],
   [/\ba\s*level\b|\ba\s*levels\b/, 'A-Levels'],
+  [/\bmba\b|\bmaster of business administration\b/, 'MBA (Note: we offer Master of Business Studies / MBS under Tribhuvan University)'],
 ];
 
 const UNRELATED_KEYWORDS = new Set([
@@ -244,6 +244,29 @@ function extractProgramMentions(normalized: string, tokens: string[]): ProgramEn
   }
 
   if (
+    padded.includes(' plustwo humanities ') ||
+    padded.includes(' humanities stream ') ||
+    tokens.includes('humanities') ||
+    tokens.includes('sociology') ||
+    padded.includes(' mass communication ') ||
+    padded.includes(' population studies ') ||
+    padded.includes(' optional english ')
+  ) {
+    found.push('plus2_humanities');
+  }
+
+  if (
+    padded.includes(' plustwo law ') ||
+    padded.includes(' law stream ') ||
+    padded.includes(' constitutional law ') ||
+    padded.includes(' procedural law ') ||
+    padded.includes(' legal drafting ') ||
+    (tokens.includes('law') && !padded.includes(' business law ') && !/\bballb\b|\bllb\b/.test(normalized))
+  ) {
+    found.push('plus2_law');
+  }
+
+  if (
     tokens.includes('bbs') ||
     padded.includes(' bachelor ') ||
     padded.includes(' bachelors ') ||
@@ -253,15 +276,14 @@ function extractProgramMentions(normalized: string, tokens: string[]): ProgramEn
   }
 
   if (
+    tokens.includes('mbs') ||
     tokens.includes('masters') ||
     tokens.includes('master') ||
     tokens.includes('postgraduate') ||
-    tokens.includes('mbs') ||
-    tokens.includes('mba') ||
     padded.includes(' graduate program ') ||
     padded.includes(' graduate courses ')
   ) {
-    found.push('graduate');
+    found.push('mbs');
   }
 
   return found;
@@ -470,22 +492,44 @@ function detectTopicAspect(
     return 'admission_apply';
   }
 
-  // 5. Location & Contact (let commute-specific queries match gen-teku-commute directly)
+  // 5. Location & Contact
+  const isReachLocationPhrase =
+    padded.includes(' how can i reach ') ||
+    padded.includes(' how do i reach ') ||
+    padded.includes(' how to reach ') ||
+    padded.includes(' reach the college ') ||
+    padded.includes(' reach your college ') ||
+    padded.includes(' reach the campus ') ||
+    padded.includes(' reach capitol ') ||
+    padded.includes(' reach chc ') ||
+    padded.includes(' get to the college ') ||
+    padded.includes(' get to capitol ') ||
+    padded.includes(' find the college ') ||
+    padded.includes(' share location ') ||
+    padded.includes(' college location ') ||
+    padded.includes(' campus location ') ||
+    padded.includes(' google map ') ||
+    padded.includes(' google maps ');
+
   if (
-    !tokens.includes('commute') &&
-    (tokens.includes('location') ||
-      tokens.includes('located') ||
-      tokens.includes('address') ||
-      tokens.includes('teku') ||
-      tokens.includes('direction') ||
-      tokens.includes('directions') ||
-      tokens.includes('landmark') ||
-      tokens.includes('map') ||
-      padded.includes(' where is chc ') ||
-      padded.includes(' where are you ') ||
-      padded.includes(' how to reach ') ||
-      padded.includes(' how do i get to ') ||
-      (tokens.includes('kathmandu') && !tokens.includes('weather')))
+    isReachLocationPhrase ||
+    tokens.includes('location') ||
+    tokens.includes('located') ||
+    tokens.includes('situated') ||
+    tokens.includes('address') ||
+    tokens.includes('teku') ||
+    tokens.includes('direction') ||
+    tokens.includes('directions') ||
+    tokens.includes('landmark') ||
+    tokens.includes('map') ||
+    tokens.includes('maps') ||
+    padded.includes(' where is chc ') ||
+    padded.includes(' where is capitol ') ||
+    padded.includes(' where is your ') ||
+    padded.includes(' where is the college ') ||
+    padded.includes(' where are you ') ||
+    padded.includes(' how do i get to ') ||
+    (tokens.includes('kathmandu') && !tokens.includes('weather'))
   ) {
     return 'location';
   }

@@ -50,7 +50,7 @@ export const SAMPLE_NOTICES: NoticeItem[] = [
     status: NoticeStatus.PUBLISHED,
     priority: NoticePriority.HIGH,
     isPinned: true,
-    showInAnnouncementBar: false,
+    showInAnnouncementBar: true,
     publishedAt: '2026-10-18T11:30:00+05:45',
     authorName: 'Examination Committee',
   },
@@ -68,7 +68,7 @@ export const SAMPLE_NOTICES: NoticeItem[] = [
     status: NoticeStatus.PUBLISHED,
     priority: NoticePriority.NORMAL,
     isPinned: false,
-    showInAnnouncementBar: false,
+    showInAnnouncementBar: true,
     publishedAt: '2026-10-14T10:00:00+05:45',
     authorName: 'Academic Coordinator',
   },
@@ -121,7 +121,7 @@ export const SAMPLE_NOTICES: NoticeItem[] = [
     status: NoticeStatus.PUBLISHED,
     priority: NoticePriority.HIGH,
     isPinned: false,
-    showInAnnouncementBar: false,
+    showInAnnouncementBar: true,
     publishedAt: '2026-10-19T08:30:00+05:45',
     authorName: 'Scholarship & Admissions Committee',
   },
@@ -167,10 +167,16 @@ export function getActiveNotices(notices: NoticeItem[] = SAMPLE_NOTICES): Notice
     });
 }
 
+export function getActiveAnnouncementBarNotices(
+  notices: NoticeItem[] = SAMPLE_NOTICES
+): NoticeItem[] {
+  return getActiveNotices(notices).filter((notice) => notice.showInAnnouncementBar);
+}
+
 export function getActiveAnnouncementBarNotice(
   notices: NoticeItem[] = SAMPLE_NOTICES
 ): NoticeItem | undefined {
-  return getActiveNotices(notices).find((notice) => notice.showInAnnouncementBar);
+  return getActiveAnnouncementBarNotices(notices)[0];
 }
 
 export function formatNoticeDate(isoString: string): string {

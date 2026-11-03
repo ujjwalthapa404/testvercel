@@ -57,7 +57,7 @@ export const CollegeImage: React.FC<CollegeImageProps> = ({
 };
 
 interface CollegeLogoProps {
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'header';
   variant?: 'light' | 'dark';
 }
 
@@ -66,7 +66,12 @@ export const CollegeLogo: React.FC<CollegeLogoProps> = ({
   variant = 'dark',
 }) => {
   const [logoError, setLogoError] = useState(false);
-  const dimensionClass = size === 'sm' ? 'w-9 h-9' : 'w-10 h-10';
+  const dimensionClass =
+    size === 'header'
+      ? 'w-10 h-10 sm:w-11 sm:h-11'
+      : size === 'sm'
+        ? 'w-9 h-9'
+        : 'w-10 h-10';
 
   if (logoError) {
     return (

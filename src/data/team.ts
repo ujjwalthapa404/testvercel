@@ -1,3 +1,5 @@
+import { ALL_LEADERSHIP_PROFILES } from './leadershipData';
+
 export type AcademicStreamId =
   | 'all'
   | 'sciences'
@@ -80,7 +82,7 @@ export const LEADERSHIP_SECTION_COPY = {
   heading: 'Executive & Academic Leadership',
   subheading: 'Senior Leadership',
   supportingText:
-    'Chairman, Principal, and Vice-Principal guiding institutional governance and daily academic standards at Capitol Hill College.',
+    'Chairman, CEO & Director, and Principal guiding institutional governance, strategic vision, and daily academic standards at Capitol Hill College.',
 } as const;
 
 export const FACULTY_SECTION_COPY = {
@@ -105,36 +107,19 @@ export const TEAM_CTA_COPY = {
 
 /**
  * Verified Executive & Senior Academic Leadership.
- * Full Board of Directors governance dossiers are maintained on the dedicated Leadership & Governance page.
+ * Derived directly from canonical `ALL_LEADERSHIP_PROFILES` in `./leadershipData.ts`
+ * so senior leader names, titles, and portraits share a single source of truth.
  */
-export const LEADERSHIP_MEMBERS: LeadershipMember[] = [
-  {
-    id: 'lead-pawan-bista',
-    name: 'Mr. Pawan Bista',
-    designation: 'Chairman',
+export const LEADERSHIP_MEMBERS: LeadershipMember[] = ALL_LEADERSHIP_PROFILES.map(
+  (member, index) => ({
+    id: `lead-${member.id}`,
+    name: member.fullName,
+    designation: member.shortDesignation,
     tier: 'senior',
-    portraitUrl: '/images/leadership/pawan-bista.jpg',
-    sortOrder: 1,
-  },
-  {
-    id: 'lead-toya-nath-adhikari',
-    name: 'Mr. Toya Nath Adhikari',
-    designation: 'Principal',
-    tier: 'senior',
-    portraitUrl:
-      'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/principal.jpg',
-    sortOrder: 2,
-  },
-  {
-    id: 'lead-sagar-raj-khanal',
-    name: 'Mr. Sagar Raj Khanal',
-    designation: 'Vice-Principal',
-    tier: 'senior',
-    portraitUrl:
-      'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/sagar.jpg',
-    sortOrder: 3,
-  },
-];
+    portraitUrl: member.portraitSrc,
+    sortOrder: index + 1,
+  })
+);
 
 /**
  * Complete Academic & Resource Departments (15 departments, 45 faculty listings).
@@ -242,8 +227,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-phy-1',
         name: 'Mr. Sagar Raj Khanal',
-        portraitUrl:
-          'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/sagar.jpg',
+        portraitUrl: '/images/leadership/sagar-raj-khanal.png',
       },
       { id: 'fac-phy-2', name: 'Sushant Pokhrel' },
       { id: 'fac-phy-3', name: 'Mr. Indra Pd. Chapagain' },

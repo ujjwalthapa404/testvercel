@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
+
+export type ProfileModalTab = 'dossier' | 'message';
 
 interface LeadershipProfileModalProps {
   member: LeadershipMemberProfile | null;
+  initialTab?: ProfileModalTab;
   onClose: () => void;
 }
 
@@ -19,11 +22,14 @@ function getInitials(fullName: string): string {
 
 export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
   member,
+  initialTab = 'dossier',
   onClose,
 }) => {
   const [entered, setEntered] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const [activeTab, setActiveTab] = useState<ProfileModalTab>('dossier');
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -32,6 +38,10 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
       setEntered(false);
       return;
     }
+
+    const resolvedTab: ProfileModalTab =
+      initialTab === 'message' && member.officialMessage ? 'message' : 'dossier';
+    setActiveTab(resolvedTab);
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -74,7 +84,12 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [member, onClose]);
+  }, [member, initialTab, onClose]);
+
+  const handleSwitchTab = (tab: ProfileModalTab) => {
+    setActiveTab(tab);
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (!member) {
     return null;
@@ -82,6 +97,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
 
   const showPortrait = Boolean(member.portraitSrc) && !imageFailed;
   const initials = getInitials(member.fullName);
+  const hasMessage = Boolean(member.officialMessage);
 
   return (
     <div
@@ -122,22 +138,32 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
         </div>
 
         {/* Scrollable Two-Column Dossier Content */}
-        <div className="overflow-y-auto overscroll-contain flex-1">
+        <div ref={scrollContainerRef} className="overflow-y-auto overscroll-contain flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Left Column: Formal Portrait & Institutional Summary */}
             <div className="lg:col-span-5 bg-[var(--color-canvas)]/65 border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)] p-6 sm:p-8 flex flex-col">
-              <div className="aspect-[4/5] w-full max-w-sm mx-auto lg:max-w-none rounded-lg overflow-hidden border border-[var(--color-hairline)] bg-neutral-200">
+              <div
+                className={`aspect-[4/5] w-full max-w-sm mx-auto lg:max-w-none rounded-lg overflow-hidden border border-[var(--color-hairline)] ${
+                  member.isCutoutPortrait
+                    ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
+                    : 'bg-neutral-200'
+                }`}
+              >
                 {showPortrait ? (
                   <img
                     src={member.portraitSrc}
                     alt={member.portraitAlt}
                     onError={() => setImageFailed(true)}
                     style={
-                      member.portraitObjectPosition
+                      !member.isCutoutPortrait && member.portraitObjectPosition
                         ? { objectPosition: member.portraitObjectPosition }
                         : undefined
                     }
-                    className="w-full h-full object-cover object-top"
+                    className={
+                      member.isCutoutPortrait
+                        ? 'w-full h-full object-contain object-bottom pt-6 px-3'
+                        : 'w-full h-full object-cover object-top'
+                    }
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -164,6 +190,16 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                     {member.professionalTagline}
                   </p>
                 )}
+                {member.academicDistinction && (
+                  <div className="mt-4 bg-white border border-[var(--color-hairline)] rounded-lg px-4 py-3">
+                    <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
+                      Academic Distinction
+                    </p>
+                    <p className="mt-1 font-display text-sm sm:text-[15px] font-semibold text-[var(--color-primary-ink)]">
+                      {member.academicDistinction.formattedLine}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Institutional Affiliation Metadata */}
@@ -189,7 +225,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
               </div>
             </div>
 
-            {/* Right Column: Structured Biographical Sections */}
+            {/* Right Column: Structured Biographical Sections OR Canonical Official Message */}
             <div className="lg:col-span-7 bg-white p-6 sm:p-8 lg:p-10 space-y-8">
               {/* Desktop Profile Header */}
               <header className="hidden lg:block pb-6 border-b border-[var(--color-hairline)]">
@@ -207,162 +243,257 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                     {member.professionalTagline}
                   </p>
                 )}
+
+                {member.academicDistinction && (
+                  <div className="mt-5 bg-[var(--color-canvas)]/70 border border-[var(--color-hairline)] rounded-lg px-4 py-3.5">
+                    <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
+                      Academic Distinction
+                    </p>
+                    <p className="mt-1 font-display text-base font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                      {member.academicDistinction.formattedLine}
+                    </p>
+                  </div>
+                )}
               </header>
 
-              {/* Section 1: Leadership Profile */}
-              {member.leadershipProfile.length > 0 && (
-                <section aria-labelledby="modal-section-leadership-profile">
-                  <h3
-                    id="modal-section-leadership-profile"
-                    className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-3"
+              {/* Editorial View Switcher (Only shown when leader has a canonical Official Message) */}
+              {hasMessage && member.officialMessage && (
+                <div
+                  role="tablist"
+                  aria-label="Profile view options"
+                  className="flex items-center gap-6 border-b border-[var(--color-hairline)]"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === 'dossier'}
+                    onClick={() => handleSwitchTab('dossier')}
+                    className={`pb-3 text-xs sm:text-sm font-semibold tracking-wide border-b-2 transition-colors cursor-pointer ${
+                      activeTab === 'dossier'
+                        ? 'border-[var(--color-brand)] text-[var(--color-brand)]'
+                        : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-primary-ink)]'
+                    }`}
                   >
                     Leadership Profile
-                  </h3>
-                  <div className="space-y-3.5 text-[15px] sm:text-base text-[var(--color-ink)] leading-relaxed max-w-[65ch]">
-                    {member.leadershipProfile.map((paragraph, idx) => (
-                      <p key={idx}>{paragraph}</p>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === 'message'}
+                    onClick={() => handleSwitchTab('message')}
+                    className={`pb-3 text-xs sm:text-sm font-semibold tracking-wide border-b-2 transition-colors cursor-pointer ${
+                      activeTab === 'message'
+                        ? 'border-[var(--color-brand)] text-[var(--color-brand)]'
+                        : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-primary-ink)]'
+                    }`}
+                  >
+                    {member.officialMessage.sectionHeading}
+                  </button>
+                </div>
+              )}
+
+              {activeTab === 'message' && member.officialMessage ? (
+                /* Canonical Verbatim Official Message View */
+                <article className="space-y-6 max-w-[65ch]">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
+                      {member.officialMessage.sectionKicker}
+                    </p>
+                    <h3 className="mt-1.5 font-display text-2xl sm:text-[1.65rem] font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                      {member.officialMessage.sectionHeading}
+                    </h3>
+                  </div>
+
+                  <p className="font-display text-lg font-medium text-[var(--color-primary-ink)]">
+                    {member.officialMessage.salutation}
+                  </p>
+
+                  <div className="space-y-4 text-[15px] sm:text-base text-[var(--color-ink)] leading-[1.8]">
+                    {member.officialMessage.openingParagraphs.map((paragraph, idx) => (
+                      <p key={`msg-open-${idx}`}>{paragraph}</p>
                     ))}
                   </div>
-                </section>
-              )}
 
-              {/* Section 2: Professional Leadership */}
-              {member.professionalLeadership && member.professionalLeadership.length > 0 && (
-                <section
-                  aria-labelledby="modal-section-professional-leadership"
-                  className="pt-6 border-t border-[var(--color-hairline)]"
-                >
-                  <h3
-                    id="modal-section-professional-leadership"
-                    className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
-                  >
-                    Professional Leadership
-                  </h3>
-                  <ul className="divide-y divide-[var(--color-hairline)] border-t border-b border-[var(--color-hairline)]">
-                    {member.professionalLeadership.map((item) => (
-                      <li
-                        key={item}
-                        className="py-3 text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* Section 3: Core Strengths */}
-              {member.coreStrengths && member.coreStrengths.length > 0 && (
-                <section
-                  aria-labelledby="modal-section-core-strengths"
-                  className="pt-6 border-t border-[var(--color-hairline)]"
-                >
-                  <h3
-                    id="modal-section-core-strengths"
-                    className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
-                  >
-                    Core Strengths
-                  </h3>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
-                    {member.coreStrengths.map((strength) => (
-                      <li
-                        key={strength}
-                        className="text-sm text-[var(--color-ink)] leading-relaxed flex items-start gap-2.5"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-primary-ink)] shrink-0"
-                        />
-                        <span>{strength}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* Section 4: Qualifications & Professional Recognition */}
-              {member.qualificationsAndRecognition &&
-                member.qualificationsAndRecognition.length > 0 && (
-                  <section
-                    aria-labelledby="modal-section-qualifications"
-                    className="pt-6 border-t border-[var(--color-hairline)]"
-                  >
-                    <h3
-                      id="modal-section-qualifications"
-                      className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                  {member.officialMessage.subsections?.map((sub) => (
+                    <div
+                      key={sub.subheading}
+                      className="pt-6 border-t border-[var(--color-hairline)] space-y-3.5"
                     >
-                      Qualifications &amp; Professional Recognition
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {member.qualificationsAndRecognition.map((credential) => (
-                        <li
-                          key={credential}
-                          className="text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
-                          />
-                          <span>{credential}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-
-              {/* Optional Achievements Section (Future-Ready for Additional Leaders) */}
-              {member.achievements && member.achievements.length > 0 && (
-                <section
-                  aria-labelledby="modal-section-achievements"
-                  className="pt-6 border-t border-[var(--color-hairline)]"
-                >
-                  <h3
-                    id="modal-section-achievements"
-                    className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
-                  >
-                    Institutional Milestones &amp; Achievements
-                  </h3>
-                  <ul className="space-y-2.5">
-                    {member.achievements.map((achievement) => (
-                      <li
-                        key={achievement}
-                        className="text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
-                        />
-                        <span>{achievement}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* Section 5: Community & Entrepreneurial Engagement */}
-              {member.communityAndEngagement &&
-                member.communityAndEngagement.length > 0 && (
-                  <section
-                    aria-labelledby="modal-section-community"
-                    className="pt-6 border-t border-[var(--color-hairline)]"
-                  >
-                    <h3
-                      id="modal-section-community"
-                      className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-3"
-                    >
-                      Community &amp; Entrepreneurial Engagement
-                    </h3>
-                    <div className="space-y-3 text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed max-w-[65ch]">
-                      {member.communityAndEngagement.map((paragraph, idx) => (
-                        <p key={idx}>{paragraph}</p>
-                      ))}
+                      <h4 className="font-display text-xl font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                        {sub.subheading}
+                      </h4>
+                      <div className="space-y-4 text-[15px] sm:text-base text-[var(--color-ink)] leading-[1.8]">
+                        {sub.paragraphs.map((paragraph, pIdx) => (
+                          <p key={`${sub.subheading}-${pIdx}`}>{paragraph}</p>
+                        ))}
+                      </div>
                     </div>
-                  </section>
-                )}
+                  ))}
+
+                  <div className="pt-6 border-t border-[var(--color-hairline)]">
+                    <p className="text-sm text-[var(--color-muted)]">
+                      {member.officialMessage.closingPhrase}
+                    </p>
+                    <p className="mt-2 font-display text-lg font-semibold text-[var(--color-primary-ink)]">
+                      {member.fullName}
+                    </p>
+                    <p className="mt-0.5 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
+                      {member.designation}
+                    </p>
+                  </div>
+                </article>
+              ) : (
+                /* Structured Biographical Dossier View */
+                <div className="space-y-8">
+                  {/* Section 1: Leadership Profile */}
+                  {member.leadershipProfile.length > 0 && (
+                    <section aria-labelledby="modal-section-leadership-profile">
+                      <h3
+                        id="modal-section-leadership-profile"
+                        className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-3"
+                      >
+                        Leadership Profile
+                      </h3>
+                      <div className="space-y-3.5 text-[15px] sm:text-base text-[var(--color-ink)] leading-relaxed max-w-[65ch]">
+                        {member.leadershipProfile.map((paragraph, idx) => (
+                          <p key={idx}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {/* Section 2: Professional Leadership */}
+                  {member.professionalLeadership && member.professionalLeadership.length > 0 && (
+                    <section
+                      aria-labelledby="modal-section-professional-leadership"
+                      className="pt-6 border-t border-[var(--color-hairline)]"
+                    >
+                      <h3
+                        id="modal-section-professional-leadership"
+                        className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                      >
+                        Professional Leadership
+                      </h3>
+                      <ul className="divide-y divide-[var(--color-hairline)] border-t border-b border-[var(--color-hairline)]">
+                        {member.professionalLeadership.map((item) => (
+                          <li
+                            key={item}
+                            className="py-3 text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                            />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {/* Section 3: Core Strengths */}
+                  {member.coreStrengths && member.coreStrengths.length > 0 && (
+                    <section
+                      aria-labelledby="modal-section-core-strengths"
+                      className="pt-6 border-t border-[var(--color-hairline)]"
+                    >
+                      <h3
+                        id="modal-section-core-strengths"
+                        className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                      >
+                        Core Strengths
+                      </h3>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                        {member.coreStrengths.map((strength) => (
+                          <li
+                            key={strength}
+                            className="text-sm text-[var(--color-ink)] leading-relaxed flex items-start gap-2.5"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-primary-ink)] shrink-0"
+                            />
+                            <span>{strength}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {/* Section 4: Qualifications & Academic Recognition */}
+                  {member.qualificationsAndRecognition &&
+                    member.qualificationsAndRecognition.length > 0 && (
+                      <section
+                        aria-labelledby="modal-section-qualifications"
+                        className="pt-6 border-t border-[var(--color-hairline)]"
+                      >
+                        <h3
+                          id="modal-section-qualifications"
+                          className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                        >
+                          Qualifications &amp; Academic Recognition
+                        </h3>
+                        <ul className="space-y-2.5">
+                          {member.qualificationsAndRecognition.map((credential) => (
+                            <li
+                              key={credential}
+                              className="text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
+                            >
+                              <span
+                                aria-hidden="true"
+                                className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                              />
+                              <span>{credential}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
+                  {/* Optional Achievements Section */}
+                  {member.achievements && member.achievements.length > 0 && (
+                    <section
+                      aria-labelledby="modal-section-achievements"
+                      className="pt-6 border-t border-[var(--color-hairline)]"
+                    >
+                      <h3
+                        id="modal-section-achievements"
+                        className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                      >
+                        Institutional Milestones &amp; Achievements
+                      </h3>
+                      <ul className="space-y-2.5">
+                        {member.achievements.map((achievement) => (
+                          <li
+                            key={achievement}
+                            className="text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-3"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                            />
+                            <span>{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {/* Direct Cross-Link to Canonical Official Message if Available */}
+                  {member.officialMessage && (
+                    <div className="pt-6 border-t border-[var(--color-hairline)]">
+                      <button
+                        type="button"
+                        onClick={() => handleSwitchTab('message')}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors cursor-pointer"
+                      >
+                        <span>Read {member.officialMessage.sectionHeading}</span>
+                        <ArrowRight className="w-4 h-4 shrink-0" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

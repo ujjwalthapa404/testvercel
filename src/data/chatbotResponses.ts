@@ -1,3 +1,4 @@
+import { AcademicProgramSlug } from './academicPrograms';
 import {
   ChatbotQuickAction,
   FacilityEntity,
@@ -20,6 +21,7 @@ export interface ConversationalTemplate {
 
 export interface ProgramConversationalProfile {
   entity: ProgramEntity;
+  programSlug: AcademicProgramSlug;
   displayName: string;
   shortName: string;
   boardAffiliation: string;
@@ -50,6 +52,7 @@ export interface ProgramConversationalProfile {
 export const PROGRAM_PROFILES: Record<ProgramEntity, ProgramConversationalProfile> = {
   plus2_science: {
     entity: 'plus2_science',
+    programSlug: 'science',
     displayName: '+2 Science',
     shortName: 'Science',
     boardAffiliation: 'National Examinations Board (NEB)',
@@ -111,18 +114,19 @@ export const PROGRAM_PROFILES: Record<ProgramEntity, ProgramConversationalProfil
 
   plus2_management: {
     entity: 'plus2_management',
+    programSlug: 'management',
     displayName: '+2 Management',
     shortName: 'Management',
     boardAffiliation: 'National Examinations Board (NEB)',
     enquiryProgramTitle: '+2 Management',
     overview: [
       '+2 Management is our NEB-affiliated Higher Secondary stream designed for students interested in business, finance, accounting, computing, and hospitality.',
-      'The curriculum covers Accounting, Economics, and Business Studies alongside practical electives such as Computer Science and Hotel Management—supported by dedicated Computer and Hotel Management labs.',
+      'The curriculum covers Accounting and Business Studies alongside stream subjects such as Computer Science, Hotel Management, Business Mathematics, and Tourism & Mountaineering—supported by dedicated Computer and Hotel Management labs.',
       'Would you like to check +2 Management admission requirements, subject options, or career pathways?',
     ],
     deeperDetail: [
       '+2 Management at Capitol Hill College blends conceptual commerce classes with hands-on practical training in our Computer Science Laboratory and Hotel Management Laboratory.',
-      'Students also build communication, leadership, and teamwork skills through inter-class quizzes, debates, educational tours, and campus events—creating a smooth foundation for undergraduate degrees like BBS, BBA, BIM, or BHM.',
+      'Students also build communication, leadership, and teamwork skills through inter-class quizzes, debates, educational tours, and campus events—creating a strong foundation for undergraduate degrees like BBS, BBA, BIM, or BHM.',
     ],
     eligibility: {
       paragraphs: [
@@ -166,12 +170,131 @@ export const PROGRAM_PROFILES: Record<ProgramEntity, ProgramConversationalProfil
     ],
     howToApply: [
       'To start your +2 Management application or counseling:',
-      '1. Use the "Enquire About +2 Management" button below to submit your enquiry online.\n2. Visit our Teku, Kathmandu campus (Sunday–Friday) to tour the classrooms and Computer/Hotel Management labs and consult an admission counselor, or call 01-5312399.',
+      '1. Use the "Enquire About Management" button below to submit your enquiry online.\n2. Visit our Teku, Kathmandu campus (Sunday–Friday) to tour the classrooms and Computer/Hotel Management labs and consult an admission counselor, or call 01-5312399.',
+    ],
+  },
+
+  plus2_humanities: {
+    entity: 'plus2_humanities',
+    programSlug: 'humanities',
+    displayName: '+2 Humanities',
+    shortName: 'Humanities',
+    boardAffiliation: 'National Examinations Board (NEB)',
+    enquiryProgramTitle: '+2 Humanities',
+    overview: [
+      '+2 Humanities is our NEB-affiliated Higher Secondary stream emphasizing human society, media, demographics, literature, and critical thinking.',
+      'Stream subjects include Sociology, Mass Communication, Population Studies, Optional English, and Tourism & Mountaineering Studies alongside compulsory core foundation subjects.',
+      'Would you like details on +2 Humanities eligibility, career pathways, or how to apply?',
+    ],
+    deeperDetail: [
+      '+2 Humanities at Capitol Hill College fosters critical reading, media literacy, social inquiry, and persuasive communication through interactive seminars, debates, quizzes, library research, and educational tours.',
+      'Students select approved optional subject pairings under NEB guidelines during admission counseling.',
+    ],
+    eligibility: {
+      paragraphs: [
+        'Applicants for +2 Humanities must have completed SEE or an equivalent recognized board examination meeting NEB Higher Secondary requirements.',
+        'Please confirm exact current-session GPA criteria and optional subject group combinations with our Admissions Office at 01-5312399.',
+      ],
+      verificationNote:
+        'Current-session SEE eligibility and subject pairings for +2 Humanities require confirmation from administration.',
+    },
+    documents: [
+      'For +2 Humanities admission, please bring:',
+      '• Copy of SEE grade sheet / academic transcript\n• Character certificate from your previous school\n• Recent passport-sized photographs\n• Completed Capitol Hill College application form',
+    ],
+    fees: {
+      paragraphs: [
+        'Fee details for +2 Humanities are not published online and require confirmation from Capitol Hill College administration.',
+        'Please call 01-5312399 or submit an online enquiry for the current +2 Humanities fee structure.',
+      ],
+      verificationNote:
+        'Official +2 Humanities fee schedules must be confirmed with Capitol Hill College administration.',
+    },
+    scholarships: {
+      paragraphs: [
+        'Scholarship opportunities for +2 Humanities applicants are determined per post-SEE intake by the college administration.',
+        'Please contact our Teku campus Admissions Desk at 01-5312399 to verify current scholarship criteria.',
+      ],
+      verificationNote:
+        '+2 Humanities scholarship tiers require confirmation from college administration.',
+    },
+    deadlines: {
+      paragraphs: [
+        '+2 Humanities enrollment opens after SEE results in accordance with the NEB calendar. Please check our Notices page or call 01-5312399 for current deadlines.',
+      ],
+      verificationNote:
+        'Current-session +2 Humanities admission dates require administrative confirmation.',
+    },
+    afterStudy: [
+      'After completing +2 Humanities, students can pursue diverse degrees and careers:',
+      '• Higher Education: BA (Sociology, Journalism & Mass Communication, English, Population Studies), BSW, B.A. LL.B., BPA, International Relations, or BTTM\n• Career Pathways: Journalism and media, social work, NGOs/INGOs, teaching, sociological research, tourism, and civil services (Lok Sewa)',
+    ],
+    howToApply: [
+      'You can enquire or apply for +2 Humanities online using the button below, or visit our Admissions Desk in Teku, Kathmandu (01-5312399).',
+    ],
+  },
+
+  plus2_law: {
+    entity: 'plus2_law',
+    programSlug: 'law',
+    displayName: '+2 Law',
+    shortName: '+2 Law',
+    boardAffiliation: 'National Examinations Board (NEB)',
+    enquiryProgramTitle: '+2 Law',
+    overview: [
+      '+2 Law is our specialized Higher Secondary stream affiliated with the National Examinations Board (NEB), introducing Grade 11 & 12 students to legal principles, constitutional governance, and civil justice.',
+      'Major legal subjects include Constitutional Law, Civil Law and Justice, Procedural Law, and Legal Drafting alongside compulsory core subjects.',
+      'Would you like to check +2 Law eligibility, career pathways, or how to apply?',
+    ],
+    deeperDetail: [
+      '+2 Law builds strong analytical reasoning, formal drafting in English and Nepali, and public speaking skills through constitutional study, debates, and library legal reference work at our Teku campus.',
+      'It provides an early foundation for five-year integrated undergraduate law degrees such as B.A. LL.B. as well as public administration and civil service pathways.',
+    ],
+    eligibility: {
+      paragraphs: [
+        'Applicants for +2 Law must hold an SEE qualification or equivalent recognized board certificate meeting NEB Law stream requirements.',
+        'Please confirm exact SEE GPA requirements and intake seats with our Admissions Office at 01-5312399.',
+      ],
+      verificationNote:
+        'Current-session SEE GPA cutoffs and intake details for +2 Law require confirmation from administration.',
+    },
+    documents: [
+      'For +2 Law admission, applicants should prepare:',
+      '• Copy of SEE grade sheet / transcript\n• Character certificate from your previous school\n• Recent passport-sized photographs\n• Completed Capitol Hill College application form',
+    ],
+    fees: {
+      paragraphs: [
+        'Fee details for +2 Law are not published online and require confirmation from Capitol Hill College administration at 01-5312399.',
+      ],
+      verificationNote:
+        'Official +2 Law tuition fees require confirmation from Capitol Hill College administration.',
+    },
+    scholarships: {
+      paragraphs: [
+        'Merit scholarship provisions for +2 Law are confirmed per post-SEE intake by the Admissions Office (01-5312399).',
+      ],
+      verificationNote:
+        '+2 Law scholarship criteria require confirmation from college administration.',
+    },
+    deadlines: {
+      paragraphs: [
+        '+2 Law admissions follow the annual post-SEE NEB admission calendar. Please check our Notices page or call 01-5312399 for active dates.',
+      ],
+      verificationNote:
+        'Current-session +2 Law admission deadlines require administrative confirmation.',
+    },
+    afterStudy: [
+      'Completing +2 Law prepares students for legal and governance degrees and careers:',
+      '• Higher Education: Five-year B.A. LL.B., B.B.M. LL.B., Political Science, Public Administration (BPA), International Relations, or Human Rights studies\n• Career Scope: Legal practice and advocacy (after completing a university law degree and Bar licensing), judicial service, public prosecution, corporate legal advisory, and civil services',
+    ],
+    howToApply: [
+      'You can submit an online enquiry for +2 Law below or visit our Teku, Kathmandu campus office (01-5312399) to speak with an academic counselor.',
     ],
   },
 
   bbs: {
     entity: 'bbs',
+    programSlug: 'bbs',
     displayName: 'Bachelor of Business Studies (BBS)',
     shortName: 'BBS',
     boardAffiliation: 'Tribhuvan University (TU)',
@@ -231,57 +354,60 @@ export const PROGRAM_PROFILES: Record<ProgramEntity, ProgramConversationalProfil
     ],
   },
 
-  graduate: {
-    entity: 'graduate',
-    displayName: "Master's / Postgraduate Programs",
-    shortName: "Master's",
-    boardAffiliation: 'Subject to Administrative Verification',
-    enquiryProgramTitle: "Master's / Graduate Enquiry",
+  mbs: {
+    entity: 'mbs',
+    programSlug: 'mbs',
+    displayName: 'Master of Business Studies (MBS)',
+    shortName: 'MBS',
+    boardAffiliation: 'Tribhuvan University (TU)',
+    enquiryProgramTitle: 'Master of Business Studies (MBS)',
     overview: [
-      "Information regarding active Master's or postgraduate specializations at Capitol Hill College is currently pending official confirmation from college administration.",
-      'Our confirmed academic programs on record are +2 Science (NEB), +2 Management (NEB), and the four-year Bachelor of Business Studies / BBS (Tribhuvan University).',
-      'Please contact our administration office at 01-5312399 or submit a graduate enquiry for up-to-date postgraduate details.',
+      'Our Master of Business Studies (MBS) is a two-year postgraduate management degree affiliated with Tribhuvan University (TU).',
+      'It focuses on Strategic Management, Financial Management, Marketing Management, Managerial Economics, Human Resource Management, Organizational Behavior, International Business, and Research Methodology.',
+      'Would you like details on MBS eligibility, career scope, or how to enquire?',
     ],
     deeperDetail: [
-      'Because postgraduate course offerings and university seat approvals are subject to session-by-session administrative confirmation, we avoid listing unverified Master’s streams.',
-      'Calling 01-5312399 or emailing info.capitolhillcollege@gmail.com will connect you directly with our academic office for verified information.',
+      'Designed under Tribhuvan University’s Faculty of Management, the MBS program equips postgraduate students with strategic analysis, corporate finance, and empirical business research skills—preparing graduates for managerial and leadership roles across private corporations, banking, public sector bodies, NGOs, INGOs, and multinational companies.',
     ],
     eligibility: {
       paragraphs: [
-        "Eligibility criteria for any postgraduate / Master's offerings depend on active university-affiliated intakes and require confirmation from Capitol Hill College administration (01-5312399).",
+        'Applicants for the two-year MBS degree must hold a Bachelor’s degree (such as BBS, BBA, or equivalent) from Tribhuvan University or a university recognized by TU, and satisfy TU Faculty of Management entrance (CMAT) requirements.',
+        'Please contact our Teku campus Admissions Office at 01-5312399 to confirm active MBS intake dates, CMAT schedules, and seat availability.',
       ],
       verificationNote:
-        "Master's / postgraduate program availability and eligibility require administrative confirmation.",
+        'Current-session TU MBS entrance (CMAT) and intake requirements should be confirmed with Capitol Hill College administration.',
     },
     documents: [
-      "Document checklists for postgraduate programs depend on active intakes—please contact the Capitol Hill College Administration Office at 01-5312399 to verify availability first.",
+      'When applying for the MBS postgraduate program, please prepare:',
+      '• Academic transcripts / mark sheets from SEE, 10+2, and Bachelor’s degree\n• Character, migration / provisional, and TU registration certificates\n• CMAT score sheet (as applicable under TU Faculty of Management rules) and passport-sized photographs',
     ],
     fees: {
       paragraphs: [
-        "Fee details and active availability for Master's / postgraduate courses are not published online and require confirmation from Capitol Hill College administration at 01-5312399.",
+        'Fee details for the two-year Tribhuvan University MBS program are not published online and require confirmation from Capitol Hill College administration at 01-5312399.',
       ],
       verificationNote:
-        "Postgraduate availability and fee schedules require administrative confirmation.",
+        'Official MBS tuition and university registration fees require confirmation from Capitol Hill College administration.',
     },
     scholarships: {
       paragraphs: [
-        "Any postgraduate scholarship provisions must be confirmed directly with Capitol Hill College administration at 01-5312399.",
+        'Any postgraduate scholarship or fee-concession provisions for MBS must be confirmed directly with Capitol Hill College administration at 01-5312399.',
       ],
       verificationNote:
-        "Postgraduate scholarship policies require administrative confirmation.",
+        'MBS scholarship policies require confirmation from college administration.',
     },
     deadlines: {
       paragraphs: [
-        "Please contact Capitol Hill College administration at 01-5312399 to confirm whether any postgraduate intakes are scheduled for the current session.",
+        'MBS admissions follow Tribhuvan University Faculty of Management’s postgraduate admission calendar. Please call 01-5312399 or check our Notices page to confirm current intake dates.',
       ],
       verificationNote:
-        "Postgraduate intake dates require administrative confirmation.",
+        'Current-session MBS intake dates require administrative confirmation.',
     },
     afterStudy: [
-      'If you have recently completed a Bachelor’s degree such as BBS, please contact our Teku campus office at 01-5312399 to verify whether postgraduate guidance or programs are currently offered.',
+      'Earning an MBS degree prepares graduates for senior professional and academic opportunities:',
+      '• Career Pathways: Managerial, executive, financial analysis, research, and leadership roles across private corporations, commercial banks, public sector entities, NGOs, INGOs, academia, and multinational organizations\n• Further Study: M.Phil., PhD, or DBA programs in Management, Finance, or Economics',
     ],
     howToApply: [
-      "You can submit a Master's / Graduate Enquiry using the button below or call 01-5312399 to speak directly with our administration team.",
+      'You can submit an online enquiry for MBS using the button below or call 01-5312399 to speak directly with our Teku campus admissions office.',
     ],
   },
 };

@@ -1,5 +1,9 @@
+import { AcademicProgramSlug, isAcademicProgramSlug } from '../data/academicPrograms';
+
 export type ActiveView =
   | 'home'
+  | 'programs'
+  | 'program-detail'
   | 'notices'
   | 'facilities'
   | 'gallery'
@@ -12,10 +16,24 @@ export type PortalTabId = 'notices' | 'faqs' | 'enquiries' | 'saved';
 
 export interface ParsedRoute {
   view: ActiveView;
+  programSlug?: AcademicProgramSlug;
   noticeSlug?: string;
   portalTab?: PortalTabId;
   sectionId?: 'about' | 'programs' | 'faq' | 'contact';
 }
+
+const LEGACY_PROGRAM_ROUTE_ALIASES: Record<string, AcademicProgramSlug> = {
+  '2management': 'management',
+  'plus-two-management': 'management',
+  '2humanities': 'humanities',
+  'plus-two-humanities': 'humanities',
+  '2science': 'science',
+  'plus-two-science': 'science',
+  '2law': 'law',
+  'plus-two-law': 'law',
+  bbs: 'bbs',
+  mbs: 'mbs',
+};
 
 function normalizeSegment(raw: string): string {
   return raw
@@ -38,6 +56,42 @@ function matchRouteToken(rawSegment: string): ParsedRoute | null {
   }
 
   const lower = cleaned.toLowerCase();
+
+  if (lower.startsWith('academic-programs/') || lower.startsWith('programs/')) {
+    const prefix = lower.startsWith('academic-programs/') ? 'academic-programs/' : 'programs/';
+    const rawProgSlug = lower.slice(prefix.length).replace(/\/+$/, '');
+    if (isAcademicProgramSlug(rawProgSlug)) {
+      return {
+        view: 'program-detail',
+        programSlug: rawProgSlug,
+      };
+    }
+    const aliasSlug = LEGACY_PROGRAM_ROUTE_ALIASES[rawProgSlug];
+    if (aliasSlug) {
+      return {
+        view: 'program-detail',
+        programSlug: aliasSlug,
+      };
+    }
+    return { view: 'programs' };
+  }
+
+  if (lower in LEGACY_PROGRAM_ROUTE_ALIASES) {
+    return {
+      view: 'program-detail',
+      programSlug: LEGACY_PROGRAM_ROUTE_ALIASES[lower],
+    };
+  }
+
+  if (
+    lower === 'academic-programs' ||
+    lower === 'academic-program' ||
+    lower === 'programs' ||
+    lower === 'services' ||
+    lower === 'courses'
+  ) {
+    return { view: 'programs' };
+  }
 
   if (lower.startsWith('notices/')) {
     const rawSlug = cleaned.slice('notices/'.length).replace(/\/+$/, '');
@@ -91,13 +145,6 @@ function matchRouteToken(rawSegment: string): ParsedRoute | null {
   if (lower === 'about' || lower === 'about-us') {
     return { view: 'home', sectionId: 'about' };
   }
-  if (
-    lower === 'programs' ||
-    lower === 'academic-programs' ||
-    lower === 'courses'
-  ) {
-    return { view: 'home', sectionId: 'programs' };
-  }
   if (lower === 'faq' || lower === 'faqs') {
     return { view: 'home', sectionId: 'faq' };
   }
@@ -113,7 +160,7 @@ function matchRouteToken(rawSegment: string): ParsedRoute | null {
  * `/leadership-governance/`, `/notices/slug`) and hash fragments (`#team-member`, `#about`)
  * so direct URL opens, page refreshes on Vercel, and in-page anchor links all work reliably.
  */
-export function parseLocationRoute(pathname: string, hash: string): ParsedRoute {
+export function parseLocationRoute(pathname: string, hash = ''): ParsedRoute {
   const hashClean = normalizeSegment(hash);
   if (hashClean) {
     const fromHash = matchRouteToken(hash);

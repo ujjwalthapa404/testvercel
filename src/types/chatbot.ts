@@ -1,3 +1,5 @@
+import { AcademicProgramSlug } from '../data/academicPrograms';
+
 export enum ChatbotCategoryId {
   GENERAL = 'general',
   PROGRAMS = 'programs',
@@ -16,6 +18,8 @@ export interface ChatbotCategoryMeta {
 
 export type ChatbotActionType =
   | 'open-enquiry'
+  | 'open-programs'
+  | 'open-program-detail'
   | 'scroll-programs'
   | 'scroll-contact'
   | 'scroll-about'
@@ -23,12 +27,15 @@ export type ChatbotActionType =
   | 'open-facilities'
   | 'open-gallery'
   | 'open-team'
-  | 'open-notices';
+  | 'open-notices'
+  | 'external-link';
 
 export interface ChatbotQuickAction {
   label: string;
   action: ChatbotActionType;
   programTitle?: string;
+  programSlug?: AcademicProgramSlug;
+  externalHref?: string;
 }
 
 export interface ChatbotFaqItem {
@@ -92,8 +99,10 @@ export enum ConversationIntent {
 export type ProgramEntity =
   | 'plus2_science'
   | 'plus2_management'
+  | 'plus2_humanities'
+  | 'plus2_law'
   | 'bbs'
-  | 'graduate';
+  | 'mbs';
 
 export type FacilityEntity =
   | 'library'

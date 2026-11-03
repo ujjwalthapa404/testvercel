@@ -10,7 +10,8 @@ interface ExecutiveLeadershipProps {
   members: LeadershipMemberProfile[];
   onSelectProfile: (
     member: LeadershipMemberProfile,
-    triggerElement: HTMLElement | null
+    triggerElement: HTMLElement | null,
+    initialTab?: 'dossier' | 'message'
   ) => void;
 }
 
@@ -43,7 +44,7 @@ export const ExecutiveLeadership: React.FC<ExecutiveLeadershipProps> = ({
           </p>
         </div>
 
-        {/* Populated Executive Profiles Grid OR Intentional Governance Office Structure */}
+        {/* Populated Executive Profiles Grid */}
         {sortedMembers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {sortedMembers.map((leader) => (
@@ -56,44 +57,26 @@ export const ExecutiveLeadership: React.FC<ExecutiveLeadershipProps> = ({
             ))}
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Institutional Executive Offices Architecture */}
-            <div className="grid grid-cols-1 md:grid-cols-3 border border-[var(--color-hairline)] rounded-xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-hairline)] bg-[var(--color-canvas)]/45">
-              {EXECUTIVE_OFFICES_FRAMEWORK.map((office, index) => (
-                <div key={office.officeTitle} className="p-6 sm:p-8 flex flex-col justify-between">
-                  <div>
-                    <span className="font-mono text-xs font-semibold text-[var(--color-brand)]">
-                      0{index + 1}
-                    </span>
-                    <h3 className="mt-3 text-xl font-semibold text-[var(--color-primary-ink)]">
-                      {office.officeTitle}
-                    </h3>
-                    <p className="mt-3 text-sm text-[var(--color-muted)] leading-relaxed">
-                      {office.scopeSummary}
-                    </p>
-                  </div>
-
-                  <p className="mt-6 pt-4 border-t border-[var(--color-hairline)] text-xs font-medium text-[var(--color-ink)]">
-                    {office.statusNote}
+          <div className="grid grid-cols-1 md:grid-cols-3 border border-[var(--color-hairline)] rounded-xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-hairline)] bg-[var(--color-canvas)]/45">
+            {EXECUTIVE_OFFICES_FRAMEWORK.map((office, index) => (
+              <div key={office.officeTitle} className="p-6 sm:p-8 flex flex-col justify-between">
+                <div>
+                  <span className="font-mono text-xs font-semibold text-[var(--color-brand)]">
+                    0{index + 1}
+                  </span>
+                  <h3 className="mt-3 text-xl font-semibold text-[var(--color-primary-ink)]">
+                    {office.officeTitle}
+                  </h3>
+                  <p className="mt-3 text-sm text-[var(--color-muted)] leading-relaxed">
+                    {office.scopeSummary}
                   </p>
                 </div>
-              ))}
-            </div>
 
-            {/* Transparent Institutional Verification Statement */}
-            <div className="bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl p-6 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="max-w-3xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-primary-ink)]">
-                  {LEADERSHIP_PAGE_COPY.executiveSection.upcomingNoticeTitle}
-                </p>
-                <p className="mt-1.5 text-sm text-[var(--color-muted)] leading-relaxed">
-                  {LEADERSHIP_PAGE_COPY.executiveSection.upcomingNoticeBody}
+                <p className="mt-6 pt-4 border-t border-[var(--color-hairline)] text-xs font-medium text-[var(--color-ink)]">
+                  {office.statusNote}
                 </p>
               </div>
-              <span className="text-xs font-medium text-[var(--color-muted)] whitespace-nowrap shrink-0">
-                Administration Office · 01-5312399
-              </span>
-            </div>
+            ))}
           </div>
         )}
       </div>

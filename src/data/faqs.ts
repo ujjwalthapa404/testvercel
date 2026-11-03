@@ -9,7 +9,7 @@ export const SAMPLE_FAQS: FaqEntry[] = [
     id: 'faq-programs-offered',
     question: 'Which academic programs are offered at Capitol Hill College?',
     answer:
-      'Capitol Hill College currently offers Higher Secondary (+2 Science and +2 Management) and undergraduate Bachelor of Business Studies (BBS) programs, alongside graduate offerings subject to final course verification with college administration.',
+      'Capitol Hill College offers National Examinations Board (NEB) Higher Secondary (+2) programs in +2 Management, +2 Humanities, +2 Science, and +2 Law, along with Tribhuvan University (TU) affiliated degree programs: Bachelor of Business Studies (BBS) and Master of Business Studies (MBS).',
     category: FaqCategory.ACADEMICS,
     status: NoticeStatus.PUBLISHED,
     sortOrder: 10,
@@ -18,16 +18,16 @@ export const SAMPLE_FAQS: FaqEntry[] = [
     id: 'faq-campus-location',
     question: 'Where is Capitol Hill College located and how can I visit for counseling?',
     answer:
-      'Our campus is located in Teku, Kathmandu, Nepal. Prospective students and guardians can visit the Admissions Desk during regular college hours (Sunday through Friday) or call 01-5312399 prior to visiting.',
+      'Capitol Hill College is located in Teku, Kathmandu, Nepal. Prospective students and guardians can visit the Admissions Desk during regular college hours (Sunday through Friday), view our exact campus pin via the Google Maps link in the footer, or call 01-5312399 prior to visiting.',
     category: FaqCategory.CAMPUS,
     status: NoticeStatus.PUBLISHED,
     sortOrder: 20,
   },
   {
     id: 'faq-admission-documents',
-    question: 'What documents are required when applying for +2 or BBS admission?',
+    question: 'What documents are required when applying for +2, BBS, or MBS admission?',
     answer:
-      'Applicants should bring copies of their academic transcripts and character certificates from their previous institution, recent passport-sized photographs, and a completed application form. Specific stream eligibility requirements are confirmed during academic counseling.',
+      'Applicants should bring copies of their academic transcripts and character certificates from their previous institution, recent passport-sized photographs, and a completed application form. Specific stream or university entrance eligibility requirements are confirmed during academic counseling.',
     category: FaqCategory.ADMISSIONS,
     status: NoticeStatus.PUBLISHED,
     sortOrder: 30,

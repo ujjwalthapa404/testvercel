@@ -22,9 +22,17 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
     ? `${name}, ${designationOrContext} at Capitol Hill College`
     : `${name}, Capitol Hill College`;
 
+  const isCutout = Boolean(portraitUrl?.endsWith('sagar-raj-khanal.png'));
+
   if (variant === 'featured') {
     return (
-      <div className="relative w-full aspect-[4/5] overflow-hidden bg-[var(--color-primary-ink)]">
+      <div
+        className={`relative w-full aspect-[4/5] overflow-hidden ${
+          isCutout && showImage
+            ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
+            : 'bg-[var(--color-primary-ink)]'
+        }`}
+      >
         {showImage ? (
           <img
             src={portraitUrl}
@@ -33,7 +41,11 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
             decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
-            className="w-full h-full object-cover object-top transition-transform duration-200 group-hover:scale-[1.015]"
+            className={
+              isCutout
+                ? 'w-full h-full object-contain object-bottom pt-6 px-3 transition-transform duration-200 group-hover:scale-[1.015]'
+                : 'w-full h-full object-cover object-top transition-transform duration-200 group-hover:scale-[1.015]'
+            }
           />
         ) : (
           <div
@@ -51,7 +63,11 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
 
   if (variant === 'board') {
     return (
-      <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-[var(--color-hairline)] bg-[var(--color-canvas)]">
+      <div
+        className={`relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-[var(--color-hairline)] ${
+          isCutout && showImage ? 'bg-[#F2F0EC]' : 'bg-[var(--color-canvas)]'
+        }`}
+      >
         {showImage ? (
           <img
             src={portraitUrl}
@@ -60,7 +76,11 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
             decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
-            className="w-full h-full object-cover object-top"
+            className={
+              isCutout
+                ? 'w-full h-full object-contain object-bottom pt-1'
+                : 'w-full h-full object-cover object-top'
+            }
           />
         ) : (
           <div
@@ -76,7 +96,11 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
 
   /* Compact variant for Faculty & General Staff rows */
   return (
-    <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[var(--color-hairline)] bg-[var(--color-brand-soft)] flex items-center justify-center">
+    <div
+      className={`relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[var(--color-hairline)] flex items-center justify-center ${
+        isCutout && showImage ? 'bg-[#F2F0EC]' : 'bg-[var(--color-brand-soft)]'
+      }`}
+    >
       {showImage ? (
         <img
           src={portraitUrl}
@@ -85,7 +109,11 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
           decoding="async"
           referrerPolicy="no-referrer"
           onError={() => setImgError(true)}
-          className="w-full h-full object-cover object-top"
+          className={
+            isCutout
+              ? 'w-full h-full object-contain object-bottom pt-0.5'
+              : 'w-full h-full object-cover object-top'
+          }
         />
       ) : (
         <span

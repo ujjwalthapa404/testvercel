@@ -1,3 +1,4 @@
+import { OFFICIAL_GOOGLE_MAPS_URL } from '../data/academicPrograms';
 import {
   CHATBOT_FAQ_DATABASE,
   CHATBOT_INITIAL_SUGGESTIONS,
@@ -113,6 +114,11 @@ function buildProgramAspectResponse(
   suggestedNextAspect?: TopicAspect;
 } {
   const profile = PROGRAM_PROFILES[program];
+  const programPageAction: ChatbotQuickAction = {
+    label: `Explore ${profile.shortName} Page`,
+    action: 'open-program-detail',
+    programSlug: profile.programSlug,
+  };
   const enquiryAction: ChatbotQuickAction = {
     label: `Enquire About ${profile.shortName}`,
     action: 'open-enquiry',
@@ -223,22 +229,12 @@ function buildProgramAspectResponse(
       return {
         paragraphs: profile.overview,
         categoryLabel: profile.displayName,
-        verificationNote:
-          program === 'graduate'
-            ? "Master's / postgraduate course offerings are pending administrative confirmation."
-            : undefined,
-        suggestedQuestions:
-          program === 'graduate'
-            ? [
-                'What programs do you offer?',
-                'How can I contact the administration?',
-              ]
-            : [
-                `What are the eligibility requirements for ${profile.shortName}?`,
-                `What about its fees?`,
-                `What can I study after ${profile.displayName}?`,
-              ],
-        actions: [enquiryAction],
+        suggestedQuestions: [
+          `What are the eligibility requirements for ${profile.shortName}?`,
+          `What about its fees?`,
+          `What can I study after ${profile.displayName}?`,
+        ],
+        actions: [programPageAction, enquiryAction],
         suggestedNextAspect: 'eligibility',
       };
   }
@@ -293,6 +289,9 @@ function inferAspectFromFaqId(faqId: string): TopicAspect {
 function inferProgramFromFaqId(faqId: string): ProgramEntity | null {
   if (faqId.includes('science') && !faqId.includes('mgmt')) return 'plus2_science';
   if (faqId.includes('management')) return 'plus2_management';
+  if (faqId.includes('humanities')) return 'plus2_humanities';
+  if (faqId.includes('law')) return 'plus2_law';
+  if (faqId.includes('mbs')) return 'mbs';
   if (faqId.includes('bbs')) return 'bbs';
   return null;
 }
@@ -373,7 +372,7 @@ export function processConversationTurn(
     const hasActiveProgram = context.activeProgram !== null;
     const reply = hasActiveProgram
       ? `${greetWord} How can I help you further? We can continue with ${PROGRAM_PROFILES[context.activeProgram!].displayName} or switch to any other question about Capitol Hill College.`
-      : `${greetWord} Welcome to Capitol Hill College. I can help you with our academic programs (+2 Science, +2 Management, and BBS), admissions, campus facilities, or contact details. What would you like to know?`;
+      : `${greetWord} Welcome to Capitol Hill College. I can help you with our academic programs (+2 Management, +2 Humanities, +2 Science, +2 Law, BBS, and MBS), our Teku campus location, admissions, or facilities. What would you like to know?`;
 
     const nextContext: ConversationContextState = {
       ...context,
@@ -722,9 +721,9 @@ export function processConversationTurn(
     if (analyzed.unofferedProgramName) {
       const paragraphs = applyLeadingGreeting(
         [
-          `${analyzed.unofferedProgramName} is not listed among our confirmed academic offerings at Capitol Hill College.`,
-          'Our verified academic programs are +2 Science (NEB), +2 Management (NEB), and the four-year Bachelor of Business Studies / BBS degree (Tribhuvan University), while any postgraduate specializations are pending administrative confirmation.',
-          'Would you like details on one of these programs, or would you prefer to confirm course availability directly with our administration at 01-5312399?',
+          `${analyzed.unofferedProgramName} is not listed among our offered academic programs at Capitol Hill College.`,
+          'Our official academic programs are +2 Management, +2 Humanities, +2 Science, and +2 Law (affiliated with NEB), along with Bachelor of Business Studies (BBS) and Master of Business Studies (MBS) (affiliated with Tribhuvan University).',
+          'Would you like details on one of these programs, or would you prefer to speak directly with our administration at 01-5312399?',
         ],
         greetingPrefix,
       );
@@ -746,15 +745,13 @@ export function processConversationTurn(
         intent: ConversationIntent.UNCONFIRMED_COLLEGE_TOPIC,
         replyParagraphs: paragraphs,
         categoryLabel: 'Academic Offerings',
-        verificationNote:
-          'Only +2 Science, +2 Management, and BBS are confirmed in current website records; contact administration (01-5312399) for any additional stream inquiries.',
         suggestedQuestions: [
-          'Tell me about +2 Science',
+          'What programs do you offer?',
           'Tell me about +2 Management',
           'Tell me about BBS',
         ],
         actions: [
-          { label: 'View Confirmed Programs', action: 'scroll-programs' },
+          { label: 'Explore Academic Programs', action: 'open-programs' },
           { label: 'Contact Administration', action: 'scroll-contact' },
         ],
         isFallback: false,
@@ -987,7 +984,7 @@ export function processConversationTurn(
       const paragraphs = leadershipFaq
         ? leadershipFaq.answer
         : [
-            'Capitol Hill College is guided by Chairman Mr. Pawan Bista, Principal Mr. Toya Nath Adhikari, and Vice-Principal Mr. Sagar Raj Khanal, supported by 45 faculty listings across 15 departments.',
+            'Capitol Hill College is guided by Chairman Mr. Pawan Bista, CEO & Director Mr. Nischal Gautam, and Principal Mr. Sagar Raj Khanal, supported by 45 faculty listings across 15 departments.',
           ];
       const nextContext: ConversationContextState = {
         ...context,
@@ -1309,14 +1306,10 @@ export function processConversationTurn(
   /* 11. CONTEXTUAL "WHERE IS IT LOCATED?" & "CAN I VISIT?"                   */
   /* ======================================================================== */
   if (analyzed.detectedAspect === 'location') {
-    const facilityNote = context.activeFacility
-      ? ` All campus facilities—including our ${context.activeFacility === 'labs' ? 'subject laboratories' : context.activeFacility}—are situated right here on campus.`
-      : '';
     const paragraphs = applyLeadingGreeting(
       [
-        `Capitol Hill College is centrally located in Teku, Kathmandu, Nepal (within Kathmandu Metropolitan City).${facilityNote}`,
-        'Teku is directly connected to Tripureshwor, Kalimati, Kuleshwor, Kalanki, New Road, and Lalitpur/Sanepa routes, making daily travel straightforward by public transport or private vehicle.',
-        'You are welcome to visit Sunday through Friday during regular college hours for a campus tour and counseling, or call 01-5312399 for landmark directions!',
+        'Capitol Hill College is located in Teku, Kathmandu, Nepal. You can find our exact location and directions on Google Maps using the link below.',
+        OFFICIAL_GOOGLE_MAPS_URL,
       ],
       greetingPrefix,
     );
@@ -1346,7 +1339,11 @@ export function processConversationTurn(
         'How can I contact the college?',
       ],
       actions: [
-        { label: 'View Location & Contact', action: 'scroll-contact' },
+        {
+          label: 'View on Google Maps',
+          action: 'external-link',
+          externalHref: OFFICIAL_GOOGLE_MAPS_URL,
+        },
         { label: 'Schedule a Campus Visit', action: 'open-enquiry' },
       ],
       isFallback: false,
@@ -1413,9 +1410,9 @@ export function processConversationTurn(
   ) {
     const paragraphs = applyLeadingGreeting(
       [
-        'We offer three confirmed academic programs at Capitol Hill College:',
-        '• +2 Science (Higher Secondary — NEB Affiliation)\n• +2 Management (Higher Secondary — NEB Affiliation)\n• Bachelor of Business Studies / BBS (4-Year Undergraduate — Tribhuvan University Affiliation)',
-        'Which of these programs would you like to hear more about?',
+        'Capitol Hill College offers six official academic programs across NEB (+2) and Tribhuvan University:',
+        '• NEB (+2) Programs: +2 Management, +2 Humanities, +2 Science, and +2 Law\n• Tribhuvan University Programs: Bachelor of Business Studies (BBS — 4 Years) and Master of Business Studies (MBS — 2 Years)',
+        'Which of these programs would you like to explore in detail?',
       ],
       greetingPrefix,
     );
@@ -1441,14 +1438,13 @@ export function processConversationTurn(
       intent: ConversationIntent.ACADEMIC_PROGRAMS,
       replyParagraphs: paragraphs,
       categoryLabel: 'Academic Programs',
-      verificationNote:
-        "Any Master's / postgraduate specializations are subject to administrative confirmation.",
       suggestedQuestions: [
-        'Tell me more about Science',
-        'Tell me more about Management',
-        'Tell me more about BBS',
+        'Tell me about +2 Management',
+        'Tell me about +2 Science',
+        'Tell me about BBS',
+        'Tell me about MBS',
       ],
-      actions: [{ label: 'Explore Programs Section', action: 'scroll-programs' }],
+      actions: [{ label: 'Explore Academic Programs', action: 'open-programs' }],
       isFallback: false,
       nextContext,
     };

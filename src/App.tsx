@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import {
   ArrowRight,
+  ExternalLink,
   Mail,
   MapPin,
   Phone,
@@ -33,19 +34,30 @@ import { CampusGalleryPage } from './pages/CampusGalleryPage';
 import { TeamMembersPage } from './pages/TeamMembersPage';
 import { AlumniTestimonialsPage } from './pages/AlumniTestimonials';
 import { LeadershipPage } from './pages/LeadershipPage';
+import { AcademicProgramsPage } from './pages/AcademicProgramsPage';
+import { AcademicProgramDetailPage } from './pages/AcademicProgramDetailPage';
 import { CollegeImage } from './components/CollegeImage';
 import { HeroOverviewVideo } from './components/HeroOverviewVideo';
 import { FaqChatbot } from './components/FaqChatbot';
 import { ChatbotQuickAction } from './types/chatbot';
+import {
+  ACADEMIC_PROGRAMS,
+  AcademicDivisionId,
+  AcademicProgramSlug,
+  getAcademicProgramBySlug,
+  OFFICIAL_CAMPUS_LOCATION,
+} from './data/academicPrograms';
 import {
   navigateBrowserUrl,
   ParsedRoute,
   parseLocationRoute,
   PortalTabId,
 } from './utils/routing';
+import { LeadershipMessagesSection } from './components/LeadershipMessagesSection';
+import { ALL_LEADERSHIP_PROFILES } from './data/leadershipData';
 import {
   formatNoticeDate,
-  getActiveAnnouncementBarNotice,
+  getActiveAnnouncementBarNotices,
   getActiveNotices,
   SAMPLE_NOTICES,
 } from './data/notices';
@@ -70,18 +82,12 @@ import {
   toSafeDocId,
 } from './lib/firebase';
 
-interface ProgramSummary {
-  id: string;
-  level: string;
-  title: string;
-  affiliationNote: string;
-  summary: string;
-}
-
 type PortalTab = PortalTabId;
 
 type RouteState =
   | { view: 'home'; sectionId?: 'about' | 'programs' | 'faq' | 'contact' }
+  | { view: 'programs' }
+  | { view: 'program-detail'; programSlug: AcademicProgramSlug }
   | { view: 'leadership' }
   | { view: 'facilities' }
   | { view: 'team' }
@@ -92,6 +98,12 @@ type RouteState =
 
 function toRouteState(parsed: ParsedRoute): RouteState {
   switch (parsed.view) {
+    case 'programs':
+      return { view: 'programs' };
+    case 'program-detail':
+      return parsed.programSlug
+        ? { view: 'program-detail', programSlug: parsed.programSlug }
+        : { view: 'programs' };
     case 'leadership':
       return { view: 'leadership' };
     case 'facilities':
@@ -119,41 +131,6 @@ function readBrowserRoute(): RouteState {
   return toRouteState(parseLocationRoute(window.location.pathname, window.location.hash));
 }
 
-const INITIAL_PROGRAMS: ProgramSummary[] = [
-  {
-    id: 'plus-two-science',
-    level: 'Higher Secondary (+2)',
-    title: '+2 Science',
-    affiliationNote: 'NEB Affiliation (Subject to College Verification)',
-    summary:
-      'Rigorous foundation in Physics, Chemistry, Biology, Mathematics, and Computer Science preparing students for medicine, engineering, and scientific inquiry.',
-  },
-  {
-    id: 'plus-two-management',
-    level: 'Higher Secondary (+2)',
-    title: '+2 Management',
-    affiliationNote: 'NEB Affiliation (Subject to College Verification)',
-    summary:
-      'Practical grounding in Accounting, Economics, Business Studies, and Computer Science designed for future business leaders and entrepreneurs.',
-  },
-  {
-    id: 'bbs',
-    level: 'Undergraduate',
-    title: 'Bachelor of Business Studies (BBS)',
-    affiliationNote: 'TU Affiliation (Subject to College Verification)',
-    summary:
-      'Four-year undergraduate business program combining analytical management principles, accounting practice, and organizational leadership.',
-  },
-  {
-    id: 'masters',
-    level: 'Graduate',
-    title: "Master's Programs",
-    affiliationNote: 'Exact Courses Pending Verification',
-    summary:
-      'Postgraduate academic offerings subject to final verification of active specializations, intake schedule, and curriculum structure with college administration.',
-  },
-];
-
 export default function App() {
   const { user, profileReady, isAdmin, signInWithGoogle } = useFirebase();
   const [route, setRoute] = useState<RouteState>(() => readBrowserRoute());
@@ -164,7 +141,9 @@ export default function App() {
   const [hasLoadedFirestoreFaqs, setHasLoadedFirestoreFaqs] = useState(false);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedProgram, setSelectedProgram] = useState<string>('+2 Science');
+  const [programDivisionFilter, setProgramDivisionFilter] = useState<'all' | AcademicDivisionId>(
+    'all'
+  );
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [submittingEnquiry, setSubmittingEnquiry] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -172,7 +151,7 @@ export default function App() {
     fullName: '',
     email: '',
     phone: '',
-    program: '+2 Science',
+    program: ACADEMIC_PROGRAMS[0].title,
     message: '',
   });
   const [formError, setFormError] = useState('');
@@ -294,8 +273,8 @@ export default function App() {
   }, [hasLoadedFirestoreFaqs, firestoreFaqs]);
 
   const activeNotices = useMemo(() => getActiveNotices(rawNoticesSource), [rawNoticesSource]);
-  const announcementNotice = useMemo(
-    () => getActiveAnnouncementBarNotice(rawNoticesSource),
+  const announcementNotices = useMemo(
+    () => getActiveAnnouncementBarNotices(rawNoticesSource),
     [rawNoticesSource]
   );
   const popupNotice = useMemo(
@@ -358,9 +337,19 @@ export default function App() {
   useEffect(() => {
     let nextTitle = 'Capitol Hill College | Quality Education in Teku, Kathmandu';
     let nextDescription =
-      'Capitol Hill College in Teku, Kathmandu offers +2 Science, +2 Management, BBS, and graduate programs with dedicated faculty and modern campus facilities.';
+      'Capitol Hill College in Teku, Kathmandu offers NEB (+2 Management, +2 Humanities, +2 Science, +2 Law) and Tribhuvan University (BBS & MBS) programs.';
 
-    if (route.view === 'leadership') {
+    if (route.view === 'programs') {
+      nextTitle = 'Academic Programs | Capitol Hill College — NEB (+2), BBS & MBS';
+      nextDescription =
+        'Explore Capitol Hill College academic programs in Teku, Kathmandu: NEB (+2 Management, +2 Humanities, +2 Science, +2 Law) and Tribhuvan University (BBS & MBS).';
+    } else if (route.view === 'program-detail') {
+      const program = getAcademicProgramBySlug(route.programSlug);
+      if (program) {
+        nextTitle = program.seo.title;
+        nextDescription = program.seo.description;
+      }
+    } else if (route.view === 'leadership') {
       nextTitle = 'Leadership & Governance | Capitol Hill College — Teku, Kathmandu';
       nextDescription =
         'Meet the Chairman, Board of Directors, and institutional governance leadership behind Capitol Hill College in Teku, Kathmandu.';
@@ -379,7 +368,7 @@ export default function App() {
     } else if (route.view === 'alumni') {
       nextTitle = 'Alumni & Testimonials | Capitol Hill College — Teku, Kathmandu';
       nextDescription =
-        'Explore Capitol Hill College alumni pathways, student perspectives, and institutional values across +2 Science, +2 Management, and BBS in Teku, Kathmandu.';
+        'Explore Capitol Hill College alumni pathways, student perspectives, and institutional values across NEB (+2) and Tribhuvan University programs in Teku, Kathmandu.';
     } else if (route.view === 'notices') {
       nextTitle = 'Notices & Announcements | Capitol Hill College';
       nextDescription =
@@ -393,7 +382,7 @@ export default function App() {
     if (metaDesc) {
       metaDesc.setAttribute('content', nextDescription);
     }
-  }, [route.view]);
+  }, [route]);
 
   const navigateHome = (sectionId?: string) => {
     const knownSection =
@@ -419,6 +408,18 @@ export default function App() {
       navigateBrowserUrl('/');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const navigateToPrograms = (slug?: AcademicProgramSlug) => {
+    setMobileMenuOpen(false);
+    if (slug) {
+      setRoute({ view: 'program-detail', programSlug: slug });
+      navigateBrowserUrl(`/academic-programs/${slug}`);
+    } else {
+      setRoute({ view: 'programs' });
+      navigateBrowserUrl('/academic-programs');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToLeadership = () => {
@@ -488,8 +489,12 @@ export default function App() {
       case 'open-enquiry':
         handleOpenEnquiry(action.programTitle);
         break;
+      case 'open-programs':
       case 'scroll-programs':
-        navigateHome('programs');
+        navigateToPrograms();
+        break;
+      case 'open-program-detail':
+        navigateToPrograms(action.programSlug);
         break;
       case 'scroll-contact':
         navigateHome('contact');
@@ -511,6 +516,8 @@ export default function App() {
         break;
       case 'open-notices':
         navigateToNotices(null);
+        break;
+      case 'external-link':
         break;
     }
   };
@@ -575,11 +582,13 @@ export default function App() {
       {/* Shared Main Navigation Bar — Official Website-Wide Deep Red University Header */}
       <SiteHeader
         activeView={route.view}
+        activeProgramSlug={route.view === 'program-detail' ? route.programSlug : null}
         userSignedIn={Boolean(user)}
         isAdmin={isAdmin}
         mobileMenuOpen={mobileMenuOpen}
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         onNavigateHome={(sectionId) => navigateHome(sectionId)}
+        onNavigatePrograms={navigateToPrograms}
         onNavigateLeadership={navigateToLeadership}
         onNavigateFacilities={navigateToFacilities}
         onNavigateGallery={navigateToGallery}
@@ -594,9 +603,9 @@ export default function App() {
         onOpenEnquiry={() => handleOpenEnquiry()}
       />
 
-      {/* Full-width urgent announcement bar directly beneath the main navigation bar */}
+      {/* Full-width continuous announcement slider directly beneath the main navigation bar */}
       <AnnouncementBar
-        notice={announcementNotice}
+        notices={announcementNotices}
         onNavigateToNotices={(slug) => navigateToNotices(slug ?? null)}
       />
 
@@ -611,6 +620,37 @@ export default function App() {
             onOpenNotice={(slug) => navigateToNotices(slug)}
             onOpenEnquiryModal={() => handleOpenEnquiry()}
           />
+        ) : route.view === 'programs' ? (
+          <AcademicProgramsPage
+            onNavigateHome={(sectionId) => navigateHome(sectionId)}
+            onSelectProgram={(slug) => navigateToPrograms(slug)}
+            onNavigateFacilities={navigateToFacilities}
+            onOpenEnquiry={handleOpenEnquiry}
+          />
+        ) : route.view === 'program-detail' ? (
+          (() => {
+            const activeProgram = getAcademicProgramBySlug(route.programSlug);
+            if (!activeProgram) {
+              return (
+                <AcademicProgramsPage
+                  onNavigateHome={(sectionId) => navigateHome(sectionId)}
+                  onSelectProgram={(slug) => navigateToPrograms(slug)}
+                  onNavigateFacilities={navigateToFacilities}
+                  onOpenEnquiry={handleOpenEnquiry}
+                />
+              );
+            }
+            return (
+              <AcademicProgramDetailPage
+                program={activeProgram}
+                onNavigateHome={(sectionId) => navigateHome(sectionId)}
+                onNavigateAllPrograms={() => navigateToPrograms()}
+                onSelectProgram={(slug) => navigateToPrograms(slug)}
+                onNavigateFacilities={navigateToFacilities}
+                onOpenEnquiry={handleOpenEnquiry}
+              />
+            );
+          })()
         ) : route.view === 'leadership' ? (
           <LeadershipPage
             onNavigateHome={(sectionId) => navigateHome(sectionId)}
@@ -620,7 +660,7 @@ export default function App() {
         ) : route.view === 'facilities' ? (
           <FacilitiesPage
             onNavigateHome={(sectionId) => navigateHome(sectionId)}
-            onExplorePrograms={() => navigateHome('programs')}
+            onExplorePrograms={() => navigateToPrograms()}
             onContactCollege={() => navigateHome('contact')}
             onOpenEnquiry={handleOpenEnquiry}
           />
@@ -628,13 +668,13 @@ export default function App() {
           <TeamMembersPage
             onNavigateHome={() => navigateHome()}
             onNavigateLeadership={navigateToLeadership}
-            onExplorePrograms={() => navigateHome('programs')}
+            onExplorePrograms={() => navigateToPrograms()}
             onContactUs={() => navigateHome('contact')}
           />
         ) : route.view === 'gallery' ? (
           <CampusGalleryPage
             onNavigateHome={() => navigateHome()}
-            onExplorePrograms={() => navigateHome('programs')}
+            onExplorePrograms={() => navigateToPrograms()}
             onContactUs={() => navigateHome('contact')}
           />
         ) : route.view === 'alumni' ? (
@@ -803,82 +843,117 @@ export default function App() {
               className="py-20 bg-[var(--color-canvas)] border-b border-[var(--color-hairline)]"
             >
               <div className="max-w-7xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[var(--color-hairline)]">
-                  <div>
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[var(--color-hairline)]">
+                  <div className="max-w-2xl">
                     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand)] mb-2">
                       Academic Offerings
                     </p>
                     <h2 className="text-3xl sm:text-4xl font-semibold text-[var(--color-primary-ink)]">
                       Academic Programs
                     </h2>
+                    <p className="mt-2.5 text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
+                      Higher Secondary (+2) streams affiliated with the National Examinations Board
+                      (NEB) alongside undergraduate and postgraduate management degrees affiliated
+                      with Tribhuvan University (TU).
+                    </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-1 p-1 bg-white border border-[var(--color-hairline)] rounded-lg self-start md:self-auto">
-                    {INITIAL_PROGRAMS.map((prog) => {
-                      const isActive = selectedProgram === prog.title;
-                      return (
-                        <button
-                          key={prog.id}
-                          type="button"
-                          onClick={() => setSelectedProgram(prog.title)}
-                          aria-pressed={isActive}
-                          className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                            isActive
-                              ? 'bg-[var(--color-brand)] text-white shadow-2xs'
-                              : 'text-[var(--color-muted)] hover:text-[var(--color-primary-ink)]'
-                          }`}
-                        >
-                          {prog.title}
-                        </button>
-                      );
-                    })}
+                  <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+                    <div
+                      role="group"
+                      aria-label="Filter academic programs by affiliation"
+                      className="flex items-center gap-1 p-1 bg-white border border-[var(--color-hairline)] rounded-lg"
+                    >
+                      {(
+                        [
+                          { id: 'all', label: 'All Programs (6)' },
+                          { id: 'neb-plus-two', label: 'NEB (+2)' },
+                          { id: 'tribhuvan-university', label: 'Tribhuvan University' },
+                        ] as const
+                      ).map((tab) => {
+                        const isActive = programDivisionFilter === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            type="button"
+                            onClick={() => setProgramDivisionFilter(tab.id)}
+                            aria-pressed={isActive}
+                            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                              isActive
+                                ? 'bg-[var(--color-brand)] text-white shadow-2xs'
+                                : 'text-[var(--color-muted)] hover:text-[var(--color-primary-ink)]'
+                            }`}
+                          >
+                            {tab.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => navigateToPrograms()}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                    >
+                      View All Programs
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {INITIAL_PROGRAMS.map((program) => {
-                    const isHighlighted = selectedProgram === program.title;
-                    return (
-                      <article
-                        key={program.id}
-                        className={`bg-white rounded-xl p-7 border transition-colors flex flex-col justify-between ${
-                          isHighlighted
-                            ? 'border-[var(--color-brand)]'
-                            : 'border-[var(--color-hairline)] hover:border-neutral-300'
-                        }`}
-                      >
-                        <div>
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-muted)]">
-                            <span className="font-semibold text-[var(--color-brand)]">
-                              {program.level}
-                            </span>
-                            <span aria-hidden="true">·</span>
-                            <span>{program.affiliationNote}</span>
-                          </div>
-                          <h3 className="mt-3 text-2xl font-semibold text-[var(--color-primary-ink)]">
-                            {program.title}
-                          </h3>
-                          <p className="mt-3 text-sm text-[var(--color-muted)] leading-relaxed">
-                            {program.summary}
-                          </p>
-                        </div>
-
-                        <div className="mt-6 pt-5 border-t border-[var(--color-hairline)] flex items-center justify-between gap-4">
-                          <span className="text-xs text-[var(--color-muted)]">
-                            Counseling &amp; admission enquiries open
+                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {ACADEMIC_PROGRAMS.filter(
+                    (program) =>
+                      programDivisionFilter === 'all' ||
+                      program.divisionId === programDivisionFilter
+                  ).map((program) => (
+                    <article
+                      key={program.slug}
+                      className="bg-white rounded-xl p-7 border border-[var(--color-hairline)] hover:border-neutral-400 transition-colors flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-muted)]">
+                          <span className="font-semibold text-[var(--color-brand)]">
+                            {program.divisionLabel}
                           </span>
+                          <span aria-hidden="true">·</span>
+                          <span>{program.affiliationShort}</span>
+                          <span aria-hidden="true">·</span>
+                          <span>{program.durationLabel}</span>
+                        </div>
+                        <h3 className="mt-3 text-xl sm:text-2xl font-semibold text-[var(--color-primary-ink)]">
                           <button
                             type="button"
-                            onClick={() => handleOpenEnquiry(program.title)}
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                            onClick={() => navigateToPrograms(program.slug)}
+                            className="text-left hover:text-[var(--color-brand)] hover:underline underline-offset-4 transition-colors cursor-pointer"
                           >
-                            Enquire
-                            <ArrowRight className="w-4 h-4" />
+                            {program.title}
                           </button>
-                        </div>
-                      </article>
-                    );
-                  })}
+                        </h3>
+                        <p className="mt-3 text-sm text-[var(--color-muted)] leading-relaxed">
+                          {program.cardSummary}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 pt-5 border-t border-[var(--color-hairline)] flex items-center justify-between gap-4">
+                        <button
+                          type="button"
+                          onClick={() => navigateToPrograms(program.slug)}
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          Explore Program
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEnquiry(program.title)}
+                          className="text-xs font-medium text-[var(--color-muted)] hover:text-[var(--color-primary-ink)] underline-offset-4 hover:underline transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          Admission Enquiry
+                        </button>
+                      </div>
+                    </article>
+                  ))}
                 </div>
               </div>
             </section>
@@ -946,10 +1021,13 @@ export default function App() {
               </div>
             </section>
 
+            {/* Dedicated Principal's Message & CEO and Directors' Message Sections */}
+            <LeadershipMessagesSection onNavigateLeadership={navigateToLeadership} />
+
             {/* Institutional Leadership & Governance Overview */}
             <section
               id="leadership"
-              className="py-20 bg-[var(--color-canvas)] border-b border-[var(--color-hairline)]"
+              className="py-20 bg-white border-b border-[var(--color-hairline)]"
             >
               <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[var(--color-hairline)]">
@@ -962,7 +1040,7 @@ export default function App() {
                     </h2>
                     <p className="mt-3 text-sm sm:text-base text-[var(--color-muted)] leading-relaxed">
                       Guided by experienced institutional stewards and academic administrators
-                      overseeing +2 Science, +2 Management, and undergraduate studies in Teku,
+                      overseeing NEB (+2) streams and Tribhuvan University degree studies in Teku,
                       Kathmandu.
                     </p>
                   </div>
@@ -988,67 +1066,44 @@ export default function App() {
                 </div>
 
                 <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <article className="bg-white border border-[var(--color-hairline)] rounded-xl p-6 flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-[var(--color-hairline)] shrink-0 bg-[var(--color-canvas)]">
-                      <img
-                        src="/images/leadership/pawan-bista.jpg"
-                        alt="Mr. Pawan Bista — Chairman, Capitol Hill College"
-                        className="w-full h-full object-cover object-top"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
-                        Chairman
-                      </p>
-                      <h3 className="mt-1 text-lg font-semibold text-[var(--color-primary-ink)] truncate">
-                        Mr. Pawan Bista
-                      </h3>
-                      <p className="mt-1 text-xs text-[var(--color-muted)]">
-                        Board Chairmanship &amp; Strategic Direction
-                      </p>
-                    </div>
-                  </article>
-
-                  <article className="bg-white border border-[var(--color-hairline)] rounded-xl p-6 flex items-center gap-4">
-                    <div
-                      aria-hidden="true"
-                      className="w-16 h-16 rounded-lg border border-[var(--color-brand-border)] bg-[var(--color-brand-soft)] text-[var(--color-brand)] flex items-center justify-center font-display text-lg font-semibold shrink-0"
+                  {ALL_LEADERSHIP_PROFILES.map((leader) => (
+                    <button
+                      key={leader.id}
+                      type="button"
+                      onClick={navigateToLeadership}
+                      className="text-left bg-[var(--color-canvas)] hover:bg-neutral-200/55 border border-[var(--color-hairline)] hover:border-neutral-400 rounded-xl p-6 flex items-center gap-4 transition-colors cursor-pointer"
                     >
-                      TA
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
-                        Principal
-                      </p>
-                      <h3 className="mt-1 text-lg font-semibold text-[var(--color-primary-ink)] truncate">
-                        Mr. Toya Nath Adhikari
-                      </h3>
-                      <p className="mt-1 text-xs text-[var(--color-muted)]">
-                        Academic Standards &amp; Campus Administration
-                      </p>
-                    </div>
-                  </article>
-
-                  <article className="bg-white border border-[var(--color-hairline)] rounded-xl p-6 flex items-center gap-4">
-                    <div
-                      aria-hidden="true"
-                      className="w-16 h-16 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-primary-ink)] flex items-center justify-center font-display text-lg font-semibold shrink-0"
-                    >
-                      SK
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
-                        Vice-Principal
-                      </p>
-                      <h3 className="mt-1 text-lg font-semibold text-[var(--color-primary-ink)] truncate">
-                        Mr. Sagar Raj Khanal
-                      </h3>
-                      <p className="mt-1 text-xs text-[var(--color-muted)]">
-                        Departmental Coordination &amp; Student Discipline
-                      </p>
-                    </div>
-                  </article>
+                      <div
+                        className={`w-16 h-16 rounded-lg overflow-hidden border border-[var(--color-hairline)] shrink-0 ${
+                          leader.isCutoutPortrait ? 'bg-[#F2F0EC]' : 'bg-white'
+                        }`}
+                      >
+                        <img
+                          src={leader.portraitSrc}
+                          alt={leader.portraitAlt}
+                          className={
+                            leader.isCutoutPortrait
+                              ? 'w-full h-full object-contain object-bottom pt-1'
+                              : 'w-full h-full object-cover object-top'
+                          }
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
+                          {leader.shortDesignation}
+                        </p>
+                        <h3 className="mt-1 text-lg font-semibold text-[var(--color-primary-ink)] truncate">
+                          {leader.fullName}
+                        </h3>
+                        <p className="mt-1 text-xs text-[var(--color-muted)] line-clamp-2">
+                          {leader.academicDistinction
+                            ? leader.academicDistinction.formattedLine
+                            : leader.homepageSummaryRole}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             </section>
@@ -1069,7 +1124,18 @@ export default function App() {
                     <MapPin className="w-4 h-4 text-[var(--color-brand)] shrink-0" />
                     Campus Location
                   </h3>
-                  <p className="mt-2 text-sm text-[var(--color-muted)]">Teku, Kathmandu, Nepal</p>
+                  <p className="mt-2 text-sm text-[var(--color-muted)]">
+                    {OFFICIAL_CAMPUS_LOCATION.address}
+                  </p>
+                  <a
+                    href={OFFICIAL_CAMPUS_LOCATION.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] underline-offset-4 hover:underline transition-colors whitespace-nowrap"
+                  >
+                    View on Google Maps
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                  </a>
                 </div>
 
                 <div className="bg-white border border-[var(--color-hairline)] rounded-xl p-6">
@@ -1079,10 +1145,10 @@ export default function App() {
                   </h3>
                   <p className="mt-2 text-sm text-[var(--color-muted)] tabular-nums">
                     <a
-                      href="tel:015312399"
+                      href={OFFICIAL_CAMPUS_LOCATION.telephoneHref}
                       className="hover:text-[var(--color-brand)] underline-offset-4 hover:underline transition-colors"
                     >
-                      01-5312399
+                      {OFFICIAL_CAMPUS_LOCATION.telephone}
                     </a>
                   </p>
                 </div>
@@ -1094,10 +1160,10 @@ export default function App() {
                   </h3>
                   <p className="mt-2 text-sm text-[var(--color-muted)] break-all">
                     <a
-                      href="mailto:info.capitolhillcollege@gmail.com"
+                      href={OFFICIAL_CAMPUS_LOCATION.emailHref}
                       className="hover:text-[var(--color-brand)] underline-offset-4 hover:underline transition-colors"
                     >
-                      info.capitolhillcollege@gmail.com
+                      {OFFICIAL_CAMPUS_LOCATION.email}
                     </a>
                   </p>
                 </div>
@@ -1111,6 +1177,7 @@ export default function App() {
       <SiteFooter
         activeView={route.view}
         onNavigateHome={(sectionId) => navigateHome(sectionId)}
+        onNavigatePrograms={navigateToPrograms}
         onNavigateLeadership={navigateToLeadership}
         onNavigateFacilities={navigateToFacilities}
         onNavigateGallery={navigateToGallery}
@@ -1307,8 +1374,8 @@ export default function App() {
                     onChange={(e) => setFormState({ ...formState, program: e.target.value })}
                     className="w-full px-3.5 py-2 text-sm border border-[var(--color-hairline)] rounded-lg bg-white focus:border-[var(--color-brand)] focus:outline-none"
                   >
-                    {INITIAL_PROGRAMS.map((p) => (
-                      <option key={p.id} value={p.title}>
+                    {ACADEMIC_PROGRAMS.map((p) => (
+                      <option key={p.slug} value={p.title}>
                         {p.title}
                       </option>
                     ))}

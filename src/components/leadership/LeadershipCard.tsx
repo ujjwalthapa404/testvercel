@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, FileText } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
 
 interface LeadershipCardProps {
@@ -7,7 +7,8 @@ interface LeadershipCardProps {
   variant?: 'featured' | 'standard';
   onSelectProfile: (
     member: LeadershipMemberProfile,
-    triggerElement: HTMLElement | null
+    triggerElement: HTMLElement | null,
+    initialTab?: 'dossier' | 'message'
   ) => void;
 }
 
@@ -30,8 +31,12 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
   const showPortrait = Boolean(member.portraitSrc) && !imageFailed;
   const initials = getInitials(member.fullName);
 
-  const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    onSelectProfile(member, e.currentTarget);
+  const handleOpenDossier = (e: React.MouseEvent<HTMLElement>) => {
+    onSelectProfile(member, e.currentTarget, 'dossier');
+  };
+
+  const handleOpenMessage = (e: React.MouseEvent<HTMLElement>) => {
+    onSelectProfile(member, e.currentTarget, 'message');
   };
 
   if (variant === 'featured') {
@@ -42,7 +47,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
           <div className="lg:col-span-5 bg-[var(--color-canvas)] border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)]">
             <button
               type="button"
-              onClick={handleOpen}
+              onClick={handleOpenDossier}
               aria-label={`View full leadership profile of ${member.fullName}`}
               className="block w-full h-full text-left overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
             >
@@ -84,7 +89,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               <h3 className="mt-2.5 text-2xl sm:text-3xl lg:text-[2rem] font-semibold tracking-tight text-[var(--color-primary-ink)]">
                 <button
                   type="button"
-                  onClick={handleOpen}
+                  onClick={handleOpenDossier}
                   className="text-left hover:text-[var(--color-brand)] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)]"
                 >
                   {member.fullName}
@@ -99,6 +104,18 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
                   {member.professionalTagline}
                 </p>
+              )}
+
+              {/* Refined Institutional Academic Distinction Callout */}
+              {member.academicDistinction && (
+                <div className="mt-5 bg-[var(--color-canvas)]/70 border border-[var(--color-hairline)] rounded-lg px-4 py-3.5">
+                  <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
+                    Academic Distinction
+                  </p>
+                  <p className="mt-1 font-display text-[15px] sm:text-base font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                    {member.academicDistinction.formattedLine}
+                  </p>
+                </div>
               )}
 
               <div className="my-6 border-t border-[var(--color-hairline)]" />
@@ -129,12 +146,12 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
 
             <div className="mt-8 pt-5 border-t border-[var(--color-hairline)] flex flex-wrap items-center justify-between gap-4">
               <span className="text-xs text-[var(--color-muted)]">
-                Complete Leadership Dossier &amp; Credentials
+                Complete Leadership Dossier &amp; Academic Recognition
               </span>
 
               <button
                 type="button"
-                onClick={handleOpen}
+                onClick={handleOpenDossier}
                 className="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2.5 text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <span>View Profile</span>
@@ -152,11 +169,17 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
       {/* Clickable Portrait */}
       <button
         type="button"
-        onClick={handleOpen}
+        onClick={handleOpenDossier}
         aria-label={`View profile of ${member.fullName}`}
         className="block w-full text-left overflow-hidden bg-[var(--color-canvas)] border-b border-[var(--color-hairline)] cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
       >
-        <div className="aspect-[4/5] w-full overflow-hidden bg-neutral-200">
+        <div
+          className={`aspect-[4/5] w-full overflow-hidden ${
+            member.isCutoutPortrait
+              ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
+              : 'bg-neutral-200'
+          }`}
+        >
           {showPortrait ? (
             <img
               src={member.portraitSrc}
@@ -164,11 +187,15 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               loading="lazy"
               onError={() => setImageFailed(true)}
               style={
-                member.portraitObjectPosition
+                !member.isCutoutPortrait && member.portraitObjectPosition
                   ? { objectPosition: member.portraitObjectPosition }
                   : undefined
               }
-              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+              className={
+                member.isCutoutPortrait
+                  ? 'w-full h-full object-contain object-bottom pt-6 px-3 transition-transform duration-300 group-hover:scale-[1.02]'
+                  : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
+              }
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-6">
@@ -189,7 +216,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
           <h3 className="text-xl font-semibold tracking-tight text-[var(--color-primary-ink)]">
             <button
               type="button"
-              onClick={handleOpen}
+              onClick={handleOpenDossier}
               className="text-left hover:text-[var(--color-brand)] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)]"
             >
               {member.fullName}
@@ -199,17 +226,34 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
           <p className="mt-1 text-sm font-medium text-[var(--color-muted)]">
             {member.designation}
           </p>
+
+          {member.academicDistinction && (
+            <p className="mt-3 pt-3 border-t border-[var(--color-hairline)] text-xs font-medium text-[var(--color-primary-ink)] leading-snug">
+              {member.academicDistinction.formattedLine}
+            </p>
+          )}
         </div>
 
-        <div className="mt-5 pt-4 border-t border-[var(--color-hairline)] flex items-center justify-between">
+        <div className="mt-5 pt-4 border-t border-[var(--color-hairline)] flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
-            onClick={handleOpen}
+            onClick={handleOpenDossier}
             className="inline-flex items-center gap-1.5 min-h-10 text-sm font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <span>View Profile</span>
             <ArrowUpRight className="w-4 h-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </button>
+
+          {member.officialMessage && (
+            <button
+              type="button"
+              onClick={handleOpenMessage}
+              className="inline-flex items-center gap-1.5 min-h-10 text-xs font-medium text-[var(--color-muted)] hover:text-[var(--color-primary-ink)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <FileText className="w-3.5 h-3.5 shrink-0 text-[var(--color-brand)]" />
+              <span>Official Message</span>
+            </button>
+          )}
         </div>
       </div>
     </article>

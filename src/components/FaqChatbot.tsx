@@ -42,6 +42,41 @@ function formatCurrentTimeLabel(date: Date = new Date()): string {
   });
 }
 
+const URL_SPLIT_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderParagraphWithLinks(paragraph: string, isBot: boolean): React.ReactNode {
+  const parts = paragraph.split(URL_SPLIT_REGEX);
+  if (parts.length === 1) {
+    return paragraph;
+  }
+
+  return parts.map((part, index) => {
+    if (/^https?:\/\/[^\s]+$/.test(part)) {
+      const cleanHref = part.replace(/[.,;!?)]+$/, '');
+      const trailingPunctuation = part.slice(cleanHref.length);
+      return (
+        <React.Fragment key={`url-${index}`}>
+          <a
+            href={cleanHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-1 font-semibold underline underline-offset-4 break-all transition-colors ${
+              isBot
+                ? 'text-[var(--color-brand)] hover:text-[var(--color-brand-dark)]'
+                : 'text-white hover:text-white/90'
+            }`}
+          >
+            <span>{cleanHref}</span>
+            <ArrowUpRight className="w-3.5 h-3.5 shrink-0 inline" />
+          </a>
+          {trailingPunctuation}
+        </React.Fragment>
+      );
+    }
+    return <React.Fragment key={`txt-${index}`}>{part}</React.Fragment>;
+  });
+}
+
 function createWelcomeMessage(): ChatMessage {
   return {
     id: 'welcome-msg',
@@ -425,7 +460,7 @@ export const FaqChatbot: React.FC<FaqChatbotProps> = ({ hidden = false, onAction
                     >
                       {msg.textParagraphs.map((paragraph, pIdx) => (
                         <p key={pIdx} className="whitespace-pre-line">
-                          {paragraph}
+                          {renderParagraphWithLinks(paragraph, isBot)}
                         </p>
                       ))}
 
@@ -459,24 +494,43 @@ export const FaqChatbot: React.FC<FaqChatbotProps> = ({ hidden = false, onAction
                         </div>
                       )}
 
-                      {/* Contextual Navigation / Enquiry Buttons */}
+                      {/* Contextual Navigation / Enquiry / External Map Buttons */}
                       {isBot && msg.actions && msg.actions.length > 0 && (
                         <div className="pt-2 flex flex-wrap gap-2">
-                          {msg.actions.map((act, actIdx) => (
-                            <button
-                              key={`${msg.id}-act-${actIdx}`}
-                              type="button"
-                              onClick={() => handleQuickActionClick(act)}
-                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                                actIdx === 0
-                                  ? 'bg-[var(--color-brand)] text-white hover:bg-[var(--color-brand-dark)]'
-                                  : 'bg-[var(--color-canvas)] text-[var(--color-primary-ink)] border border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
-                              }`}
-                            >
-                              <span>{act.label}</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
-                            </button>
-                          ))}
+                          {msg.actions.map((act, actIdx) => {
+                            const btnClasses = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                              actIdx === 0
+                                ? 'bg-[var(--color-brand)] text-white hover:bg-[var(--color-brand-dark)]'
+                                : 'bg-[var(--color-canvas)] text-[var(--color-primary-ink)] border border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
+                            }`;
+
+                            if (act.externalHref) {
+                              return (
+                                <a
+                                  key={`${msg.id}-act-${actIdx}`}
+                                  href={act.externalHref}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={btnClasses}
+                                >
+                                  <span>{act.label}</span>
+                                  <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                                </a>
+                              );
+                            }
+
+                            return (
+                              <button
+                                key={`${msg.id}-act-${actIdx}`}
+                                type="button"
+                                onClick={() => handleQuickActionClick(act)}
+                                className={btnClasses}
+                              >
+                                <span>{act.label}</span>
+                                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                              </button>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

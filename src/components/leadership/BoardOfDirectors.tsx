@@ -9,7 +9,8 @@ interface BoardOfDirectorsProps {
   members: LeadershipMemberProfile[];
   onSelectProfile: (
     member: LeadershipMemberProfile,
-    triggerElement: HTMLElement | null
+    triggerElement: HTMLElement | null,
+    initialTab?: 'dossier' | 'message'
   ) => void;
 }
 

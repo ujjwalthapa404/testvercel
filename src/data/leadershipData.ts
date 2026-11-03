@@ -1,56 +1,88 @@
 /**
- * Centralized Institutional Leadership & Governance Data
+ * Canonical Institutional Leadership, Governance & Official Messages Data
  * Capitol Hill College — Teku, Kathmandu, Nepal
  *
- * HOW TO ADD ANOTHER BOARD MEMBER:
- * Append a new `LeadershipMemberProfile` object to `BOARD_OF_DIRECTORS` below
- * with `category: 'board'`, place their portrait image inside `public/images/leadership/`,
- * and set `portraitSrc: '/images/leadership/<filename>.jpg'`.
- *
- * HOW TO ADD AN EXECUTIVE LEADER (e.g., Principal, Vice-Principal, Academic Dean):
- * Append a new `LeadershipMemberProfile` object to `EXECUTIVE_LEADERSHIP` below
- * with `category: 'executive'`. Once `EXECUTIVE_LEADERSHIP` has one or more entries,
- * the Executive Leadership section automatically renders clickable profile cards
- * connected to the shared `LeadershipProfileModal`.
+ * SINGLE SOURCE OF TRUTH:
+ * Every senior leader's biographical dossier, portrait path, credentials, and official
+ * institutional message (where applicable) is maintained strictly in this module.
+ * Homepage message sections, the Leadership & Governance page, and the Team Member
+ * directory all derive directly from `BOARD_OF_DIRECTORS` and `EXECUTIVE_LEADERSHIP`.
  */
 
 export type LeadershipCategory = 'board' | 'executive';
 
+export interface AcademicDistinction {
+  /** Formal distinction label (e.g., 'Honorary Doctorate') */
+  degreeTitle: string;
+  /** Conferring institution and city (e.g., 'Lincoln University, Oakland') */
+  conferringInstitution: string;
+  /** Year conferred (e.g., '2024') */
+  year: string;
+  /** Canonical formatted distinction string */
+  formattedLine: string;
+}
+
+export interface LeadershipMessageSubsection {
+  subheading: string;
+  paragraphs: string[];
+}
+
+export interface OfficialLeadershipMessage {
+  id: string;
+  sectionKicker: string;
+  sectionHeading: string;
+  campusLocationLine: string;
+  /** Optional concise verified institutional highlights shown beneath the portrait nameplate */
+  institutionalHighlights?: string[];
+  salutation: string;
+  openingParagraphs: string[];
+  subsections?: LeadershipMessageSubsection[];
+  closingPhrase: string;
+}
+
 export interface LeadershipMemberProfile {
   /** Unique URL-safe slug identifier (e.g., 'pawan-bista') */
   id: string;
-  /** Full formal name displayed on the card and modal header */
+  /** Full formal name displayed on cards, modals, and message sign-offs */
   fullName: string;
-  /** Concise institutional title shown on the profile card */
+  /** Concise role title (e.g., 'Chairman', 'CEO & Director', 'Principal') */
+  shortDesignation: string;
+  /** Formal institutional title shown on leadership cards */
   designation: string;
-  /** Pipe-separated or formal role line displayed in the profile modal header */
+  /** Pipe-separated formal role line displayed in the profile modal header */
   modalRoleLine: string;
   /** Optional executive specialization line shown under the modal role line */
   professionalTagline?: string;
+  /** Concise institutional scope line shown in compact directory overviews */
+  homepageSummaryRole: string;
   /** Section assignment: 'board' or 'executive' */
   category: LeadershipCategory;
   /** Marks the Chairman or presiding officer for prominent editorial framing */
   isFeaturedChair?: boolean;
-  /** Path to portrait image under `public/` (e.g., '/images/leadership/pawan-bista.jpg') */
+  /** Path to portrait image under `public/` */
   portraitSrc?: string;
   /** Accessible alt description for the portrait */
   portraitAlt: string;
   /** Optional CSS object-position override (defaults to 'center top') */
   portraitObjectPosition?: string;
+  /** True ONLY for transparent-background portrait cutouts (renders on subtle neutral studio ground) */
+  isCutoutPortrait?: boolean;
+  /** Optional featured academic distinction highlighted with refined institutional typography */
+  academicDistinction?: AcademicDistinction;
   /** Concise 1-2 sentence institutional overview shown in featured Chairman layout */
   cardOverview?: string;
   /** Primary biographical paragraphs ('Leadership Profile' in modal) */
   leadershipProfile: string[];
-  /** Formal institutional & corporate appointments ('Professional Leadership' in modal) */
+  /** Formal institutional & governance appointments ('Professional Leadership' in modal) */
   professionalLeadership?: string[];
   /** Key areas of strategic focus ('Core Strengths' in modal) */
   coreStrengths?: string[];
-  /** Academic degrees, honorary doctorates & certifications ('Qualifications & Professional Recognition') */
+  /** Academic degrees, honorary doctorates & recognition ('Qualifications & Academic Recognition') */
   qualificationsAndRecognition?: string[];
-  /** Civic, cultural & entrepreneurial contributions ('Community & Entrepreneurial Engagement') */
-  communityAndEngagement?: string[];
-  /** Optional institutional milestones or academic achievements for future profiles */
+  /** Optional institutional milestones or academic achievements */
   achievements?: string[];
+  /** Canonical verbatim official message from this leader, if published */
+  officialMessage?: OfficialLeadershipMessage;
   /** Display order within its section (ascending) */
   sortOrder: number;
 }
@@ -87,9 +119,6 @@ export const LEADERSHIP_PAGE_COPY = {
     title: 'Executive Leadership',
     description:
       'Executive Leadership oversees day-to-day academic administration, curriculum delivery, faculty development, student welfare, and institutional quality assurance across all +2 and undergraduate programs.',
-    upcomingNoticeTitle: 'Verified Executive Profiles Scheduled for Publication',
-    upcomingNoticeBody:
-      'Official biographical dossiers and portraits for the Principal, Vice-Principal, and senior academic officers are currently undergoing formal verification with the College Administration Office and will be published in this section.',
   },
 };
 
@@ -122,86 +151,177 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
   {
     id: 'pawan-bista',
     fullName: 'Mr. Pawan Bista',
+    shortDesignation: 'Chairman',
     designation: 'Chairman, Capitol Hill College',
     modalRoleLine: 'Chairman | Capitol Hill College',
-    professionalTagline: 'Education Entrepreneur • International Education Strategist',
+    professionalTagline: 'Institutional Governance • International Higher Education Leadership',
+    homepageSummaryRole: 'Board Chairmanship & Strategic Direction',
     category: 'board',
     isFeaturedChair: true,
     portraitSrc: '/images/leadership/pawan-bista.jpg',
     portraitAlt: 'Mr. Pawan Bista, Chairman of Capitol Hill College',
     portraitObjectPosition: 'center 15%',
+    academicDistinction: {
+      degreeTitle: 'Honorary Doctorate',
+      conferringInstitution: 'Lincoln University, Oakland',
+      year: '2024',
+      formattedLine: 'Honorary Doctorate — Lincoln University, Oakland (2024)',
+    },
     cardOverview:
-      'Education entrepreneur and international education consultant with more than two decades of experience in higher education counseling, institutional partnerships, and student mobility.',
+      'Institutional leader with more than two decades of experience in higher education governance, international university partnerships, and student academic pathways.',
     leadershipProfile: [
-      'Pawan Bista is an education entrepreneur and international education consultant with more than two decades of experience in higher education counseling, institutional partnerships and student mobility. As Chairman of Capitol Hill College, he brings a global perspective to academic leadership, student opportunity and institutional development.',
+      'Mr. Pawan Bista brings more than two decades of experience in higher education leadership, international institutional partnerships, and student academic development. As Chairman of Capitol Hill College, he guides the institution’s long-term strategic direction with a global perspective focused on academic quality, ethical governance, and meaningful scholarly opportunities for students in Nepal.',
     ],
     professionalLeadership: [
       'Chairman — Capitol Hill College, Kathmandu, Nepal.',
-      'Founder & Managing Director — Bradford Global Education Consultancy, Nepal (est. 2006).',
       'Vice President, South & Southeast Asia — Enrollment Advisory Group (EAG), USA.',
       'Vice President & Trustee — Nepalese Association of Northern California (NANC).',
-      'President — ApplyGlobal USA.',
     ],
     coreStrengths: [
       'Educational leadership and institutional development.',
-      'International university partnerships.',
-      'Ethical student recruitment and admissions.',
-      'Student success and academic pathways.',
-      'Cross-border collaboration.',
+      'International university collaboration and partnerships.',
+      'Student success and higher-education academic pathways.',
+      'Cross-border academic collaboration and governance.',
     ],
     qualificationsAndRecognition: [
-      'Honorary Doctorate in Business Administration — Lincoln University, Oakland, California (2024).',
-      'ICEF Trained Agent Counselor (ITAC).',
-      'Qualified International Education Agent Counselor — University of Central Oklahoma.',
-      'Canada Course Graduate (CCG).',
-    ],
-    communityAndEngagement: [
-      'His work extends to diaspora community initiatives, cultural engagement, entrepreneurship and investment. He is also a producer of the Nepali feature film BALIDAN and an independent recording artist.',
+      'Honorary Doctorate — Lincoln University, Oakland (2024).',
     ],
     sortOrder: 1,
+  },
+  {
+    id: 'nischal-gautam',
+    fullName: 'Mr. Nischal Gautam',
+    shortDesignation: 'CEO & Director',
+    designation: 'CEO & Director, Capitol Hill College',
+    modalRoleLine: 'CEO & Director | Capitol Hill College',
+    professionalTagline: 'Executive Governance • Financial Scholarship • Academic Leadership',
+    homepageSummaryRole: 'Executive Governance & Institutional Strategy',
+    category: 'board',
+    portraitSrc: '/assets/aistudio/Ceo_and_director_e2a88a5e.jpeg',
+    portraitAlt: 'Mr. Nischal Gautam, CEO & Director of Capitol Hill College',
+    portraitObjectPosition: 'center top',
+    leadershipProfile: [
+      'Mr. Nischal Gautam serves as Chief Executive Officer and Director of Capitol Hill College, leading executive governance, institutional strategy, and academic-industry alignment at the Teku, Kathmandu campus.',
+      'An alumnus of Capitol Hill College (+2 Management, 2012–2014 batch, stream highest scorer) and MBA in Finance Topper (2022 AD, University Dean’s List) at Pokhara University, he brings four years of higher-education finance teaching and program coordination alongside senior corporate leadership experience.',
+    ],
+    professionalLeadership: [
+      'Chief Executive Officer (CEO) & Director — Capitol Hill College, Teku, Kathmandu.',
+      'Former Faculty Member of Finance (Bachelor’s & Master’s levels) and Program Coordinator (four years in the academic sector).',
+      'Former Group General Manager and Head of Employee — Techno Biomed and its group companies.',
+    ],
+    qualificationsAndRecognition: [
+      'Master of Business Administration (MBA) in Finance — Pokhara University (MBA Finance Topper, 2022 AD; University Dean’s List).',
+      '+2 Management — Capitol Hill College (2012–2014 Batch; Stream Highest Scorer).',
+    ],
+    coreStrengths: [
+      'Institutional governance and modern industry alignment.',
+      'Financial scholarship and academic administration.',
+      'Student mentorship, pastoral care, and career readiness.',
+    ],
+    officialMessage: {
+      id: 'ceo-director-message',
+      sectionKicker: 'Message from the CEO & Directors · Executive Governance',
+      sectionHeading: 'A Message from the CEO & Director',
+      campusLocationLine: 'Capitol Hill College, Teku, Kathmandu',
+      institutionalHighlights: [
+        'MBA in Finance Topper (2022 AD) & Dean’s List — Pokhara University',
+        'Capitol Hill College Alumnus & Stream Highest Scorer (+2 Management, 2012–2014)',
+      ],
+      salutation: 'Welcome to Capitol Hill College.',
+      openingParagraphs: [
+        "Looking back at my own journey—from walking these very corridors as a +2 Management student in the 2012–2014 batch and graduating as the stream's highest scorer, to now returning to lead the institution as its Chief Executive Officer—fills me with a profound sense of pride and gratitude. Capitol Hill has always been far more than an academic institution to me; it is where my foundational understanding of leadership, discipline, and ambition was shaped.",
+        'My educational pursuits further deepened my commitment to academic rigor. I went on to complete my MBA in Finance from Pokhara University, graduating as the MBA Finance Topper for the year 2022 AD and earning a place on the prestigious University Dean’s List. Bridging theory with practice, I spent four years immersed in the academic sector as a faculty member of Finance for Bachelor’s and Master’s level students, as well as serving as a Program Coordinator. Additionally, I bring extensive corporate exposure from my tenure as Group General Manager and Head of Employee at Techno Biomed and its group companies. This unique blend of advanced financial scholarship, administrative experience, and corporate leadership allows me to steer Capitol Hill College with a dynamic perspective that directly aligns education with modern industry demands.',
+      ],
+      subsections: [
+        {
+          subheading: 'Our Legacy and Vision',
+          paragraphs: [
+            'Established in 2005 AD by a dedicated collective of academic experts and seasoned professionals, Capitol Hill College has spent over two decades building a formidable legacy of excellence. Today, our alumni stand tall as market leaders, innovators, and changemakers—not only within the nation but far beyond national boundaries.',
+            "Managed under a private educational trust by a deeply professional, forward-thinking, and visionary team, we ensure that our institutional standards remain second to none. We understand that choosing a college is one of the most critical decisions in a student's life. That is why Capitol Hill is designed to be much more than a place of lectures and examinations.",
+          ],
+        },
+        {
+          subheading: 'A Home Away from Home',
+          paragraphs: [
+            'We pride ourselves on cultivating a comprehensive, nurturing ecosystem where students find trusted mentors, dedicated coaches, supportive guidance, and a warm, homely environment. We are present for our students in every aspect of their personal and professional development—ensuring that academic rigor is always matched with pastoral care and unwavering support.',
+            'We invite you to place your trust in a leadership team and an institution that has proven its dedication for over twenty years. Welcome to Capitol Hill College, where your future is shaped with expertise, integrity, and genuine care.',
+          ],
+        },
+      ],
+      closingPhrase: 'Warm regards,',
+    },
+    sortOrder: 2,
   },
 ];
 
 /**
  * Verified Executive Leadership Profiles
- * Add Principal, Vice-Principal, and senior institutional leaders here as verified profiles are finalized.
  */
 export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
-  /*
-   * Example structure when adding an Executive Leader:
-   * {
-   *   id: 'principal-name',
-   *   fullName: 'Prof. Full Name',
-   *   designation: 'Principal, Capitol Hill College',
-   *   modalRoleLine: 'Principal | Capitol Hill College',
-   *   professionalTagline: 'Academic Administration • Curriculum Leadership',
-   *   category: 'executive',
-   *   portraitSrc: '/images/leadership/principal-name.jpg',
-   *   portraitAlt: 'Prof. Full Name, Principal of Capitol Hill College',
-   *   leadershipProfile: ['Verified biography paragraph...'],
-   *   professionalLeadership: ['Principal — Capitol Hill College, Kathmandu, Nepal.'],
-   *   qualificationsAndRecognition: ['Verified degree and institution...'],
-   *   sortOrder: 1,
-   * }
-   */
+  {
+    id: 'sagar-raj-khanal',
+    fullName: 'Mr. Sagar Raj Khanal',
+    shortDesignation: 'Principal',
+    designation: 'Principal, Capitol Hill College',
+    modalRoleLine: 'Principal | Capitol Hill College',
+    professionalTagline: 'Academic Administration • Institutional Standards',
+    homepageSummaryRole: 'Academic Standards & Campus Administration',
+    category: 'executive',
+    portraitSrc: '/images/leadership/sagar-raj-khanal.png',
+    portraitAlt: 'Mr. Sagar Raj Khanal, Principal of Capitol Hill College',
+    isCutoutPortrait: true,
+    leadershipProfile: [
+      'Mr. Sagar Raj Khanal serves as Principal of Capitol Hill College in Teku, Kathmandu, overseeing academic standards, faculty coordination, curriculum delivery, and holistic student development across +2 Science, +2 Management, and undergraduate programs.',
+    ],
+    professionalLeadership: [
+      'Principal — Capitol Hill College, Teku, Kathmandu, Nepal.',
+      'Senior Faculty Member, Department of Physics — Capitol Hill College.',
+    ],
+    coreStrengths: [
+      'Academic standards and NEB / Tribhuvan University regulatory coordination.',
+      'Faculty mentorship, laboratory rigor, and structured examination systems.',
+      'Student discipline, pastoral guidance, and parent-guardian partnership.',
+    ],
+    officialMessage: {
+      id: 'principal-message',
+      sectionKicker: 'Office of the Principal · Academic Stewardship',
+      sectionHeading: 'Message from the Principal',
+      campusLocationLine: 'Capitol Hill College, Teku, Kathmandu',
+      salutation: 'Dear Prospective Students, Parents and Guardians,',
+      openingParagraphs: [
+        'It is a privilege to welcome you to Capitol Hill College in Teku, Kathmandu. Since our establishment in 2005, Capitol Hill College has remained steadfast in its commitment to delivering disciplined, practical, and forward-looking education grounded in strong academic values.',
+        'At Capitol Hill College, we view education as a transformative journey that shapes character, critical inquiry, and lifelong responsibility alongside classroom achievement. Across our +2 Science, +2 Management, and undergraduate academic programs, our dedicated faculty members mentor students closely—combining structured academic guidance, laboratory and library learning, and co-curricular engagement.',
+        'Meaningful student success is built through a trusted partnership among educators, learners, parents, and guardians. We invite you to visit our campus, engage with our academic community, and build a purposeful foundation for higher learning and future leadership with us.',
+      ],
+      closingPhrase: 'With best wishes,',
+    },
+    sortOrder: 1,
+  },
 ];
 
 /**
- * Institutional Executive Structure displayed while individual executive biographies are pending publication.
- * Contains zero fabricated personal names or photographs.
+ * Combined canonical list of all senior leadership profiles in institutional order.
+ */
+export const ALL_LEADERSHIP_PROFILES: LeadershipMemberProfile[] = [
+  ...BOARD_OF_DIRECTORS,
+  ...EXECUTIVE_LEADERSHIP,
+];
+
+/**
+ * Institutional Executive Structure reference slots.
  */
 export const EXECUTIVE_OFFICES_FRAMEWORK: ExecutiveOfficeSlot[] = [
   {
-    officeTitle: 'Office of the Principal — Mr. Toya Nath Adhikari',
+    officeTitle: 'Office of the Principal — Mr. Sagar Raj Khanal',
     scopeSummary:
       'Chief academic and administrative officer responsible for institutional standards, faculty leadership, academic calendar execution, and regulatory coordination with NEB and Tribhuvan University.',
-    statusNote: 'Full Biographical Dossier Pending Release',
+    statusNote: 'Active Institutional Office',
   },
   {
-    officeTitle: 'Office of the Vice-Principal — Mr. Sagar Raj Khanal',
+    officeTitle: 'Academic Administration & Student Welfare',
     scopeSummary:
-      'Oversees daily academic operations, student discipline and welfare, internal examinations, co-curricular programming, and departmental coordination across campus.',
-    statusNote: 'Full Biographical Dossier Pending Release',
+      'Oversees daily academic operations, student discipline and pastoral support, internal examinations, and co-curricular programming across campus.',
+    statusNote: 'Campus Administration Office',
   },
   {
     officeTitle: 'Academic & Program Coordination',

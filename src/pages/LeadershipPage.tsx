@@ -9,7 +9,10 @@ import {
 } from '../data/leadershipData';
 import { BoardOfDirectors } from '../components/leadership/BoardOfDirectors';
 import { ExecutiveLeadership } from '../components/leadership/ExecutiveLeadership';
-import { LeadershipProfileModal } from '../components/leadership/LeadershipProfileModal';
+import {
+  LeadershipProfileModal,
+  ProfileModalTab,
+} from '../components/leadership/LeadershipProfileModal';
 
 interface LeadershipPageProps {
   onNavigateHome: (sectionId?: string) => void;
@@ -24,11 +27,18 @@ export const LeadershipPage: React.FC<LeadershipPageProps> = ({
 }) => {
   const [selectedMember, setSelectedMember] =
     useState<LeadershipMemberProfile | null>(null);
+  const [modalInitialTab, setModalInitialTab] =
+    useState<ProfileModalTab>('dossier');
   const lastTriggerRef = useRef<HTMLElement | null>(null);
 
   const handleOpenProfile = useCallback(
-    (member: LeadershipMemberProfile, triggerEl: HTMLElement | null) => {
+    (
+      member: LeadershipMemberProfile,
+      triggerEl: HTMLElement | null,
+      initialTab: ProfileModalTab = 'dossier'
+    ) => {
       lastTriggerRef.current = triggerEl;
+      setModalInitialTab(initialTab);
       setSelectedMember(member);
     },
     []
@@ -229,9 +239,10 @@ export const LeadershipPage: React.FC<LeadershipPageProps> = ({
         </div>
       </section>
 
-      {/* Accessible Profile Modal */}
+      {/* Accessible Profile & Official Message Modal */}
       <LeadershipProfileModal
         member={selectedMember}
+        initialTab={modalInitialTab}
         onClose={handleCloseProfile}
       />
     </div>

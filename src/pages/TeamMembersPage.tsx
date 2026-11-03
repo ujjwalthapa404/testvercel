@@ -245,7 +245,9 @@ export const LeadershipProfile: React.FC<LeadershipProfileProps> = ({ member }) 
           <p className="mt-4 pt-3 border-t border-[var(--color-hairline)] text-xs text-[var(--color-muted)]">
             {member.designation === 'Chairman'
               ? 'Board of Directors · Capitol Hill College'
-              : 'Academic Administration · Capitol Hill College'}
+              : member.designation === 'CEO & Director'
+                ? 'Executive Governance & Board of Directors · Capitol Hill College'
+                : 'Office of the Principal · Capitol Hill College'}
           </p>
         </div>
       </article>
