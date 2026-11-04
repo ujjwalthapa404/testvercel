@@ -6,6 +6,10 @@ import {
   LeadershipMessageEntry,
   PRINCIPAL_MESSAGE,
 } from '../data/leadershipMessages';
+import {
+  PRINCIPAL_PORTRAIT_4X5_IMG_CLASS,
+  PRINCIPAL_PORTRAIT_BG_CLASS,
+} from '../utils/portraitFraming';
 
 interface LeadershipMessagesSectionProps {
   onNavigateLeadership?: () => void;
@@ -31,9 +35,7 @@ const PortraitFrame: React.FC<PortraitFrameProps> = ({ entry }) => {
     <div className="bg-white border border-[var(--color-hairline)] rounded-xl overflow-hidden">
       <div
         className={`relative w-full aspect-[4/5] overflow-hidden ${
-          entry.isCutoutPortrait
-            ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
-            : 'bg-white'
+          entry.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-white'
         }`}
       >
         {!imgFailed ? (
@@ -45,7 +47,7 @@ const PortraitFrame: React.FC<PortraitFrameProps> = ({ entry }) => {
             onError={() => setImgFailed(true)}
             className={
               entry.isCutoutPortrait
-                ? 'w-full h-full object-contain object-bottom pt-6 px-3 select-none'
+                ? PRINCIPAL_PORTRAIT_4X5_IMG_CLASS
                 : 'w-full h-full object-cover object-top select-none'
             }
           />

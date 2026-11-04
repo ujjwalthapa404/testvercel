@@ -34,9 +34,9 @@ export const SAMPLE_FAQS: FaqEntry[] = [
   },
   {
     id: 'faq-online-enquiry',
-    question: 'How can I submit an admission enquiry online and track the response?',
+    question: 'How can I submit an admission enquiry online?',
     answer:
-      'Click "Request Admission Information" on the homepage and sign in with your Google account to submit your enquiry. You can track the review status and read counselor responses anytime under "My Portal".',
+      'Click "Apply for Admission" or "Request Admission Information" anywhere on the website to open our Contact & Admission Enquiry page, where you can send a structured enquiry directly to our Admissions Desk, email info.capitolhillcollege@gmail.com, or call 01-5312399.',
     category: FaqCategory.ADMISSIONS,
     status: NoticeStatus.PUBLISHED,
     sortOrder: 40,
@@ -45,7 +45,7 @@ export const SAMPLE_FAQS: FaqEntry[] = [
     id: 'faq-exam-notices',
     question: 'Where are examination schedules, admit card instructions, and results published?',
     answer:
-      'All official examination routines, terminal assessment updates, and result notifications are published on the Notices & Announcements page. You can filter notices by "Examinations" or "Results" and bookmark important updates to your account.',
+      'All official examination routines, terminal assessment updates, and result notifications are published on the Notices & Announcements page, where you can filter notices by "Examinations" or "Results" and download notice summaries.',
     category: FaqCategory.EXAMINATIONS,
     status: NoticeStatus.PUBLISHED,
     sortOrder: 50,

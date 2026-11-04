@@ -89,8 +89,8 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     keywords: ['introduction', 'overview', 'history', 'founded', 'institution', 'motto'],
     answer: [
-      'Capitol Hill College, located in Teku, Kathmandu, Nepal, is an academic institution founded by experienced academicians and dedicated to providing quality, practical education.',
-      'Guided by its institutional commitment—"Quality Education for Success with all Excellence"—the college offers Higher Secondary (+2) and undergraduate programs while supporting students\' intellectual, social, and personal growth.',
+      'CAPITOL HILL COLLEGE (...Shaping Futures Since 2005...), located in Teku, Kathmandu, Nepal, is an academic institution founded by experienced academicians and dedicated to providing quality, practical education.',
+      'Guided by its institutional vision—"Inspiring Minds. Shaping Futures." (Quality Education • Practical Skills • Global Opportunities)—the college offers Higher Secondary (+2), undergraduate (BBS), and postgraduate (MBS) programs affiliated with NEB and Tribhuvan University.',
     ],
     relatedIds: [
       'gen-affiliations',
@@ -197,7 +197,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     answer: [
       'You can reach Capitol Hill College through our official channels:',
       '• Location: Teku, Kathmandu, Nepal\n• Telephone: 01-5312399\n• Email: info.capitolhillcollege@gmail.com',
-      'You can also submit an online enquiry directly through this website using the "Apply for Admission" button.',
+      'You can also submit an admission or academic enquiry directly through our Contact & Admission Enquiry page using the "Apply for Admission" button.',
     ],
     relatedIds: [
       'sup-submit-enquiry',
@@ -205,7 +205,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'gen-location',
     ],
     primaryAction: {
-      label: 'Go to Contact Section',
+      label: 'Contact & Admission Enquiry',
       action: 'scroll-contact',
     },
   },
@@ -326,13 +326,46 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'Our academic delivery is supported by 45 faculty listings across 15 departments alongside dedicated administrative staff at our Teku, Kathmandu campus.',
     ],
     relatedIds: [
+      'gen-advisory-committee',
       'gen-what-makes-different',
       'prog-available-programs',
-      'gen-contact',
     ],
     primaryAction: {
       label: 'Leadership & Governance',
       action: 'open-leadership',
+    },
+  },
+  {
+    id: 'gen-advisory-committee',
+    category: ChatbotCategoryId.GENERAL,
+    categoryLabel: 'Advisory Committee',
+    question: 'Does Capitol Hill College have an Advisory Committee?',
+    questionVariants: [
+      'advisory committee of capitol hill college',
+      'who is on the advisory committee',
+      'advisory board members',
+      'academic advisory committee',
+      'institutional advisors',
+    ],
+    keywords: [
+      'advisory',
+      'committee',
+      'advisors',
+      'advisory board',
+      'consultative',
+    ],
+    answer: [
+      'Yes. CAPITOL HILL COLLEGE maintains a dedicated Advisory Committee page outlining the consultative mandate that supports academic quality assurance, curriculum relevance across NEB (+2) and Tribhuvan University (BBS & MBS) programs, student career readiness, and community engagement.',
+      'Individual Advisory Committee member profiles and appointments are published on the Advisory Committee page following formal institutional verification by the Board of Directors and Office of the Principal.',
+    ],
+    relatedIds: [
+      'gen-leadership-team',
+      'gen-what-makes-different',
+      'gen-contact',
+    ],
+    primaryAction: {
+      label: 'View Advisory Committee',
+      action: 'open-advisory',
     },
   },
 
@@ -648,8 +681,8 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     keywords: ['apply', 'application', 'enroll', 'enrollment', 'admission process', 'join', 'register'],
     answer: [
-      'You can begin your admission process at Capitol Hill College in two convenient ways:',
-      '1. Online Enquiry: Click "Apply for Admission" on our website to submit your program interest and contact details. You can sign in to track admissions team responses under "My Student Portal".\n2. Campus Visit: Visit the Admissions Desk at our Teku, Kathmandu campus (Sunday through Friday during regular college hours) to meet an academic counselor, review stream options, and submit your application form.',
+      'You can begin your admission process at CAPITOL HILL COLLEGE in two convenient ways:',
+      '1. Online Admission Enquiry: Click "Apply for Admission" on our website to open the Contact & Admission Enquiry page, select your program of interest, and send your details directly to our admissions desk (no sign-in required).\n2. Campus Visit: Visit the Admissions Desk at our Teku, Kathmandu campus (Sunday through Friday during regular college hours) to meet an academic counselor, review stream options, and submit your application form.',
       'For immediate assistance, call 01-5312399 or email info.capitolhillcollege@gmail.com.',
     ],
     relatedIds: [
@@ -658,7 +691,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'adm-when-open',
     ],
     primaryAction: {
-      label: 'Open Admission Enquiry Form',
+      label: 'Open Contact & Enquiry Page',
       action: 'open-enquiry',
     },
   },
@@ -783,7 +816,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: ['counselor', 'counsellor', 'advisor', 'counseling', 'counselling', 'guidance', 'speak with', 'talk to'],
     answer: [
       'You can connect with an admission counselor in three ways:',
-      '• By Phone: Call the campus office at 01-5312399 during working hours (Sunday–Friday).\n• In Person: Visit the Admissions Desk at our Teku, Kathmandu campus.\n• Online: Submit your questions through the "Apply for Admission" enquiry form on this website and view the counselor’s written response in your Student Portal.',
+      '• By Phone: Call the campus office at 01-5312399 during working hours (Sunday–Friday).\n• In Person: Visit the Admissions Desk at our Teku, Kathmandu campus.\n• Online: Submit your questions through our Contact & Admission Enquiry page ("Apply for Admission") or email info.capitolhillcollege@gmail.com directly.',
     ],
     relatedIds: [
       'adm-how-to-apply',
@@ -1241,8 +1274,8 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     keywords: ['submit enquiry', 'enquiry form', 'send enquiry', 'track enquiry', 'online enquiry', 'ask question'],
     answer: [
-      'Click "Apply for Admission" in the top bar (or the button below) to open the online Admission Enquiry modal.',
-      'After signing in with your Google account, fill in your name, phone number, program of interest (+2 Science, +2 Management, or BBS), and your message. Once submitted, you can view counselor updates anytime under "My Student Portal".',
+      'Click "Apply for Admission" in the header (or the button below) to open our dedicated Contact & Admission Enquiry page.',
+      'Fill in your full name, phone number, email address, program of interest (+2 Management, +2 Humanities, +2 Science, +2 Law, BBS, or MBS), and your questions—no account login is required. You can dispatch your formatted enquiry directly to info.capitolhillcollege@gmail.com or call 01-5312399 for immediate counseling.',
     ],
     relatedIds: [
       'adm-how-to-apply',
@@ -1250,7 +1283,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'sup-find-contact-info',
     ],
     primaryAction: {
-      label: 'Open Enquiry Form Now',
+      label: 'Open Contact & Enquiry Page',
       action: 'open-enquiry',
     },
   },
@@ -1266,7 +1299,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     keywords: ['find contact', 'contact information', 'contact page', 'social media', 'facebook', 'tiktok', 'footer'],
     answer: [
-      'Official contact details are available in the Contact section at the bottom of the Homepage and in the website footer on every page:',
+      'Official contact details are available on our dedicated Contact & Admission Enquiry page, in the Contact strip on the Homepage, and in the website footer on every page:',
       '• Campus Location: Teku, Kathmandu, Nepal\n• Telephone: 01-5312399\n• Official Email: info.capitolhillcollege@gmail.com\n• Official Social Channels: Facebook (@CapitolHillAcademy123) and TikTok (@capitol.hill.coll8)',
     ],
     relatedIds: [
@@ -1275,7 +1308,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'gen-location',
     ],
     primaryAction: {
-      label: 'Jump to Contact Section',
+      label: 'Open Contact & Enquiry Page',
       action: 'scroll-contact',
     },
   },
@@ -1293,7 +1326,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     keywords: ['notices', 'announcements', 'results', 'exam', 'examination', 'routine', 'admit card', 'bulletin'],
     answer: [
       'All official admission bulletins, internal assessment and pre-board examination routines, result announcements, and event updates are published on the Notices & Announcements page.',
-      'You can filter notices by category (Admissions, Examinations, Results, Events, Urgent) or publication date, and sign in to bookmark important notices.',
+      'You can filter notices by category (Admissions, Examinations, Results, Events, Urgent) or search by keyword anytime without needing to sign in.',
     ],
     relatedIds: [
       'adm-when-open',
@@ -1363,18 +1396,18 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
   {
     id: 'sup-student-portal',
     category: ChatbotCategoryId.CONTACT,
-    categoryLabel: 'Online Portal',
-    question: 'How does the online Student & Staff Portal on this website work?',
+    categoryLabel: 'Admissions & Notices',
+    question: 'Do I need an account or portal login to view notices or submit an admission enquiry?',
     questionVariants: [
-      'what is student portal',
-      'how to sign in to portal',
-      'bookmark notices and track enquiry',
-      'staff and student sign in',
+      'do i need to sign in to apply',
+      'is student portal required',
+      'how to submit enquiry without login',
+      'student portal status',
     ],
-    keywords: ['portal', 'sign in', 'login', 'google', 'bookmark', 'dashboard', 'track'],
+    keywords: ['portal', 'sign in', 'login', 'account', 'enquiry'],
     answer: [
-      'Our website includes a secure Google Sign-In Student & Staff Portal right in the top navigation bar.',
-      'Once signed in, prospective students and guardians can submit official admission enquiries, track counselor responses in one place, and bookmark important examination or admission notices.',
+      'No login or portal account is required. All academic program guides, official notices, examination routines, and admission enquiries on this website are openly accessible to students, parents, and visitors.',
+      'Simply click "Apply for Admission" or visit our Contact & Admission Enquiry page (/contact) to send your enquiry directly to our Teku, Kathmandu admissions office, or call 01-5312399.',
     ],
     relatedIds: [
       'sup-submit-enquiry',
@@ -1382,7 +1415,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
       'adm-how-to-apply',
     ],
     primaryAction: {
-      label: 'Open Admission Enquiry',
+      label: 'Open Contact & Enquiry Page',
       action: 'open-enquiry',
     },
   },

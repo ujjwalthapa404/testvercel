@@ -20,6 +20,10 @@ export const ExecutiveLeadership: React.FC<ExecutiveLeadershipProps> = ({
   onSelectProfile,
 }) => {
   const sortedMembers = [...members].sort((a, b) => a.sortOrder - b.sortOrder);
+  const principalProfile = sortedMembers.find((m) => m.id === 'sagar-raj-khanal');
+  const additionalExecutives = principalProfile
+    ? sortedMembers.filter((m) => m.id !== principalProfile.id)
+    : sortedMembers;
 
   return (
     <section
@@ -44,17 +48,35 @@ export const ExecutiveLeadership: React.FC<ExecutiveLeadershipProps> = ({
           </p>
         </div>
 
-        {/* Populated Executive Profiles Grid */}
+        {/* Populated Executive Profiles */}
         {sortedMembers.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {sortedMembers.map((leader) => (
+          <div className="space-y-8 sm:space-y-10">
+            {principalProfile && (
               <LeadershipCard
-                key={leader.id}
-                member={leader}
-                variant="standard"
+                member={principalProfile}
+                variant="executive"
                 onSelectProfile={onSelectProfile}
               />
-            ))}
+            )}
+
+            {additionalExecutives.length > 0 && (
+              <div
+                className={
+                  additionalExecutives.length === 1
+                    ? 'space-y-8'
+                    : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'
+                }
+              >
+                {additionalExecutives.map((leader) => (
+                  <LeadershipCard
+                    key={leader.id}
+                    member={leader}
+                    variant={additionalExecutives.length === 1 ? 'executive' : 'standard'}
+                    onSelectProfile={onSelectProfile}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 border border-[var(--color-hairline)] rounded-xl overflow-hidden divide-y md:divide-y-0 md:divide-x divide-[var(--color-hairline)] bg-[var(--color-canvas)]/45">

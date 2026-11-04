@@ -20,9 +20,13 @@ export const BoardOfDirectors: React.FC<BoardOfDirectorsProps> = ({
 }) => {
   const sortedMembers = [...members].sort((a, b) => a.sortOrder - b.sortOrder);
   const featuredChair = sortedMembers.find((m) => m.isFeaturedChair);
-  const additionalDirectors = featuredChair
+  const remainingDirectors = featuredChair
     ? sortedMembers.filter((m) => m.id !== featuredChair.id)
     : sortedMembers;
+  const ceoDirector = remainingDirectors.find((m) => m.id === 'nischal-gautam');
+  const otherBoardDirectors = ceoDirector
+    ? remainingDirectors.filter((m) => m.id !== ceoDirector.id)
+    : remainingDirectors;
 
   return (
     <section
@@ -49,7 +53,7 @@ export const BoardOfDirectors: React.FC<BoardOfDirectorsProps> = ({
 
         {/* Featured Chairman Presentation */}
         {featuredChair && (
-          <div className="mb-10">
+          <div className="mb-8 sm:mb-10">
             <LeadershipCard
               member={featuredChair}
               variant="featured"
@@ -58,14 +62,31 @@ export const BoardOfDirectors: React.FC<BoardOfDirectorsProps> = ({
           </div>
         )}
 
+        {/* CEO & Director Presentation with Dedicated Institutional Introduction */}
+        {ceoDirector && (
+          <div className={otherBoardDirectors.length > 0 ? 'mb-8 sm:mb-10' : ''}>
+            <LeadershipCard
+              member={ceoDirector}
+              variant="executive"
+              onSelectProfile={onSelectProfile}
+            />
+          </div>
+        )}
+
         {/* Additional Board Directors Grid (Automatically scales as directors are added) */}
-        {additionalDirectors.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {additionalDirectors.map((director) => (
+        {otherBoardDirectors.length > 0 && (
+          <div
+            className={
+              otherBoardDirectors.length === 1
+                ? 'space-y-8'
+                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'
+            }
+          >
+            {otherBoardDirectors.map((director) => (
               <LeadershipCard
                 key={director.id}
                 member={director}
-                variant="standard"
+                variant={otherBoardDirectors.length === 1 ? 'executive' : 'standard'}
                 onSelectProfile={onSelectProfile}
               />
             ))}
@@ -76,7 +97,7 @@ export const BoardOfDirectors: React.FC<BoardOfDirectorsProps> = ({
         <div className="mt-8 pt-6 border-t border-[var(--color-hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[var(--color-muted)]">
           <p>{LEADERSHIP_PAGE_COPY.boardSection.publicationNote}</p>
           <span className="font-medium text-[var(--color-primary-ink)] shrink-0">
-            Capitol Hill College · Kathmandu, Nepal
+            CAPITOL HILL COLLEGE · Kathmandu, Nepal
           </span>
         </div>
       </div>

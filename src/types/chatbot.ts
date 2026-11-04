@@ -24,6 +24,7 @@ export type ChatbotActionType =
   | 'scroll-contact'
   | 'scroll-about'
   | 'open-leadership'
+  | 'open-advisory'
   | 'open-facilities'
   | 'open-gallery'
   | 'open-team'

@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
-  Bookmark,
   Calendar,
   Check,
   Download,
@@ -13,7 +12,6 @@ import {
 } from 'lucide-react';
 import { NoticeCategory, NoticeItem } from '../types/notice';
 import { formatNoticeDate } from '../data/notices';
-import { useFirebase } from '../context/FirebaseContext';
 
 interface NoticesPageProps {
   notices: NoticeItem[];
@@ -23,7 +21,7 @@ interface NoticesPageProps {
   onOpenEnquiry: (programTitle?: string) => void;
 }
 
-type CategoryFilterValue = 'All' | 'Saved' | NoticeCategory;
+type CategoryFilterValue = 'All' | NoticeCategory;
 
 const FILTER_CATEGORIES: Array<{ value: 'All' | NoticeCategory; label: string }> = [
   { value: 'All', label: 'All' },
@@ -63,7 +61,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
   onBackToHome,
   onOpenEnquiry,
 }) => {
-  const { user, savedNoticeIds, toggleSavedNotice, signInWithGoogle } = useFirebase();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilterValue>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -119,7 +116,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {
       All: queryAndDateMatchedNotices.length,
-      Saved: queryAndDateMatchedNotices.filter((n) => savedNoticeIds.includes(n.id)).length,
     };
     for (const cat of Object.values(NoticeCategory)) {
       counts[cat] = 0;
@@ -128,17 +124,14 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
       counts[notice.category] = (counts[notice.category] ?? 0) + 1;
     }
     return counts;
-  }, [queryAndDateMatchedNotices, savedNoticeIds]);
+  }, [queryAndDateMatchedNotices]);
 
   const filteredNotices = useMemo(() => {
     if (selectedCategory === 'All') {
       return queryAndDateMatchedNotices;
     }
-    if (selectedCategory === 'Saved') {
-      return queryAndDateMatchedNotices.filter((notice) => savedNoticeIds.includes(notice.id));
-    }
     return queryAndDateMatchedNotices.filter((notice) => notice.category === selectedCategory);
-  }, [queryAndDateMatchedNotices, selectedCategory, savedNoticeIds]);
+  }, [queryAndDateMatchedNotices, selectedCategory]);
 
   const totalPages = Math.max(1, Math.ceil(filteredNotices.length / ITEMS_PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -197,14 +190,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
     setCurrentPage(1);
   };
 
-  const handleBookmarkClick = async (noticeId: string) => {
-    if (!user) {
-      await signInWithGoogle();
-      return;
-    }
-    await toggleSavedNotice(noticeId);
-  };
-
   const handleCopyShareLink = async (slug: string) => {
     const shareUrl = `${window.location.origin}${window.location.pathname}#notices/${slug}`;
     try {
@@ -244,8 +229,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
 
   /* Individual Notice Detail View */
   if (selectedNotice) {
-    const isSaved = savedNoticeIds.includes(selectedNotice.id);
-
     return (
       <div className="bg-[var(--color-canvas)] py-12 sm:py-16">
         <section className="max-w-4xl mx-auto px-6">
@@ -295,19 +278,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
                   </>
                 )}
               </div>
-
-              <button
-                type="button"
-                onClick={() => handleBookmarkClick(selectedNotice.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                  isSaved
-                    ? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
-                    : 'bg-white text-[var(--color-muted)] border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
-                }`}
-              >
-                <Bookmark className="w-3.5 h-3.5" />
-                <span>{isSaved ? 'Saved' : 'Save Notice'}</span>
-              </button>
             </div>
 
             <h1 className="mt-4 text-2xl sm:text-4xl font-semibold text-[var(--color-primary-ink)] leading-tight">
@@ -429,7 +399,7 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
               </h1>
               <p className="mt-3 text-sm sm:text-base text-[var(--color-muted)] max-w-2xl">
                 Official updates on admissions, examination schedules, academic results, and campus
-                events from Capitol Hill College, Teku.
+                events from CAPITOL HILL COLLEGE, Teku.
               </p>
             </div>
 
@@ -491,29 +461,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
                   </button>
                 );
               })}
-
-              {user && (
-                <button
-                  type="button"
-                  aria-pressed={selectedCategory === 'Saved'}
-                  onClick={() => handleCategoryChange('Saved')}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                    selectedCategory === 'Saved'
-                      ? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
-                      : 'bg-[var(--color-canvas)] text-[var(--color-muted)] border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
-                  }`}
-                >
-                  <Bookmark className="w-3.5 h-3.5" />
-                  <span>Saved</span>
-                  <span
-                    className={`tabular-nums text-[11px] font-normal ${
-                      selectedCategory === 'Saved' ? 'text-white/85' : 'text-[var(--color-muted)]'
-                    }`}
-                  >
-                    ({categoryCounts.Saved ?? 0})
-                  </span>
-                </button>
-              )}
             </div>
 
             {hasActiveFilters && (
@@ -627,11 +574,7 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
             Showing{' '}
             <strong className="font-semibold text-[var(--color-ink)]">{filteredNotices.length}</strong>{' '}
             {filteredNotices.length === 1 ? 'published notice' : 'published notices'}
-            {selectedCategory === 'Saved'
-              ? ' in Saved Bookmarks'
-              : selectedCategory !== 'All'
-              ? ` in ${selectedCategory}`
-              : ''}
+            {selectedCategory !== 'All' ? ` in ${selectedCategory}` : ''}
             {searchQuery.trim() ? ` matching “${searchQuery.trim()}”` : ''}
             {startDate && endDate
               ? ` · Published ${formatDateInputLabel(startDate)} – ${formatDateInputLabel(endDate)}`
@@ -659,9 +602,7 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
               No matching notices found
             </h2>
             <p className="mt-2 text-sm text-[var(--color-muted)] max-w-md mx-auto">
-              {selectedCategory === 'Saved'
-                ? 'You have not bookmarked any notices matching the current date range or search query.'
-                : 'No active notices match your selected category, publication date range, or search keyword.'}
+              No active notices match your selected category, publication date range, or search keyword.
             </p>
             <button
               type="button"
@@ -673,10 +614,7 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
           </div>
         ) : (
           <div className="mt-5 space-y-4">
-            {paginatedNotices.map((notice) => {
-              const isSaved = savedNoticeIds.includes(notice.id);
-
-              return (
+            {paginatedNotices.map((notice) => (
                 <article
                   key={notice.id}
                   className="bg-white border border-[var(--color-hairline)] hover:border-[var(--color-brand)] rounded-xl p-6 sm:p-7 transition-colors"
@@ -703,20 +641,6 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
                         </>
                       )}
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleBookmarkClick(notice.id)}
-                      aria-label={isSaved ? 'Remove notice from saved' : 'Save notice'}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                        isSaved
-                          ? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
-                          : 'bg-white text-[var(--color-muted)] border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
-                      }`}
-                    >
-                      <Bookmark className="w-3.5 h-3.5" />
-                      <span>{isSaved ? 'Saved' : 'Save'}</span>
-                    </button>
                   </div>
 
                   <h2 className="mt-2.5 text-xl sm:text-2xl font-semibold text-[var(--color-primary-ink)]">
@@ -750,8 +674,7 @@ export const NoticesPage: React.FC<NoticesPageProps> = ({
                     </button>
                   </div>
                 </article>
-              );
-            })}
+            ))}
           </div>
         )}
 

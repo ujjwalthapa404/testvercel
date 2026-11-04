@@ -55,6 +55,8 @@ export interface LeadershipMemberProfile {
   professionalTagline?: string;
   /** Concise institutional scope line shown in compact directory overviews */
   homepageSummaryRole: string;
+  /** Formal institutional office kicker displayed on horizontal leadership cards */
+  officeKicker?: string;
   /** Section assignment: 'board' or 'executive' */
   category: LeadershipCategory;
   /** Marks the Chairman or presiding officer for prominent editorial framing */
@@ -69,7 +71,7 @@ export interface LeadershipMemberProfile {
   isCutoutPortrait?: boolean;
   /** Optional featured academic distinction highlighted with refined institutional typography */
   academicDistinction?: AcademicDistinction;
-  /** Concise 1-2 sentence institutional overview shown in featured Chairman layout */
+  /** Concise 1-2 sentence institutional introduction shown on the Leadership page */
   cardOverview?: string;
   /** Primary biographical paragraphs ('Leadership Profile' in modal) */
   leadershipProfile: string[];
@@ -101,9 +103,9 @@ export interface ExecutiveOfficeSlot {
 
 export const LEADERSHIP_PAGE_COPY = {
   pageName: 'Leadership & Governance',
-  kicker: 'Institutional Governance · Teku, Kathmandu',
+  kicker: 'CAPITOL HILL COLLEGE · Institutional Governance',
   mainHeading: 'Leadership & Governance',
-  supportingHeading: 'Meet the Leaders Behind Capitol Hill College',
+  supportingHeading: 'Meet the Leaders Behind CAPITOL HILL COLLEGE',
   introduction:
     'Capitol Hill College is guided by an institutional governance framework dedicated to academic rigor, ethical stewardship, and long-term student success. Working in alignment with National Examinations Board (NEB) and Tribhuvan University (TU) academic standards, our leadership shapes strategic direction, international perspective, and campus development in Teku, Kathmandu.',
   boardSection: {
@@ -152,10 +154,11 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     id: 'pawan-bista',
     fullName: 'Mr. Pawan Bista',
     shortDesignation: 'Chairman',
-    designation: 'Chairman, Capitol Hill College',
-    modalRoleLine: 'Chairman | Capitol Hill College',
+    designation: 'Chairman, CAPITOL HILL COLLEGE',
+    modalRoleLine: 'Chairman | CAPITOL HILL COLLEGE',
     professionalTagline: 'Institutional Governance • International Higher Education Leadership',
     homepageSummaryRole: 'Board Chairmanship & Strategic Direction',
+    officeKicker: 'Office of the Chairman · Board of Directors',
     category: 'board',
     isFeaturedChair: true,
     portraitSrc: '/images/leadership/pawan-bista.jpg',
@@ -192,17 +195,26 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     id: 'nischal-gautam',
     fullName: 'Mr. Nischal Gautam',
     shortDesignation: 'CEO & Director',
-    designation: 'CEO & Director, Capitol Hill College',
-    modalRoleLine: 'CEO & Director | Capitol Hill College',
+    designation: 'CEO & Director, CAPITOL HILL COLLEGE',
+    modalRoleLine: 'CEO & Director | CAPITOL HILL COLLEGE',
     professionalTagline: 'Executive Governance • Financial Scholarship • Academic Leadership',
     homepageSummaryRole: 'Executive Governance & Institutional Strategy',
+    officeKicker: 'Office of the CEO & Director · Board of Directors',
     category: 'board',
     portraitSrc: '/assets/aistudio/Ceo_and_director_e2a88a5e.jpeg',
     portraitAlt: 'Mr. Nischal Gautam, CEO & Director of Capitol Hill College',
     portraitObjectPosition: 'center top',
+    academicDistinction: {
+      degreeTitle: 'MBA Finance',
+      conferringInstitution: 'Pokhara University',
+      year: '2022',
+      formattedLine: 'MBA Finance – Pokhara University Topper',
+    },
+    cardOverview:
+      'As Chief Executive Officer and Director of CAPITOL HILL COLLEGE, Mr. Nischal Gautam leads executive governance, institutional strategy, and academic-industry alignment. He works closely with the Board and faculty to advance the college’s institutional vision through strong academic standards, purposeful student mentorship, and a supportive campus environment.',
     leadershipProfile: [
       'Mr. Nischal Gautam serves as Chief Executive Officer and Director of Capitol Hill College, leading executive governance, institutional strategy, and academic-industry alignment at the Teku, Kathmandu campus.',
-      'An alumnus of Capitol Hill College (+2 Management, 2012–2014 batch, stream highest scorer) and MBA in Finance Topper (2022 AD, University Dean’s List) at Pokhara University, he brings four years of higher-education finance teaching and program coordination alongside senior corporate leadership experience.',
+      'An alumnus of Capitol Hill College (+2 Management, 2012–2014 batch, stream highest scorer) and MBA Finance – Pokhara University Topper (2022 AD, University Dean’s List), he brings four years of higher-education finance teaching and program coordination alongside senior corporate leadership experience.',
     ],
     professionalLeadership: [
       'Chief Executive Officer (CEO) & Director — Capitol Hill College, Teku, Kathmandu.',
@@ -210,7 +222,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
       'Former Group General Manager and Head of Employee — Techno Biomed and its group companies.',
     ],
     qualificationsAndRecognition: [
-      'Master of Business Administration (MBA) in Finance — Pokhara University (MBA Finance Topper, 2022 AD; University Dean’s List).',
+      'MBA Finance – Pokhara University Topper (2022 AD; University Dean’s List).',
       '+2 Management — Capitol Hill College (2012–2014 Batch; Stream Highest Scorer).',
     ],
     coreStrengths: [
@@ -222,15 +234,15 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
       id: 'ceo-director-message',
       sectionKicker: 'Message from the CEO & Directors · Executive Governance',
       sectionHeading: 'A Message from the CEO & Director',
-      campusLocationLine: 'Capitol Hill College, Teku, Kathmandu',
+      campusLocationLine: 'CAPITOL HILL COLLEGE, Teku, Kathmandu',
       institutionalHighlights: [
-        'MBA in Finance Topper (2022 AD) & Dean’s List — Pokhara University',
+        'MBA Finance – Pokhara University Topper (2022 AD; University Dean’s List)',
         'Capitol Hill College Alumnus & Stream Highest Scorer (+2 Management, 2012–2014)',
       ],
       salutation: 'Welcome to Capitol Hill College.',
       openingParagraphs: [
         "Looking back at my own journey—from walking these very corridors as a +2 Management student in the 2012–2014 batch and graduating as the stream's highest scorer, to now returning to lead the institution as its Chief Executive Officer—fills me with a profound sense of pride and gratitude. Capitol Hill has always been far more than an academic institution to me; it is where my foundational understanding of leadership, discipline, and ambition was shaped.",
-        'My educational pursuits further deepened my commitment to academic rigor. I went on to complete my MBA in Finance from Pokhara University, graduating as the MBA Finance Topper for the year 2022 AD and earning a place on the prestigious University Dean’s List. Bridging theory with practice, I spent four years immersed in the academic sector as a faculty member of Finance for Bachelor’s and Master’s level students, as well as serving as a Program Coordinator. Additionally, I bring extensive corporate exposure from my tenure as Group General Manager and Head of Employee at Techno Biomed and its group companies. This unique blend of advanced financial scholarship, administrative experience, and corporate leadership allows me to steer Capitol Hill College with a dynamic perspective that directly aligns education with modern industry demands.',
+        'My educational pursuits further deepened my commitment to academic rigor. I went on to complete my MBA in Finance from Pokhara University, graduating as the MBA Finance – Pokhara University Topper for the year 2022 AD and earning a place on the prestigious University Dean’s List. Bridging theory with practice, I spent four years immersed in the academic sector as a faculty member of Finance for Bachelor’s and Master’s level students, as well as serving as a Program Coordinator. Additionally, I bring extensive corporate exposure from my tenure as Group General Manager and Head of Employee at Techno Biomed and its group companies. This unique blend of advanced financial scholarship, administrative experience, and corporate leadership allows me to steer Capitol Hill College with a dynamic perspective that directly aligns education with modern industry demands.',
       ],
       subsections: [
         {
@@ -262,31 +274,35 @@ export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
     id: 'sagar-raj-khanal',
     fullName: 'Mr. Sagar Raj Khanal',
     shortDesignation: 'Principal',
-    designation: 'Principal, Capitol Hill College',
-    modalRoleLine: 'Principal | Capitol Hill College',
-    professionalTagline: 'Academic Administration • Institutional Standards',
+    designation: 'Principal, CAPITOL HILL COLLEGE',
+    modalRoleLine: 'Principal | CAPITOL HILL COLLEGE',
+    professionalTagline: 'Academic Leadership • Teaching Standards • Student Development',
     homepageSummaryRole: 'Academic Standards & Campus Administration',
+    officeKicker: 'Office of the Principal · Academic Stewardship',
     category: 'executive',
     portraitSrc: '/images/leadership/sagar-raj-khanal.png',
     portraitAlt: 'Mr. Sagar Raj Khanal, Principal of Capitol Hill College',
     isCutoutPortrait: true,
+    cardOverview:
+      'As Principal of CAPITOL HILL COLLEGE, Mr. Sagar Raj Khanal oversees academic leadership, teaching standards, and holistic student development across campus. Working closely with faculty and academic departments, his office fosters a disciplined, supportive, and intellectually engaging learning environment across +2 Science, +2 Management, and undergraduate programs.',
     leadershipProfile: [
-      'Mr. Sagar Raj Khanal serves as Principal of Capitol Hill College in Teku, Kathmandu, overseeing academic standards, faculty coordination, curriculum delivery, and holistic student development across +2 Science, +2 Management, and undergraduate programs.',
+      'Mr. Sagar Raj Khanal serves as Principal of Capitol Hill College in Teku, Kathmandu, providing academic leadership across curriculum delivery, faculty coordination, teaching standards, and holistic student development in +2 Science, +2 Management, and undergraduate programs.',
+      'Together with department faculty and administrative staff, his office upholds structured academic guidance, laboratory and classroom rigor, and a disciplined, supportive learning environment built in close partnership with students, parents, and guardians.',
     ],
     professionalLeadership: [
       'Principal — Capitol Hill College, Teku, Kathmandu, Nepal.',
       'Senior Faculty Member, Department of Physics — Capitol Hill College.',
     ],
     coreStrengths: [
-      'Academic standards and NEB / Tribhuvan University regulatory coordination.',
-      'Faculty mentorship, laboratory rigor, and structured examination systems.',
-      'Student discipline, pastoral guidance, and parent-guardian partnership.',
+      'Academic leadership and NEB / Tribhuvan University curriculum standards.',
+      'Teaching quality, faculty coordination, and structured evaluation systems.',
+      'Student development, supportive campus culture, and parent-guardian partnership.',
     ],
     officialMessage: {
       id: 'principal-message',
       sectionKicker: 'Office of the Principal · Academic Stewardship',
       sectionHeading: 'Message from the Principal',
-      campusLocationLine: 'Capitol Hill College, Teku, Kathmandu',
+      campusLocationLine: 'CAPITOL HILL COLLEGE, Teku, Kathmandu',
       salutation: 'Dear Prospective Students, Parents and Guardians,',
       openingParagraphs: [
         'It is a privilege to welcome you to Capitol Hill College in Teku, Kathmandu. Since our establishment in 2005, Capitol Hill College has remained steadfast in its commitment to delivering disciplined, practical, and forward-looking education grounded in strong academic values.',

@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, ChevronDown, Search, Settings, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, Search, X } from 'lucide-react';
 import { FaqCategory, FaqEntry } from '../types/notice';
 
 interface FaqSectionProps {
   faqs: FaqEntry[];
-  isAdmin?: boolean;
   onOpenEnquiry: () => void;
-  onManageFaqs?: () => void;
 }
 
 const FAQ_FILTER_TABS: Array<{ value: 'All' | FaqCategory; label: string }> = [
@@ -20,9 +18,7 @@ const FAQ_FILTER_TABS: Array<{ value: 'All' | FaqCategory; label: string }> = [
 
 export const FaqSection: React.FC<FaqSectionProps> = ({
   faqs,
-  isAdmin = false,
   onOpenEnquiry,
-  onManageFaqs,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<'All' | FaqCategory>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,17 +90,6 @@ export const FaqSection: React.FC<FaqSectionProps> = ({
               examinations, and campus visits at Capitol Hill College.
             </p>
           </div>
-
-          {isAdmin && onManageFaqs && (
-            <button
-              type="button"
-              onClick={onManageFaqs}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[var(--color-primary-ink)] bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              Manage FAQs
-            </button>
-          )}
         </div>
 
         {/* Category Filter Tabs + Search + Expand/Collapse Control */}

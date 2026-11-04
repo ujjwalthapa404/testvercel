@@ -30,7 +30,10 @@ export interface LeadershipMember {
   designation: string;
   tier: 'senior' | 'board';
   portraitUrl?: string;
+  portraitObjectPosition?: string;
   portraitVerificationNote?: string;
+  qualificationLine?: string;
+  summaryOverview?: string;
   sortOrder: number;
 }
 
@@ -72,10 +75,9 @@ export const TEAM_HERO_CONTENT = {
   supportingText: 'Meet our dedicated faculty and staff committed to excellence.',
   introStatement:
     'Our dedicated and highly qualified team serve as exemplary role models.',
-  campusBackdropUrl:
-    'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/building.png',
+  campusBackdropUrl: '/images/official/building.png',
   campusBackdropAlt:
-    'Capitol Hill College academic building in Teku, Kathmandu',
+    'CAPITOL HILL COLLEGE academic building in Teku, Kathmandu',
 } as const;
 
 export const LEADERSHIP_SECTION_COPY = {
@@ -117,6 +119,9 @@ export const LEADERSHIP_MEMBERS: LeadershipMember[] = ALL_LEADERSHIP_PROFILES.ma
     designation: member.shortDesignation,
     tier: 'senior',
     portraitUrl: member.portraitSrc,
+    portraitObjectPosition: member.portraitObjectPosition,
+    qualificationLine: member.academicDistinction?.formattedLine,
+    summaryOverview: member.cardOverview,
     sortOrder: index + 1,
   })
 );
@@ -211,8 +216,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-nep-1',
         name: 'Mr. Bhola Nath Regmi',
-        portraitUrl:
-          'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/bholo.jpg',
+        portraitUrl: '/images/official/bholo.jpg',
       },
       { id: 'fac-nep-2', name: 'Ms. Rekha Pawan' },
     ],
@@ -243,8 +247,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-chem-1',
         name: 'Dr. Tej Narayan Poudel',
-        portraitUrl:
-          'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/tej.jpg',
+        portraitUrl: '/images/official/tej.jpg',
       },
       { id: 'fac-chem-2', name: 'Dr. D.R. Paudel' },
       { id: 'fac-chem-3', name: 'Mr. Basanta Aidi' },

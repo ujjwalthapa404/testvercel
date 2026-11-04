@@ -44,10 +44,10 @@ export const ALUMNI_HERO_CONTENT: AlumniHeroContent = {
   primaryCtaLabel: 'Explore Graduate Pathways',
   secondaryCtaLabel: 'Reconnect With Campus',
   heroImage: {
-    src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/ca1.jpg',
-    alt: 'Graduating students gathered at a Capitol Hill College farewell program in Teku, Kathmandu',
+    src: '/images/official/ca1.jpg',
+    alt: 'Graduating students gathered at a CAPITOL HILL COLLEGE farewell program in Teku, Kathmandu',
     caption:
-      'Graduating cohort gathered during an official Capitol Hill College Farewell Program at Teku, Kathmandu.',
+      'Graduating cohort gathered during an official CAPITOL HILL COLLEGE Farewell Program at Teku, Kathmandu.',
     isPlaceholderAsset: false,
   },
 };

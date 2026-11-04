@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { getPersonInitials } from '../data/team';
+import {
+  PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS,
+  PRINCIPAL_PORTRAIT_BG_CLASS,
+  PRINCIPAL_PORTRAIT_THUMB_BG_CLASS,
+  PRINCIPAL_PORTRAIT_THUMB_IMG_CLASS,
+  isPrincipalCutoutPortrait,
+} from '../utils/portraitFraming';
 
 interface TeamAvatarProps {
   name: string;
   designationOrContext?: string;
   portraitUrl?: string;
+  portraitObjectPosition?: string;
   variant: 'featured' | 'board' | 'compact';
 }
 
@@ -12,6 +20,7 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
   name,
   designationOrContext,
   portraitUrl,
+  portraitObjectPosition,
   variant,
 }) => {
   const [imgError, setImgError] = useState(false);
@@ -19,17 +28,17 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
   const showImage = Boolean(portraitUrl) && !imgError;
 
   const altText = designationOrContext
-    ? `${name}, ${designationOrContext} at Capitol Hill College`
-    : `${name}, Capitol Hill College`;
+    ? `${name}, ${designationOrContext} at CAPITOL HILL COLLEGE`
+    : `${name}, CAPITOL HILL COLLEGE`;
 
-  const isCutout = Boolean(portraitUrl?.endsWith('sagar-raj-khanal.png'));
+  const isCutout = isPrincipalCutoutPortrait(portraitUrl);
 
   if (variant === 'featured') {
     return (
       <div
         className={`relative w-full aspect-[4/5] overflow-hidden ${
           isCutout && showImage
-            ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
+            ? PRINCIPAL_PORTRAIT_BG_CLASS
             : 'bg-[var(--color-primary-ink)]'
         }`}
       >
@@ -41,9 +50,14 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
             decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
+            style={
+              !isCutout && portraitObjectPosition
+                ? { objectPosition: portraitObjectPosition }
+                : undefined
+            }
             className={
               isCutout
-                ? 'w-full h-full object-contain object-bottom pt-6 px-3 transition-transform duration-200 group-hover:scale-[1.015]'
+                ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
                 : 'w-full h-full object-cover object-top transition-transform duration-200 group-hover:scale-[1.015]'
             }
           />
@@ -65,7 +79,7 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
     return (
       <div
         className={`relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-[var(--color-hairline)] ${
-          isCutout && showImage ? 'bg-[#F2F0EC]' : 'bg-[var(--color-canvas)]'
+          isCutout && showImage ? PRINCIPAL_PORTRAIT_THUMB_BG_CLASS : 'bg-[var(--color-canvas)]'
         }`}
       >
         {showImage ? (
@@ -76,9 +90,14 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
             decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
+            style={
+              !isCutout && portraitObjectPosition
+                ? { objectPosition: portraitObjectPosition }
+                : undefined
+            }
             className={
               isCutout
-                ? 'w-full h-full object-contain object-bottom pt-1'
+                ? PRINCIPAL_PORTRAIT_THUMB_IMG_CLASS
                 : 'w-full h-full object-cover object-top'
             }
           />
@@ -98,7 +117,7 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
   return (
     <div
       className={`relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[var(--color-hairline)] flex items-center justify-center ${
-        isCutout && showImage ? 'bg-[#F2F0EC]' : 'bg-[var(--color-brand-soft)]'
+        isCutout && showImage ? PRINCIPAL_PORTRAIT_THUMB_BG_CLASS : 'bg-[var(--color-brand-soft)]'
       }`}
     >
       {showImage ? (
@@ -109,9 +128,14 @@ export const TeamAvatar: React.FC<TeamAvatarProps> = ({
           decoding="async"
           referrerPolicy="no-referrer"
           onError={() => setImgError(true)}
+          style={
+            !isCutout && portraitObjectPosition
+              ? { objectPosition: portraitObjectPosition }
+              : undefined
+          }
           className={
             isCutout
-              ? 'w-full h-full object-contain object-bottom pt-0.5'
+              ? PRINCIPAL_PORTRAIT_THUMB_IMG_CLASS
               : 'w-full h-full object-cover object-top'
           }
         />

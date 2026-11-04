@@ -32,7 +32,7 @@ export const CollegeImage: React.FC<CollegeImageProps> = ({
       >
         <Building2 className="w-8 h-8 mb-3 text-[var(--color-brand-on-dark)] opacity-90" />
         <p className="font-display text-base font-medium text-white max-w-xs">
-          {fallbackTitle || 'Capitol Hill College Campus'}
+          {fallbackTitle || 'CAPITOL HILL COLLEGE'}
         </p>
         <p className="mt-1 text-xs text-neutral-300 max-w-xs">Teku, Kathmandu, Nepal</p>
       </div>

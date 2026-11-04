@@ -138,7 +138,7 @@ export const TeamPageHero: React.FC<TeamPageHeroProps> = ({
           <div className="lg:col-span-7 flex flex-col justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand)] mb-3">
-                Capitol Hill College · Teku, Kathmandu
+                CAPITOL HILL COLLEGE · Teku, Kathmandu
               </p>
               <h1
                 id="team-hero-heading"
@@ -201,11 +201,11 @@ export const TeamPageHero: React.FC<TeamPageHeroProps> = ({
                 alt={TEAM_HERO_CONTENT.campusBackdropAlt}
                 aspectClassName="aspect-[16/10] lg:aspect-auto lg:h-full min-h-[260px]"
                 priority
-                fallbackTitle="Capitol Hill College Campus"
+                fallbackTitle="CAPITOL HILL COLLEGE"
               />
             </div>
             <p className="mt-2.5 text-xs text-[var(--color-muted)] flex items-center justify-between gap-4">
-              <span>Capitol Hill College Campus</span>
+              <span>CAPITOL HILL COLLEGE Campus</span>
               <span className="text-[var(--color-muted)] shrink-0">Teku, Kathmandu</span>
             </p>
           </div>
@@ -231,6 +231,7 @@ export const LeadershipProfile: React.FC<LeadershipProfileProps> = ({ member }) 
           name={member.name}
           designationOrContext={member.designation}
           portraitUrl={member.portraitUrl}
+          portraitObjectPosition={member.portraitObjectPosition}
           variant="featured"
         />
         <div className="p-6 flex-1 flex flex-col justify-between">
@@ -241,13 +242,23 @@ export const LeadershipProfile: React.FC<LeadershipProfileProps> = ({ member }) 
             <h3 className="mt-1.5 text-xl sm:text-2xl font-semibold text-[var(--color-primary-ink)] leading-snug">
               {member.name}
             </h3>
+            {member.qualificationLine && (
+              <p className="mt-2.5 text-xs font-semibold text-[var(--color-primary-ink)] leading-snug">
+                {member.qualificationLine}
+              </p>
+            )}
+            {member.summaryOverview && (
+              <p className="mt-2.5 text-xs sm:text-[13px] text-[var(--color-muted)] leading-relaxed line-clamp-3">
+                {member.summaryOverview}
+              </p>
+            )}
           </div>
           <p className="mt-4 pt-3 border-t border-[var(--color-hairline)] text-xs text-[var(--color-muted)]">
             {member.designation === 'Chairman'
-              ? 'Board of Directors · Capitol Hill College'
+              ? 'Board of Directors · CAPITOL HILL COLLEGE'
               : member.designation === 'CEO & Director'
-                ? 'Executive Governance & Board of Directors · Capitol Hill College'
-                : 'Office of the Principal · Capitol Hill College'}
+                ? 'Executive Governance & Board of Directors · CAPITOL HILL COLLEGE'
+                : 'Office of the Principal · CAPITOL HILL COLLEGE'}
           </p>
         </div>
       </article>
@@ -260,6 +271,7 @@ export const LeadershipProfile: React.FC<LeadershipProfileProps> = ({ member }) 
         name={member.name}
         designationOrContext={member.designation}
         portraitUrl={member.portraitUrl}
+        portraitObjectPosition={member.portraitObjectPosition}
         variant="board"
       />
       <div className="min-w-0">

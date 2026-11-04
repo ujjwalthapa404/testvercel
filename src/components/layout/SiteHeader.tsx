@@ -3,6 +3,7 @@ import { ChevronDown, Menu, X } from 'lucide-react';
 import {
   AcademicProgramSlug,
   NEB_PLUS_TWO_PROGRAMS,
+  OFFICIAL_CAMPUS_LOCATION,
   TU_DEGREE_PROGRAMS,
 } from '../../data/academicPrograms';
 import { CollegeLogo } from '../CollegeImage';
@@ -12,73 +13,77 @@ export type ActiveSiteView =
   | 'programs'
   | 'program-detail'
   | 'leadership'
+  | 'advisory'
   | 'facilities'
   | 'team'
   | 'gallery'
   | 'alumni'
   | 'notices'
-  | 'portal';
+  | 'contact';
 
 interface SiteHeaderProps {
   activeView: ActiveSiteView;
   activeProgramSlug?: AcademicProgramSlug | null;
-  userSignedIn: boolean;
-  isAdmin: boolean;
   mobileMenuOpen: boolean;
   onToggleMobileMenu: () => void;
   onNavigateHome: (sectionId?: string) => void;
   onNavigatePrograms: (slug?: AcademicProgramSlug) => void;
   onNavigateLeadership: () => void;
+  onNavigateAdvisory: () => void;
   onNavigateFacilities: () => void;
   onNavigateGallery: () => void;
   onNavigateTeam: () => void;
   onNavigateAlumni: () => void;
   onNavigateNotices: () => void;
-  onNavigatePortal: () => void;
-  onSignIn: () => void;
+  onNavigateContact: () => void;
   onOpenEnquiry: () => void;
 }
 
 export const SiteHeader: React.FC<SiteHeaderProps> = ({
   activeView,
   activeProgramSlug = null,
-  userSignedIn,
-  isAdmin,
   mobileMenuOpen,
   onToggleMobileMenu,
   onNavigateHome,
   onNavigatePrograms,
   onNavigateLeadership,
+  onNavigateAdvisory,
   onNavigateFacilities,
   onNavigateGallery,
   onNavigateTeam,
   onNavigateAlumni,
   onNavigateNotices,
-  onNavigatePortal,
-  onSignIn,
+  onNavigateContact,
   onOpenEnquiry,
 }) => {
   const [programsMenuOpen, setProgramsMenuOpen] = useState(false);
+  const [leadershipMenuOpen, setLeadershipMenuOpen] = useState(false);
   const [mobileProgramsOpen, setMobileProgramsOpen] = useState(false);
   const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
 
   const programsMenuRef = useRef<HTMLDivElement | null>(null);
+  const leadershipMenuRef = useRef<HTMLDivElement | null>(null);
   const exploreMenuRef = useRef<HTMLDivElement | null>(null);
 
   const isProgramsActive = activeView === 'programs' || activeView === 'program-detail';
+  const isLeadershipActive = activeView === 'leadership' || activeView === 'advisory';
 
   useEffect(() => {
     setProgramsMenuOpen(false);
+    setLeadershipMenuOpen(false);
     setExploreMenuOpen(false);
   }, [activeView, activeProgramSlug]);
 
   useEffect(() => {
-    if (!programsMenuOpen && !exploreMenuOpen) return;
+    if (!programsMenuOpen && !leadershipMenuOpen && !exploreMenuOpen) return;
 
     const handleOutside = (e: MouseEvent) => {
       const target = e.target as Node;
       if (programsMenuRef.current && !programsMenuRef.current.contains(target)) {
         setProgramsMenuOpen(false);
+      }
+      if (leadershipMenuRef.current && !leadershipMenuRef.current.contains(target)) {
+        setLeadershipMenuOpen(false);
       }
       if (exploreMenuRef.current && !exploreMenuRef.current.contains(target)) {
         setExploreMenuOpen(false);
@@ -88,6 +93,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setProgramsMenuOpen(false);
+        setLeadershipMenuOpen(false);
         setExploreMenuOpen(false);
       }
     };
@@ -98,7 +104,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
       document.removeEventListener('mousedown', handleOutside);
       window.removeEventListener('keydown', handleKey);
     };
-  }, [programsMenuOpen, exploreMenuOpen]);
+  }, [programsMenuOpen, leadershipMenuOpen, exploreMenuOpen]);
 
   const navLinkClass = (isActive: boolean) =>
     `hover:text-white hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
@@ -116,8 +122,8 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[var(--color-brand)] text-white border-b border-white/15 shadow-2xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[4.35rem] sm:h-[4.65rem] flex items-center justify-between gap-4 lg:gap-5">
-        {/* Zone 1: Official Crest Logo + Prominent College Name & Subordinate Tagline */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[4.45rem] sm:h-[4.75rem] flex items-center justify-between gap-4 lg:gap-5">
+        {/* Zone 1: Official Crest Logo + Prominent Uppercase College Name & Subordinate Tagline */}
         <button
           type="button"
           onClick={() => onNavigateHome()}
@@ -125,11 +131,11 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         >
           <CollegeLogo size="header" variant="light" />
           <span className="flex flex-col justify-center">
-            <span className="font-display text-[1.25rem] sm:text-[1.5rem] lg:text-[1.68rem] font-bold tracking-[-0.015em] leading-[1.06] text-white">
-              Capitol Hill College
+            <span className="font-display text-[1.12rem] sm:text-[1.35rem] lg:text-[1.52rem] font-bold tracking-[0.02em] leading-[1.06] text-white uppercase">
+              {OFFICIAL_CAMPUS_LOCATION.collegeName}
             </span>
-            <span className="mt-1 font-sans text-[10px] sm:text-[11px] font-normal tracking-[0.045em] text-white/75 leading-tight">
-              Shaping Futures Since 2005
+            <span className="mt-1 font-sans text-[10px] sm:text-[10.5px] font-normal tracking-[0.04em] text-white/78 leading-tight">
+              {OFFICIAL_CAMPUS_LOCATION.tagline}
             </span>
           </span>
         </button>
@@ -153,6 +159,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             ref={programsMenuRef}
             className="relative py-2 -my-2"
             onMouseEnter={() => {
+              setLeadershipMenuOpen(false);
               setExploreMenuOpen(false);
               setProgramsMenuOpen(true);
             }}
@@ -173,6 +180,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
               <button
                 type="button"
                 onClick={() => {
+                  setLeadershipMenuOpen(false);
                   setExploreMenuOpen(false);
                   setProgramsMenuOpen((prev) => !prev);
                 }}
@@ -272,14 +280,105 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={onNavigateLeadership}
-            aria-current={activeView === 'leadership' ? 'page' : undefined}
-            className={`${navLinkClass(activeView === 'leadership')} focus-visible:outline-white`}
+          {/* Leadership & Governance + Advisory Committee Submenu */}
+          <div
+            ref={leadershipMenuRef}
+            className="relative py-2 -my-2"
+            onMouseEnter={() => {
+              setProgramsMenuOpen(false);
+              setExploreMenuOpen(false);
+              setLeadershipMenuOpen(true);
+            }}
+            onMouseLeave={() => setLeadershipMenuOpen(false)}
           >
-            Leadership
-          </button>
+            <div className="inline-flex items-center gap-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setLeadershipMenuOpen(false);
+                  onNavigateLeadership();
+                }}
+                aria-current={activeView === 'leadership' ? 'page' : undefined}
+                className={`${navLinkClass(isLeadershipActive)} focus-visible:outline-white`}
+              >
+                Leadership
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setProgramsMenuOpen(false);
+                  setExploreMenuOpen(false);
+                  setLeadershipMenuOpen((prev) => !prev);
+                }}
+                aria-label="Toggle Leadership and Advisory menu"
+                aria-expanded={leadershipMenuOpen}
+                aria-haspopup="menu"
+                className="inline-flex items-center justify-center p-1 rounded text-white/90 hover:text-white cursor-pointer focus-visible:outline-white"
+              >
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                    leadershipMenuOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            </div>
+
+            {leadershipMenuOpen && (
+              <div
+                role="menu"
+                aria-label="Leadership and Governance"
+                className="absolute left-0 top-full pt-2 w-60 z-50"
+              >
+                <div className="rounded-xl bg-white border border-[var(--color-hairline)] shadow-lg py-2 text-[var(--color-ink)]">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setLeadershipMenuOpen(false);
+                      onNavigateLeadership();
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-[var(--color-canvas)] transition-colors cursor-pointer ${
+                      activeView === 'leadership'
+                        ? 'font-semibold text-[var(--color-brand)]'
+                        : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
+                    }`}
+                  >
+                    Leadership &amp; Governance
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setLeadershipMenuOpen(false);
+                      onNavigateAdvisory();
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-[var(--color-canvas)] transition-colors cursor-pointer ${
+                      activeView === 'advisory'
+                        ? 'font-semibold text-[var(--color-brand)]'
+                        : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
+                    }`}
+                  >
+                    Advisory Committee
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setLeadershipMenuOpen(false);
+                      onNavigateTeam();
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-[var(--color-canvas)] transition-colors cursor-pointer ${
+                      activeView === 'team'
+                        ? 'font-semibold text-[var(--color-brand)]'
+                        : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
+                    }`}
+                  >
+                    Academic &amp; Professional Team
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
@@ -308,18 +407,21 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             Alumni
           </button>
 
-          {/* Clean Explore Dropdown housing Governance, Faculty, Notices, FAQ, Contact & Portal */}
+          {/* Clean Explore Dropdown housing Governance, Advisory, Faculty, Notices, FAQ & Contact */}
           <div ref={exploreMenuRef} className="relative">
             <button
               type="button"
               onClick={() => {
                 setProgramsMenuOpen(false);
+                setLeadershipMenuOpen(false);
                 setExploreMenuOpen((prev) => !prev);
               }}
               aria-expanded={exploreMenuOpen}
               aria-haspopup="menu"
               className={`inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-white hover:text-white ${
-                activeView === 'team' || activeView === 'notices' || activeView === 'portal'
+                activeView === 'team' ||
+                activeView === 'notices' ||
+                activeView === 'contact'
                   ? 'text-white font-semibold underline underline-offset-8 decoration-white decoration-2'
                   : 'text-white/90'
               }`}
@@ -335,7 +437,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             {exploreMenuOpen && (
               <div
                 role="menu"
-                className="absolute right-0 mt-3 w-60 rounded-xl bg-white border border-[var(--color-hairline)] shadow-lg py-2 z-50 text-[var(--color-ink)]"
+                className="absolute right-0 mt-3 w-64 rounded-xl bg-white border border-[var(--color-hairline)] shadow-lg py-2 z-50 text-[var(--color-ink)]"
               >
                 <button
                   type="button"
@@ -346,7 +448,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                   }}
                   className="block w-full text-left px-4 py-2 text-sm text-[var(--color-ink)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-brand)] transition-colors cursor-pointer"
                 >
-                  About Capitol Hill College
+                  About CAPITOL HILL COLLEGE
                 </button>
                 <button
                   type="button"
@@ -362,6 +464,21 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                   }`}
                 >
                   Leadership &amp; Governance
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setExploreMenuOpen(false);
+                    onNavigateAdvisory();
+                  }}
+                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-[var(--color-canvas)] transition-colors cursor-pointer ${
+                    activeView === 'advisory'
+                      ? 'font-semibold text-[var(--color-brand)]'
+                      : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
+                  }`}
+                >
+                  Advisory Committee
                 </button>
                 <button
                   type="button"
@@ -424,38 +541,16 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                   role="menuitem"
                   onClick={() => {
                     setExploreMenuOpen(false);
-                    onNavigateHome('contact');
+                    onNavigateContact();
                   }}
-                  className="block w-full text-left px-4 py-2 text-sm text-[var(--color-ink)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-brand)] transition-colors cursor-pointer"
+                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-[var(--color-canvas)] transition-colors cursor-pointer ${
+                    activeView === 'contact'
+                      ? 'font-semibold text-[var(--color-brand)]'
+                      : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
+                  }`}
                 >
-                  Contact
+                  Contact &amp; Admission Enquiry
                 </button>
-                <div className="my-1.5 border-t border-[var(--color-hairline)]" />
-                {userSignedIn ? (
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={() => {
-                      setExploreMenuOpen(false);
-                      onNavigatePortal();
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm font-semibold text-[var(--color-brand)] hover:bg-[var(--color-canvas)] transition-colors cursor-pointer"
-                  >
-                    {isAdmin ? 'Admin Dashboard' : 'My Student Portal'}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={() => {
-                      setExploreMenuOpen(false);
-                      onSignIn();
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm font-semibold text-[var(--color-brand)] hover:bg-[var(--color-canvas)] transition-colors cursor-pointer"
-                  >
-                    Staff &amp; Student Sign In
-                  </button>
-                )}
               </div>
             )}
           </div>
@@ -600,6 +695,14 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
           </button>
           <button
             type="button"
+            onClick={onNavigateAdvisory}
+            aria-current={activeView === 'advisory' ? 'page' : undefined}
+            className={mobileNavLinkClass(activeView === 'advisory')}
+          >
+            Advisory Committee
+          </button>
+          <button
+            type="button"
             onClick={onNavigateFacilities}
             className={mobileNavLinkClass(activeView === 'facilities')}
           >
@@ -643,10 +746,11 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => onNavigateHome('contact')}
-            className={mobileNavLinkClass()}
+            onClick={onNavigateContact}
+            aria-current={activeView === 'contact' ? 'page' : undefined}
+            className={mobileNavLinkClass(activeView === 'contact')}
           >
-            Contact
+            Contact &amp; Enquiry
           </button>
 
           <div className="pt-3 flex flex-col gap-2">
@@ -657,23 +761,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             >
               Apply for Admission
             </button>
-            {userSignedIn ? (
-              <button
-                type="button"
-                onClick={onNavigatePortal}
-                className="w-full min-h-11 px-4 py-2.5 text-sm font-medium text-white border border-white/25 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-              >
-                {isAdmin ? 'Admin Dashboard' : 'My Portal'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onSignIn}
-                className="w-full min-h-11 px-4 py-2.5 text-sm font-medium text-white border border-white/25 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-              >
-                Staff &amp; Student Sign In
-              </button>
-            )}
           </div>
         </div>
       )}

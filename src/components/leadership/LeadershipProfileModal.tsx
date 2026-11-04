@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, X } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
+import {
+  PRINCIPAL_PORTRAIT_4X5_IMG_CLASS,
+  PRINCIPAL_PORTRAIT_BG_CLASS,
+} from '../../utils/portraitFraming';
 
 export type ProfileModalTab = 'dossier' | 'message';
 
@@ -122,7 +126,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
         {/* Top Institutional Bar with Accessible Close Control */}
         <div className="flex items-center justify-between gap-4 px-5 sm:px-8 py-3.5 bg-[var(--color-canvas)] border-b border-[var(--color-hairline)] shrink-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)] truncate">
-            Capitol Hill College · Official Leadership Profile
+            CAPITOL HILL COLLEGE · Official Leadership Profile
           </p>
 
           <button
@@ -144,9 +148,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
             <div className="lg:col-span-5 bg-[var(--color-canvas)]/65 border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)] p-6 sm:p-8 flex flex-col">
               <div
                 className={`aspect-[4/5] w-full max-w-sm mx-auto lg:max-w-none rounded-lg overflow-hidden border border-[var(--color-hairline)] ${
-                  member.isCutoutPortrait
-                    ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
-                    : 'bg-neutral-200'
+                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
                 }`}
               >
                 {showPortrait ? (
@@ -161,7 +163,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                     }
                     className={
                       member.isCutoutPortrait
-                        ? 'w-full h-full object-contain object-bottom pt-6 px-3'
+                        ? PRINCIPAL_PORTRAIT_4X5_IMG_CLASS
                         : 'w-full h-full object-cover object-top'
                     }
                   />
@@ -171,7 +173,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                       {initials}
                     </span>
                     <span className="mt-3 text-xs uppercase tracking-[0.16em] text-white/60">
-                      Capitol Hill College
+                      CAPITOL HILL COLLEGE
                     </span>
                   </div>
                 )}
@@ -209,7 +211,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                     Institution
                   </span>
                   <span className="mt-0.5 block">
-                    Capitol Hill College · Teku, Kathmandu, Nepal
+                    CAPITOL HILL COLLEGE · Teku, Kathmandu, Nepal
                   </span>
                 </div>
                 <div>

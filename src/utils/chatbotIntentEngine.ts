@@ -551,10 +551,18 @@ function detectTopicAspect(
     tokens.includes('chairman') ||
     tokens.includes('pawan') ||
     tokens.includes('bista') ||
+    tokens.includes('nischal') ||
+    tokens.includes('gautam') ||
+    tokens.includes('sagar') ||
+    tokens.includes('khanal') ||
     tokens.includes('governance') ||
+    tokens.includes('advisory') ||
+    tokens.includes('committee') ||
     tokens.includes('director') ||
     tokens.includes('faculty') ||
     tokens.includes('teachers') ||
+    padded.includes(' advisory committee ') ||
+    padded.includes(' advisory board ') ||
     padded.includes(' vice principal ') ||
     padded.includes(' board of directors ') ||
     padded.includes(' team ')

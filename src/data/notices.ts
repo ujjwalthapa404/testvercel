@@ -12,12 +12,12 @@ import {
 export const SAMPLE_NOTICES: NoticeItem[] = [
   {
     id: 'notice-admission-2024',
-    title: 'Admission Open — +2 Science, +2 Management & BBS',
+    title: 'Admission Open — NEB (+2) Streams, BBS & MBS',
     slug: 'admission-open-science-management-bbs',
     excerpt:
-      'Applications and academic counseling are open across +2 Science, +2 Management (NEB), and Bachelor of Business Studies (BBS, TU) at Capitol Hill College, Teku.',
+      'Applications and academic counseling are open across +2 Science, +2 Management, +2 Humanities, +2 Law (NEB), and BBS & MBS (Tribhuvan University) at CAPITOL HILL COLLEGE, Teku.',
     content: [
-      'Capitol Hill College invites admission enquiries and applications from eligible students across +2 Science, +2 Management (National Examinations Board), and the four-year Bachelor of Business Studies (BBS, Tribhuvan University) program.',
+      'CAPITOL HILL COLLEGE invites admission enquiries and applications from eligible students across +2 Science, +2 Management, +2 Humanities, +2 Law (National Examinations Board), and Bachelor of Business Studies (BBS) and Master of Business Studies (MBS) under Tribhuvan University.',
       'Prospective students and guardians are welcome to visit the Admissions Desk at our Teku, Kathmandu campus between Sunday and Friday during regular college hours for stream counseling, laboratory and library orientation, and form submission.',
       'Applicants should bring copies of academic transcripts, character certificates, and recent passport-sized photographs. For current session intake dates and fee schedules, contact the college office at 01-5312399 or email info.capitolhillcollege@gmail.com.',
     ],
@@ -44,7 +44,7 @@ export const SAMPLE_NOTICES: NoticeItem[] = [
       'Departmental examination preparation guidelines and hall allocation instructions for Grade XI and Grade XII Science and Management students.',
     content: [
       'All +2 Science and +2 Management students are reminded that internal assessment and pre-board examinations are conducted in accordance with the Capitol Hill College academic calendar.',
-      'Students must clear library obligations, collect their examination admit cards from the administration counter, and report to their designated examination halls 15 minutes prior to the scheduled start time. Detailed subject-wise timetables are posted on the campus notice board and updated via the Administration Portal.',
+      'Students must clear library obligations, collect their examination admit cards from the administration counter, and report to their designated examination halls 15 minutes prior to the scheduled start time. Detailed subject-wise timetables are posted on the campus notice board and published on the official Notices & Announcements page.',
     ],
     category: NoticeCategory.EXAMINATIONS,
     status: NoticeStatus.PUBLISHED,

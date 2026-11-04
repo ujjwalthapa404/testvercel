@@ -9,8 +9,9 @@ export type ActiveView =
   | 'gallery'
   | 'team'
   | 'leadership'
+  | 'advisory'
   | 'alumni'
-  | 'portal';
+  | 'contact';
 
 export type PortalTabId = 'notices' | 'faqs' | 'enquiries' | 'saved';
 
@@ -42,6 +43,21 @@ function normalizeSegment(raw: string): string {
     .replace(/^\/+/, '')
     .replace(/\/+$/, '')
     .toLowerCase();
+}
+
+export function isDeferredPortalPath(pathname: string, hash = ''): boolean {
+  const cleanPath = normalizeSegment(pathname);
+  const cleanHash = normalizeSegment(hash);
+  return (
+    cleanPath === 'portal' ||
+    cleanPath.startsWith('portal/') ||
+    cleanPath === 'admin' ||
+    cleanPath.startsWith('admin/') ||
+    cleanHash === 'portal' ||
+    cleanHash.startsWith('portal/') ||
+    cleanHash === 'admin' ||
+    cleanHash.startsWith('admin/')
+  );
 }
 
 function matchRouteToken(rawSegment: string): ParsedRoute | null {
@@ -130,26 +146,42 @@ function matchRouteToken(rawSegment: string): ParsedRoute | null {
     return { view: 'leadership' };
   }
   if (
+    lower === 'advisory-committee' ||
+    lower === 'advisory' ||
+    lower === 'advisory-board'
+  ) {
+    return { view: 'advisory' };
+  }
+  if (
     lower === 'alumni' ||
     lower === 'alumni-testimonials' ||
     lower === 'testimonials'
   ) {
     return { view: 'alumni' };
   }
-  if (lower === 'admin/faqs' || lower === 'portal/faqs') {
-    return { view: 'portal', portalTab: 'faqs' };
+  if (
+    lower === 'contact' ||
+    lower === 'contact-us' ||
+    lower === 'enquiry' ||
+    lower === 'admission-enquiry' ||
+    lower === 'admissions-enquiry'
+  ) {
+    return { view: 'contact' };
   }
-  if (lower === 'portal' || lower === 'admin') {
-    return { view: 'portal' };
+  /* Student & Admin Portal routes are deferred to Phase 2; redirect cleanly to Homepage */
+  if (
+    lower === 'portal' ||
+    lower.startsWith('portal/') ||
+    lower === 'admin' ||
+    lower.startsWith('admin/')
+  ) {
+    return { view: 'home' };
   }
   if (lower === 'about' || lower === 'about-us') {
     return { view: 'home', sectionId: 'about' };
   }
   if (lower === 'faq' || lower === 'faqs') {
     return { view: 'home', sectionId: 'faq' };
-  }
-  if (lower === 'contact' || lower === 'contact-us') {
-    return { view: 'home', sectionId: 'contact' };
   }
 
   return null;

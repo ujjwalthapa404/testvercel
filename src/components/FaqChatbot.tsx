@@ -251,8 +251,13 @@ export const FaqChatbot: React.FC<FaqChatbotProps> = ({ hidden = false, onAction
   };
 
   const handleQuickActionClick = (action: ChatbotQuickAction) => {
-    // Close chat window when opening the enquiry modal or on compact mobile screens so destination is visible
-    if (action.action === 'open-enquiry' || window.innerWidth < 640) {
+    // Close chat window when opening the enquiry/contact page or on compact mobile screens so destination is visible
+    if (
+      action.action === 'open-enquiry' ||
+      action.action === 'scroll-contact' ||
+      action.action === 'open-advisory' ||
+      window.innerWidth < 640
+    ) {
       setIsOpen(false);
     }
     onAction(action);
@@ -314,7 +319,7 @@ export const FaqChatbot: React.FC<FaqChatbotProps> = ({ hidden = false, onAction
                       CHC Campus Guide
                     </h2>
                     <p className="text-[11px] text-white/80 leading-tight mt-0.5 truncate">
-                      Capitol Hill College <span aria-hidden="true">·</span> Teku, Kathmandu
+                      CAPITOL HILL COLLEGE <span aria-hidden="true">·</span> ...Shaping Futures Since 2005...
                     </p>
                   </div>
                 </div>
@@ -632,7 +637,7 @@ export const FaqChatbot: React.FC<FaqChatbotProps> = ({ hidden = false, onAction
                 </button>
               </div>
               <p className="mt-1.5 px-1 text-[10px] text-[var(--color-muted)] flex items-center justify-between gap-2">
-                <span>CHC Campus Guide · Teku, Kathmandu</span>
+                <span>CAPITOL HILL COLLEGE · Teku, Kathmandu</span>
                 <button
                   type="button"
                   onClick={() =>

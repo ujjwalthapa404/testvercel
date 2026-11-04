@@ -52,7 +52,7 @@ function toMessageEntry(member: LeadershipMemberProfile): LeadershipMessageEntry
     campusLocationLine: msg.campusLocationLine,
     leaderName: member.fullName,
     designation: member.shortDesignation,
-    institution: 'Capitol Hill College',
+    institution: 'CAPITOL HILL COLLEGE',
     portraitSrc: member.portraitSrc ?? '',
     portraitAlt: member.portraitAlt,
     isCutoutPortrait: member.isCutoutPortrait,

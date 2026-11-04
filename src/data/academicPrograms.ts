@@ -1,7 +1,10 @@
 export const OFFICIAL_GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/GawWXEWEpCaCsAqdA';
 
 export const OFFICIAL_CAMPUS_LOCATION = {
-  collegeName: 'Capitol Hill College',
+  collegeName: 'CAPITOL HILL COLLEGE',
+  tagline: '...Shaping Futures Since 2005...',
+  heroHeadline: 'Inspiring Minds. Shaping Futures.',
+  heroSubheadline: 'Quality Education • Practical Skills • Global Opportunities',
   address: 'Teku, Kathmandu, Nepal',
   telephone: '01-5312399',
   telephoneHref: 'tel:015312399',
@@ -186,14 +189,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE grade eligibility, active subject-combination groups, class shift timings, and current-session fee or scholarship details should be confirmed directly with the Capitol Hill College Admissions Office.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/c1-scaled.jpg',
-      alt: 'Capitol Hill College students attending an interactive classroom session in Teku, Kathmandu',
-      caption: 'Interactive classroom learning at Capitol Hill College, Teku, Kathmandu.',
+      src: '/images/official/c1-scaled.jpg',
+      alt: 'CAPITOL HILL COLLEGE students attending an interactive classroom session in Teku, Kathmandu',
+      caption: 'Interactive classroom learning at CAPITOL HILL COLLEGE, Teku, Kathmandu.',
     },
     seo: {
-      title: '+2 Management (NEB) | Academic Programs — Capitol Hill College',
+      title: '+2 Management (NEB) | Academic Programs — CAPITOL HILL COLLEGE',
       description:
-        'Explore the NEB-affiliated +2 Management program at Capitol Hill College in Teku, Kathmandu, covering Accounting, Business Studies, Computer Science, Hotel Management, Business Mathematics, and Tourism.',
+        'Explore the NEB-affiliated +2 Management program at CAPITOL HILL COLLEGE in Teku, Kathmandu, covering Accounting, Business Studies, Computer Science, Hotel Management, Business Mathematics, and Tourism.',
     },
   },
   {
@@ -310,14 +313,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE grade requirements, available optional subject pairings, shift schedules, and current tuition or scholarship provisions should be verified with the Capitol Hill College Admissions Desk.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/uiz2-scaled.jpg',
-      alt: 'Capitol Hill College students participating in an academic quiz and discussion program',
-      caption: 'Academic dialogue, quizzes, and student engagement at Capitol Hill College.',
+      src: '/images/official/uiz2-scaled.jpg',
+      alt: 'CAPITOL HILL COLLEGE students participating in an academic quiz and discussion program',
+      caption: 'Academic dialogue, quizzes, and student engagement at CAPITOL HILL COLLEGE.',
     },
     seo: {
-      title: '+2 Humanities (NEB) | Academic Programs — Capitol Hill College',
+      title: '+2 Humanities (NEB) | Academic Programs — CAPITOL HILL COLLEGE',
       description:
-        'Explore the NEB-affiliated +2 Humanities program at Capitol Hill College in Teku, Kathmandu, featuring Sociology, Mass Communication, Population Studies, Optional English, and Tourism.',
+        'Explore the NEB-affiliated +2 Humanities program at CAPITOL HILL COLLEGE in Teku, Kathmandu, featuring Sociology, Mass Communication, Population Studies, Optional English, and Tourism.',
     },
   },
   {
@@ -428,14 +431,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Current-session SEE GPA cutoffs, entrance test requirements, laboratory schedules, and merit scholarship criteria must be confirmed with the Capitol Hill College Admissions Office.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/science.jpg',
-      alt: 'Capitol Hill College +2 Science students performing supervised laboratory practicals',
-      caption: 'Supervised +2 Science laboratory practical session at Capitol Hill College.',
+      src: '/images/official/science.jpg',
+      alt: 'CAPITOL HILL COLLEGE +2 Science students performing supervised laboratory practicals',
+      caption: 'Supervised +2 Science laboratory practical session at CAPITOL HILL COLLEGE.',
     },
     seo: {
-      title: '+2 Science (NEB) | Academic Programs — Capitol Hill College',
+      title: '+2 Science (NEB) | Academic Programs — CAPITOL HILL COLLEGE',
       description:
-        'Explore the NEB-affiliated +2 Science program at Capitol Hill College in Teku, Kathmandu, featuring Physics, Chemistry, Mathematics, Biology, and Computer Science with separate dedicated laboratories.',
+        'Explore the NEB-affiliated +2 Science program at CAPITOL HILL COLLEGE in Teku, Kathmandu, featuring Physics, Chemistry, Mathematics, Biology, and Computer Science with separate dedicated laboratories.',
     },
   },
   {
@@ -545,14 +548,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE eligibility criteria, exact Grade 11/12 NEB paper combinations, intake seats, and fee details for +2 Law should be verified directly with the Capitol Hill College Admissions Office.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/library1.png',
-      alt: 'Capitol Hill College academic library and reference study environment in Teku, Kathmandu',
-      caption: 'Reference study and legal reading resources at Capitol Hill College.',
+      src: '/images/official/library1.png',
+      alt: 'CAPITOL HILL COLLEGE academic library and reference study environment in Teku, Kathmandu',
+      caption: 'Reference study and legal reading resources at CAPITOL HILL COLLEGE.',
     },
     seo: {
-      title: '+2 Law (NEB) | Academic Programs — Capitol Hill College',
+      title: '+2 Law (NEB) | Academic Programs — CAPITOL HILL COLLEGE',
       description:
-        'Explore the NEB-affiliated +2 Law program at Capitol Hill College in Teku, Kathmandu, covering Constitutional Law, Civil Law and Justice, Procedural Law, and Legal Drafting.',
+        'Explore the NEB-affiliated +2 Law program at CAPITOL HILL COLLEGE in Teku, Kathmandu, covering Constitutional Law, Civil Law and Justice, Procedural Law, and Legal Drafting.',
     },
   },
   {
@@ -668,14 +671,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Applicants must hold 10+2 (NEB) or an equivalent qualification recognized by Tribhuvan University. Exact minimum grade requirements, TU registration deadlines, shift timings, and fee structures should be confirmed with the Admissions Office.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/04/c3.jpg',
-      alt: 'Undergraduate business classroom lecture at Capitol Hill College, Teku, Kathmandu',
-      caption: 'Undergraduate BBS academic coursework at Capitol Hill College.',
+      src: '/images/official/c3.jpg',
+      alt: 'Undergraduate business classroom lecture at CAPITOL HILL COLLEGE, Teku, Kathmandu',
+      caption: 'Undergraduate BBS academic coursework at CAPITOL HILL COLLEGE.',
     },
     seo: {
-      title: 'Bachelor of Business Studies (BBS) | Tribhuvan University — Capitol Hill College',
+      title: 'Bachelor of Business Studies (BBS) | Tribhuvan University — CAPITOL HILL COLLEGE',
       description:
-        'Study the 4-year Tribhuvan University affiliated Bachelor of Business Studies (BBS) at Capitol Hill College in Teku, Kathmandu, covering Accounting, Finance, Marketing, HR, and Economics.',
+        'Study the 4-year Tribhuvan University affiliated Bachelor of Business Studies (BBS) at CAPITOL HILL COLLEGE in Teku, Kathmandu, covering Accounting, Finance, Marketing, HR, and Economics.',
     },
   },
   {
@@ -790,14 +793,14 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Applicants require a recognized Bachelor’s degree (such as BBS, BBA, or equivalent) and must satisfy Tribhuvan University Faculty of Management entrance (CMAT) and intake rules. Please confirm active intake schedule, seat availability, class timings, and fee structure with Capitol Hill College administration.',
     image: {
-      src: 'https://capitolhillcollege.edu.np/wp-content/uploads/2026/05/building.png',
-      alt: 'Capitol Hill College main campus building in Teku, Kathmandu',
-      caption: 'Capitol Hill College campus in Teku, Kathmandu — offering NEB and Tribhuvan University programs.',
+      src: '/images/official/building.png',
+      alt: 'CAPITOL HILL COLLEGE main campus building in Teku, Kathmandu',
+      caption: 'CAPITOL HILL COLLEGE campus in Teku, Kathmandu — offering NEB and Tribhuvan University programs.',
     },
     seo: {
-      title: 'Master of Business Studies (MBS) | Tribhuvan University — Capitol Hill College',
+      title: 'Master of Business Studies (MBS) | Tribhuvan University — CAPITOL HILL COLLEGE',
       description:
-        'Explore the 2-year Tribhuvan University affiliated Master of Business Studies (MBS) postgraduate program at Capitol Hill College in Teku, Kathmandu.',
+        'Explore the 2-year Tribhuvan University affiliated Master of Business Studies (MBS) postgraduate program at CAPITOL HILL COLLEGE in Teku, Kathmandu.',
     },
   },
 ];

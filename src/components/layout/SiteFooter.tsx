@@ -10,12 +10,13 @@ interface SiteFooterProps {
   onNavigateHome: (sectionId?: string) => void;
   onNavigatePrograms: (slug?: AcademicProgramSlug) => void;
   onNavigateLeadership: () => void;
+  onNavigateAdvisory: () => void;
   onNavigateFacilities: () => void;
   onNavigateGallery: () => void;
   onNavigateTeam: () => void;
   onNavigateAlumni: () => void;
   onNavigateNotices: () => void;
-  onNavigatePortal: () => void;
+  onNavigateContact: () => void;
 }
 
 export const SiteFooter: React.FC<SiteFooterProps> = ({
@@ -23,12 +24,13 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
   onNavigateHome,
   onNavigatePrograms,
   onNavigateLeadership,
+  onNavigateAdvisory,
   onNavigateFacilities,
   onNavigateGallery,
   onNavigateTeam,
   onNavigateAlumni,
   onNavigateNotices,
-  onNavigatePortal,
+  onNavigateContact,
 }) => {
   const linkClass = (isCurrent = false) =>
     `underline-offset-4 hover:underline transition-colors cursor-pointer focus-visible:outline-white ${
@@ -40,15 +42,18 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
   return (
     <footer className="bg-[var(--color-brand)] text-white/90 border-t border-white/15">
       <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
-        {/* Column 1: Logo + Institutional Motto */}
+        {/* Column 1: Logo + Uppercase College Name & Official Tagline */}
         <div className="lg:col-span-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-start gap-3">
             <CollegeLogo size="md" variant="light" />
             <div>
-              <p className="font-display text-lg font-semibold text-white">
+              <p className="font-display text-base sm:text-lg font-bold tracking-[0.02em] text-white leading-tight uppercase">
                 {OFFICIAL_CAMPUS_LOCATION.collegeName}
               </p>
-              <p className="text-xs text-white/75">{OFFICIAL_CAMPUS_LOCATION.address}</p>
+              <p className="mt-1 text-[11px] tracking-[0.03em] text-white/80 leading-tight">
+                {OFFICIAL_CAMPUS_LOCATION.tagline}
+              </p>
+              <p className="mt-1 text-xs text-white/75">{OFFICIAL_CAMPUS_LOCATION.address}</p>
             </div>
           </div>
 
@@ -109,6 +114,15 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
             <li>
               <button
                 type="button"
+                onClick={onNavigateAdvisory}
+                className={linkClass(activeView === 'advisory')}
+              >
+                Advisory Committee
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
                 onClick={onNavigateFacilities}
                 className={linkClass(activeView === 'facilities')}
               >
@@ -154,17 +168,8 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
             <li>
               <button
                 type="button"
-                onClick={() => onNavigateHome('about')}
-                className={linkClass()}
-              >
-                About
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={() => onNavigateHome('contact')}
-                className={linkClass()}
+                onClick={onNavigateContact}
+                className={linkClass(activeView === 'contact')}
               >
                 Contact
               </button>
@@ -204,10 +209,10 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
           <div className="mt-4 pt-3 border-t border-white/15">
             <button
               type="button"
-              onClick={onNavigatePortal}
-              className="text-xs text-white/80 hover:text-white underline-offset-4 hover:underline cursor-pointer focus-visible:outline-white"
+              onClick={onNavigateContact}
+              className="text-xs text-white/85 hover:text-white underline-offset-4 hover:underline cursor-pointer focus-visible:outline-white"
             >
-              Staff &amp; Student Portal
+              Admission &amp; Student Enquiry
             </button>
           </div>
         </div>
@@ -226,7 +231,7 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
                 <MapPin className="w-4 h-4 text-white" />
               </span>
               <div className="min-w-0">
-                <p className="font-display text-sm font-semibold text-white leading-snug">
+                <p className="font-display text-sm font-semibold text-white leading-snug uppercase">
                   {OFFICIAL_CAMPUS_LOCATION.collegeName}
                 </p>
                 <p className="mt-0.5 text-xs text-white/85 leading-relaxed">
@@ -250,8 +255,10 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
 
       <div className="bg-[var(--color-brand-dark)] border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/80">
-          <p>&copy; 2026 Capitol Hill College. All Rights Reserved.</p>
-          <p>{OFFICIAL_CAMPUS_LOCATION.address}</p>
+          <p>&copy; 2026 {OFFICIAL_CAMPUS_LOCATION.collegeName}. All Rights Reserved.</p>
+          <p>
+            {OFFICIAL_CAMPUS_LOCATION.tagline} · {OFFICIAL_CAMPUS_LOCATION.address}
+          </p>
         </div>
       </div>
     </footer>

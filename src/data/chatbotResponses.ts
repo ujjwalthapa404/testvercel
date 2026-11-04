@@ -108,7 +108,7 @@ export const PROGRAM_PROFILES: Record<ProgramEntity, ProgramConversationalProfil
     ],
     howToApply: [
       'You can apply or enquire for +2 Science in two easy ways:',
-      '1. Click "Enquire About +2 Science" below to submit your details online and track counselor responses in your Student Portal.\n2. Visit our Admissions Desk at Teku, Kathmandu (Sunday–Friday during college hours) or call 01-5312399 to speak with a Science stream counselor.',
+      '1. Click "Enquire About Science" below to open our Contact & Admission Enquiry page and send your enquiry directly to our admissions team.\n2. Visit our Admissions Desk at Teku, Kathmandu (Sunday–Friday during college hours) or call 01-5312399 to speak with a Science stream counselor.',
     ],
   },
 

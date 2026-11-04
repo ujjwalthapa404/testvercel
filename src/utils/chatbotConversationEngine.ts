@@ -278,7 +278,7 @@ function inferAspectFromFaqId(faqId: string): TopicAspect {
   if (faqId === 'fac-overview') return 'facilities_overview';
   if (faqId.startsWith('fac-')) return 'facility_detail';
   if (faqId === 'gen-location') return 'location';
-  if (faqId === 'gen-leadership-team') return 'leadership';
+  if (faqId === 'gen-leadership-team' || faqId === 'gen-advisory-committee') return 'leadership';
   if (faqId === 'gen-affiliations') return 'affiliations';
   if (faqId === 'gen-educational-approach') return 'approach';
   if (faqId === 'gen-notices-results') return 'notices';
@@ -1002,9 +1002,13 @@ export function processConversationTurn(
         intent: ConversationIntent.FOLLOW_UP,
         replyParagraphs: paragraphs,
         categoryLabel: 'Leadership & Governance',
-        suggestedQuestions: ['What programs do you offer?', 'What facilities are available?'],
+        suggestedQuestions: [
+          'Does Capitol Hill College have an Advisory Committee?',
+          'What programs do you offer?',
+        ],
         actions: [
           { label: 'Leadership & Governance', action: 'open-leadership' },
+          { label: 'Advisory Committee', action: 'open-advisory' },
           { label: 'Faculty & Staff Directory', action: 'open-team' },
         ],
         isFallback: false,
@@ -1644,7 +1648,7 @@ export function processConversationTurn(
       'What programs do you offer?',
     ],
     actions: [
-      { label: 'Go to Contact Section', action: 'scroll-contact' },
+      { label: 'Contact & Admission Enquiry', action: 'scroll-contact' },
       { label: 'Submit Online Enquiry', action: 'open-enquiry' },
     ],
     isFallback: true,

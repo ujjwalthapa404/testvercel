@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, FileText } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
+import {
+  PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS,
+  PRINCIPAL_PORTRAIT_BG_CLASS,
+} from '../../utils/portraitFraming';
+
+export type LeadershipCardVariant = 'featured' | 'executive' | 'standard';
 
 interface LeadershipCardProps {
   member: LeadershipMemberProfile;
-  variant?: 'featured' | 'standard';
+  variant?: LeadershipCardVariant;
   onSelectProfile: (
     member: LeadershipMemberProfile,
     triggerElement: HTMLElement | null,
@@ -42,7 +48,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
   if (variant === 'featured') {
     return (
       <article className="group bg-white border border-[var(--color-hairline)] hover:border-neutral-400 rounded-xl overflow-hidden transition-colors duration-200">
-        <div className="grid grid-cols-1 lg:grid-cols-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
           {/* Portrait Column — Clickable */}
           <div className="lg:col-span-5 bg-[var(--color-canvas)] border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)]">
             <button
@@ -51,19 +57,28 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               aria-label={`View full leadership profile of ${member.fullName}`}
               className="block w-full h-full text-left overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
             >
-              <div className="aspect-[4/5] w-full overflow-hidden bg-neutral-200 relative">
+              <div
+                className={`aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[460px] w-full overflow-hidden relative ${
+                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
+                }`}
+              >
                 {showPortrait ? (
                   <img
                     src={member.portraitSrc}
                     alt={member.portraitAlt}
                     loading="eager"
+                    referrerPolicy="no-referrer"
                     onError={() => setImageFailed(true)}
                     style={
-                      member.portraitObjectPosition
+                      !member.isCutoutPortrait && member.portraitObjectPosition
                         ? { objectPosition: member.portraitObjectPosition }
                         : undefined
                     }
-                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+                    className={
+                      member.isCutoutPortrait
+                        ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
+                        : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
+                    }
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -71,7 +86,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                       {initials}
                     </span>
                     <span className="mt-3 text-xs uppercase tracking-[0.16em] text-white/60">
-                      Capitol Hill College
+                      CAPITOL HILL COLLEGE
                     </span>
                   </div>
                 )}
@@ -83,7 +98,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
           <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 xl:p-12 flex flex-col justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-brand)]">
-                Office of the Chairman · Board of Directors
+                {member.officeKicker ?? 'Office of the Chairman · Board of Directors'}
               </p>
 
               <h3 className="mt-2.5 text-2xl sm:text-3xl lg:text-[2rem] font-semibold tracking-tight text-[var(--color-primary-ink)]">
@@ -120,7 +135,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
 
               <div className="my-6 border-t border-[var(--color-hairline)]" />
 
-              <p className="text-[15px] sm:text-base text-[var(--color-ink)] leading-relaxed max-w-[60ch]">
+              <p className="text-[15px] sm:text-base text-[var(--color-ink)] leading-relaxed max-w-[62ch]">
                 {member.cardOverview ?? member.leadershipProfile[0]}
               </p>
 
@@ -149,14 +164,176 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                 Complete Leadership Dossier &amp; Academic Recognition
               </span>
 
-              <button
-                type="button"
-                onClick={handleOpenDossier}
-                className="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2.5 text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              <div className="flex flex-wrap items-center gap-3">
+                {member.officialMessage && (
+                  <button
+                    type="button"
+                    onClick={handleOpenMessage}
+                    className="inline-flex items-center justify-center gap-2 min-h-11 px-4 py-2.5 text-sm font-medium text-[var(--color-primary-ink)] bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4 shrink-0 text-[var(--color-brand)]" />
+                    <span>Official Message</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleOpenDossier}
+                  className="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2.5 text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <span>View Profile</span>
+                  <ArrowUpRight className="w-4 h-4 shrink-0" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  if (variant === 'executive') {
+    return (
+      <article className="group bg-white border border-[var(--color-hairline)] hover:border-neutral-400 rounded-xl overflow-hidden transition-colors duration-200">
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+          {/* Portrait Column — Balanced 4/12 proportion subordinate to Chairman's 5/12 */}
+          <div className="lg:col-span-4 bg-[var(--color-canvas)] border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)]">
+            <button
+              type="button"
+              onClick={handleOpenDossier}
+              aria-label={`View profile of ${member.fullName}`}
+              className="block w-full h-full text-left overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
+            >
+              <div
+                className={`aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[380px] w-full overflow-hidden relative ${
+                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
+                }`}
               >
-                <span>View Profile</span>
-                <ArrowUpRight className="w-4 h-4 shrink-0" />
-              </button>
+                {showPortrait ? (
+                  <img
+                    src={member.portraitSrc}
+                    alt={member.portraitAlt}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    onError={() => setImageFailed(true)}
+                    style={
+                      !member.isCutoutPortrait && member.portraitObjectPosition
+                        ? { objectPosition: member.portraitObjectPosition }
+                        : undefined
+                    }
+                    className={
+                      member.isCutoutPortrait
+                        ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
+                        : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
+                    }
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
+                    <span className="font-display text-4xl font-semibold tracking-wider text-white/90">
+                      {initials}
+                    </span>
+                    <span className="mt-3 text-xs uppercase tracking-[0.16em] text-white/60">
+                      CAPITOL HILL COLLEGE
+                    </span>
+                  </div>
+                )}
+              </div>
+            </button>
+          </div>
+
+          {/* Dedicated Institutional Introduction & Mandate Column */}
+          <div className="lg:col-span-8 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-brand)]">
+                {member.officeKicker ??
+                  (member.category === 'board'
+                    ? 'Board of Directors · CAPITOL HILL COLLEGE'
+                    : 'Executive Leadership · CAPITOL HILL COLLEGE')}
+              </p>
+
+              <h3 className="mt-2 text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                <button
+                  type="button"
+                  onClick={handleOpenDossier}
+                  className="text-left hover:text-[var(--color-brand)] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)]"
+                >
+                  {member.fullName}
+                </button>
+              </h3>
+
+              <p className="mt-1 text-[15px] sm:text-base font-medium text-[var(--color-ink)]">
+                {member.designation}
+              </p>
+
+              {member.professionalTagline && (
+                <p className="mt-1 text-sm text-[var(--color-muted)]">
+                  {member.professionalTagline}
+                </p>
+              )}
+
+              {member.academicDistinction && (
+                <div className="mt-4 bg-[var(--color-canvas)]/70 border border-[var(--color-hairline)] rounded-lg px-4 py-3">
+                  <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
+                    Qualification &amp; Academic Recognition
+                  </p>
+                  <p className="mt-1 font-display text-[15px] sm:text-base font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                    {member.academicDistinction.formattedLine}
+                  </p>
+                </div>
+              )}
+
+              <div className="my-5 border-t border-[var(--color-hairline)]" />
+
+              <p className="text-[15px] sm:text-base text-[var(--color-ink)] leading-relaxed max-w-[65ch]">
+                {member.cardOverview ?? member.leadershipProfile[0]}
+              </p>
+
+              {member.coreStrengths && member.coreStrengths.length > 0 && (
+                <div className="mt-5 pt-5 border-t border-[var(--color-hairline)]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)] mb-2.5">
+                    Institutional Stewardship &amp; Focus
+                  </p>
+                  <ul className="space-y-1.5 text-sm text-[var(--color-ink)]">
+                    {member.coreStrengths.slice(0, 3).map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <span
+                          aria-hidden="true"
+                          className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-7 pt-5 border-t border-[var(--color-hairline)] flex flex-wrap items-center justify-between gap-4">
+              <span className="text-xs text-[var(--color-muted)]">
+                CAPITOL HILL COLLEGE · Teku, Kathmandu
+              </span>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {member.officialMessage && (
+                  <button
+                    type="button"
+                    onClick={handleOpenMessage}
+                    className="inline-flex items-center justify-center gap-2 min-h-10 px-4 py-2 text-xs sm:text-sm font-medium text-[var(--color-primary-ink)] bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 shrink-0 text-[var(--color-brand)]" />
+                    <span>Official Message</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleOpenDossier}
+                  className="inline-flex items-center justify-center gap-2 min-h-10 px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <span>View Profile</span>
+                  <ArrowUpRight className="w-4 h-4 shrink-0" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -175,9 +352,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
       >
         <div
           className={`aspect-[4/5] w-full overflow-hidden ${
-            member.isCutoutPortrait
-              ? 'bg-gradient-to-b from-[#FAF9F7] via-[#F2F0EC] to-[#E8E5DF]'
-              : 'bg-neutral-200'
+            member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
           }`}
         >
           {showPortrait ? (
@@ -185,6 +360,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               src={member.portraitSrc}
               alt={member.portraitAlt}
               loading="lazy"
+              referrerPolicy="no-referrer"
               onError={() => setImageFailed(true)}
               style={
                 !member.isCutoutPortrait && member.portraitObjectPosition
@@ -193,7 +369,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               }
               className={
                 member.isCutoutPortrait
-                  ? 'w-full h-full object-contain object-bottom pt-6 px-3 transition-transform duration-300 group-hover:scale-[1.02]'
+                  ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
                   : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
               }
             />
@@ -203,7 +379,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                 {initials}
               </span>
               <span className="mt-2 text-[11px] uppercase tracking-[0.14em] text-white/60">
-                Capitol Hill College
+                CAPITOL HILL COLLEGE
               </span>
             </div>
           )}
@@ -228,8 +404,14 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
           </p>
 
           {member.academicDistinction && (
-            <p className="mt-3 pt-3 border-t border-[var(--color-hairline)] text-xs font-medium text-[var(--color-primary-ink)] leading-snug">
+            <p className="mt-3 pt-3 border-t border-[var(--color-hairline)] text-xs font-semibold text-[var(--color-primary-ink)] leading-snug">
               {member.academicDistinction.formattedLine}
+            </p>
+          )}
+
+          {(member.cardOverview || member.leadershipProfile[0]) && (
+            <p className="mt-3 text-sm text-[var(--color-muted)] leading-relaxed line-clamp-4">
+              {member.cardOverview ?? member.leadershipProfile[0]}
             </p>
           )}
         </div>
