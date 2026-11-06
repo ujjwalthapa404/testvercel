@@ -153,7 +153,7 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({
                 onClick={onNavigateAlumni}
                 className={linkClass(activeView === 'alumni')}
               >
-                Alumni &amp; Stories
+                Student Voices &amp; Achievements
               </button>
             </li>
             <li>

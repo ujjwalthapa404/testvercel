@@ -50,6 +50,7 @@ import {
   parseLocationRoute,
 } from './utils/routing';
 import { LeadershipMessagesSection } from './components/LeadershipMessagesSection';
+import { StudentInsightsCarousel } from './components/studentInsights/StudentInsightsCarousel';
 import { ALL_LEADERSHIP_PROFILES } from './data/leadershipData';
 import {
   formatNoticeDate,
@@ -335,9 +336,9 @@ export default function App() {
       nextDescription =
         'Discover student classroom life, sports, educational tours, welcome programs, quiz competitions, science practicals, and farewell memories at CAPITOL HILL COLLEGE, Teku, Kathmandu.';
     } else if (route.view === 'alumni') {
-      nextTitle = 'Alumni & Testimonials | CAPITOL HILL COLLEGE — Teku, Kathmandu';
+      nextTitle = 'Student Voices & Achievements | CAPITOL HILL COLLEGE — Our Students, Our Pride';
       nextDescription =
-        'Explore CAPITOL HILL COLLEGE alumni pathways, student perspectives, and institutional values across NEB (+2) and Tribhuvan University programs in Teku, Kathmandu.';
+        'Discover inspiring student voices, academic achievements, board toppers, and authentic testimonials from CAPITOL HILL COLLEGE students in Teku, Kathmandu.';
     } else if (route.view === 'notices') {
       nextTitle = 'Notices & Announcements | CAPITOL HILL COLLEGE';
       nextDescription =
@@ -1027,9 +1028,16 @@ export default function App() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
-                          {leader.shortDesignation}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
+                            {leader.shortDesignation}
+                          </p>
+                          {leader.academicDistinction && (
+                            <span className="font-mono text-[10px] font-bold text-[var(--color-brand)] bg-[var(--color-brand-soft)] px-1.5 py-0.5 rounded border border-[var(--color-brand)]/20 truncate">
+                              {leader.academicDistinction.degreeTitle}
+                            </span>
+                          )}
+                        </div>
                         <h3 className="mt-1 text-lg font-semibold text-[var(--color-primary-ink)] truncate">
                           {leader.fullName}
                         </h3>
@@ -1044,6 +1052,9 @@ export default function App() {
                 </div>
               </div>
             </section>
+
+            {/* Student Perspectives: Insights into College Life Carousel */}
+            <StudentInsightsCarousel onNavigateToAllStories={navigateToAlumni} />
 
             {/* Frequently Asked Questions Accordion Section */}
             <FaqSection

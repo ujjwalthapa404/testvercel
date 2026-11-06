@@ -322,7 +322,7 @@ export const CHATBOT_FAQ_DATABASE: ChatbotFaqItem[] = [
     ],
     answer: [
       'Capitol Hill College is guided by accountable institutional governance and experienced academic administration:',
-      '• Chairman: Mr. Pawan Bista\n• CEO & Director: Mr. Nischal Gautam\n• Principal: Mr. Sagar Raj Khanal',
+      '• Chairman: Mr. Pawan Bista (Honorary Doctorate – Lincoln University, California, USA)\n• CEO & Director: Mr. Nischal Gautam (MBA Finance – Pokhara University Topper)\n• Principal: Mr. Sagar Raj Khanal',
       'Our academic delivery is supported by 45 faculty listings across 15 departments alongside dedicated administrative staff at our Teku, Kathmandu campus.',
     ],
     relatedIds: [

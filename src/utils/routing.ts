@@ -155,7 +155,10 @@ function matchRouteToken(rawSegment: string): ParsedRoute | null {
   if (
     lower === 'alumni' ||
     lower === 'alumni-testimonials' ||
-    lower === 'testimonials'
+    lower === 'testimonials' ||
+    lower === 'student-voices' ||
+    lower === 'student-stories' ||
+    lower === 'student-achievements'
   ) {
     return { view: 'alumni' };
   }

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, Award, GraduationCap, X } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
 import {
   PRINCIPAL_PORTRAIT_4X5_IMG_CLASS,
@@ -184,21 +184,40 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
                   {member.modalRoleLine}
                 </p>
-                <h2 className="mt-1.5 text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-primary-ink)]">
-                  {member.fullName}
-                </h2>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-primary-ink)]">
+                    {member.fullName}
+                  </h2>
+                  {member.academicDistinction && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[var(--color-brand-soft)] border border-[var(--color-brand)]/35 text-[var(--color-brand)] text-xs font-bold tracking-wide">
+                      <GraduationCap className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      <span>{member.academicDistinction.degreeTitle}</span>
+                    </span>
+                  )}
+                </div>
+
+                {member.academicDistinction && (
+                  <p className="mt-1 font-display text-sm font-semibold text-[var(--color-brand)]">
+                    {member.academicDistinction.degreeTitle} – {member.academicDistinction.conferringInstitution} ({member.academicDistinction.year})
+                  </p>
+                )}
+
                 {member.professionalTagline && (
                   <p className="mt-1.5 text-sm font-medium text-[var(--color-muted)]">
                     {member.professionalTagline}
                   </p>
                 )}
                 {member.academicDistinction && (
-                  <div className="mt-4 bg-white border border-[var(--color-hairline)] rounded-lg px-4 py-3">
-                    <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
-                      Academic Distinction
+                  <div className="mt-4 bg-white border border-[var(--color-brand)]/25 rounded-lg px-4 py-3">
+                    <p className="font-sans text-[10.5px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand)] flex items-center gap-1.5">
+                      <Award className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Academic Distinction &amp; Recognition</span>
                     </p>
-                    <p className="mt-1 font-display text-sm sm:text-[15px] font-semibold text-[var(--color-primary-ink)]">
-                      {member.academicDistinction.formattedLine}
+                    <p className="mt-1 font-display text-base font-bold text-[var(--color-primary-ink)]">
+                      {member.academicDistinction.degreeTitle}
+                    </p>
+                    <p className="mt-0.5 text-xs text-[var(--color-ink)] font-medium">
+                      Conferred by {member.academicDistinction.conferringInstitution} · {member.academicDistinction.year}
                     </p>
                   </div>
                 )}
@@ -234,12 +253,28 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-brand)]">
                   {member.modalRoleLine}
                 </p>
-                <h2
-                  id="leadership-profile-modal-name"
-                  className="mt-2 text-3xl xl:text-[2.15rem] font-semibold tracking-tight text-[var(--color-primary-ink)]"
-                >
-                  {member.fullName}
-                </h2>
+                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <h2
+                    id="leadership-profile-modal-name"
+                    className="text-3xl xl:text-[2.2rem] font-semibold tracking-tight text-[var(--color-primary-ink)]"
+                  >
+                    {member.fullName}
+                  </h2>
+                  {member.academicDistinction && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[var(--color-brand-soft)] border border-[var(--color-brand)]/35 text-[var(--color-brand)] text-xs sm:text-sm font-bold tracking-wide shadow-2xs">
+                      <GraduationCap className="w-4 h-4 shrink-0 text-[var(--color-brand)]" aria-hidden="true" />
+                      <span>{member.academicDistinction.degreeTitle}</span>
+                    </span>
+                  )}
+                </div>
+
+                {member.academicDistinction && (
+                  <p className="mt-1 font-display text-sm sm:text-base font-semibold text-[var(--color-brand)] tracking-wide flex flex-wrap items-center gap-x-2">
+                    <span>{member.academicDistinction.degreeTitle} – {member.academicDistinction.conferringInstitution}</span>
+                    <span className="font-mono text-xs font-normal text-[var(--color-muted)]">({member.academicDistinction.year})</span>
+                  </p>
+                )}
+
                 {member.professionalTagline && (
                   <p className="mt-2 text-sm font-medium text-[var(--color-muted)]">
                     {member.professionalTagline}
@@ -247,12 +282,16 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                 )}
 
                 {member.academicDistinction && (
-                  <div className="mt-5 bg-[var(--color-canvas)]/70 border border-[var(--color-hairline)] rounded-lg px-4 py-3.5">
-                    <p className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)]">
-                      Academic Distinction
+                  <div className="mt-5 bg-gradient-to-r from-[var(--color-brand-soft)] via-white to-[var(--color-canvas)]/80 border border-[var(--color-brand)]/25 rounded-xl p-4 sm:p-5 shadow-2xs">
+                    <p className="font-sans text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand)] flex items-center gap-1.5">
+                      <Award className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span>Academic Distinction &amp; Recognition</span>
                     </p>
-                    <p className="mt-1 font-display text-base font-semibold tracking-tight text-[var(--color-primary-ink)]">
-                      {member.academicDistinction.formattedLine}
+                    <p className="mt-1.5 font-display text-lg sm:text-xl font-bold tracking-tight text-[var(--color-primary-ink)]">
+                      {member.academicDistinction.degreeTitle}
+                    </p>
+                    <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink)] font-medium leading-relaxed">
+                      Conferred by {member.academicDistinction.conferringInstitution} ({member.academicDistinction.year})
                     </p>
                   </div>
                 )}

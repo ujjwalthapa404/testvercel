@@ -35,19 +35,19 @@ export const ALUMNI_PROGRAM_FILTERS: AlumniProgramFilterOption[] = [
 
 export const ALUMNI_HERO_CONTENT: AlumniHeroContent = {
   breadcrumbParent: 'Home',
-  breadcrumbCurrent: 'Alumni & Testimonials',
-  eyebrow: 'Teku, Kathmandu · Graduate & Student Community',
-  heading: 'Our Alumni, Our Pride',
-  supportingHeading: 'Academic Foundations That Prepare Graduates for Higher Study and Careers',
+  breadcrumbCurrent: 'Student Voices & Achievements',
+  eyebrow: 'Teku, Kathmandu · Student Voices & Academic Recognition',
+  heading: 'Our Students, Our Pride',
+  supportingHeading: 'Voices of Achievement. Stories of Inspiration.',
   introduction:
-    'At Capitol Hill College, education extends beyond examination halls. Through structured classroom instruction, hands-on laboratory practice, and attentive mentorship across our NEB +2 and Tribhuvan University undergraduate programs, we prepare students with the academic discipline and confidence needed for higher studies and professional life.',
-  primaryCtaLabel: 'Explore Graduate Pathways',
-  secondaryCtaLabel: 'Reconnect With Campus',
+    'At Capitol Hill College, academic excellence goes hand in hand with independent thinking, practical learning, and the overall development of students. Across Grade XI, Grade XII, and competitive national examinations, our students discover their potential, test their knowledge in modern laboratories, and build the intellectual confidence required for higher education and real-world leadership.',
+  primaryCtaLabel: 'Explore Student Stories',
+  secondaryCtaLabel: 'Admission Enquiry',
   heroImage: {
     src: '/images/official/ca1.jpg',
-    alt: 'Graduating students gathered at a CAPITOL HILL COLLEGE farewell program in Teku, Kathmandu',
+    alt: 'Students and academic cohort gathered at CAPITOL HILL COLLEGE in Teku, Kathmandu',
     caption:
-      'Graduating cohort gathered during an official CAPITOL HILL COLLEGE Farewell Program at Teku, Kathmandu.',
+      'Student cohort and faculty gathered during an official CAPITOL HILL COLLEGE program at Teku, Kathmandu.',
     isPlaceholderAsset: false,
   },
 };

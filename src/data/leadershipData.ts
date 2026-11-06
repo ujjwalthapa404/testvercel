@@ -14,7 +14,7 @@ export type LeadershipCategory = 'board' | 'executive';
 export interface AcademicDistinction {
   /** Formal distinction label (e.g., 'Honorary Doctorate') */
   degreeTitle: string;
-  /** Conferring institution and city (e.g., 'Lincoln University, Oakland') */
+  /** Conferring institution and location (e.g., 'Lincoln University, California, USA') */
   conferringInstitution: string;
   /** Year conferred (e.g., '2024') */
   year: string;
@@ -166,14 +166,14 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     portraitObjectPosition: 'center 15%',
     academicDistinction: {
       degreeTitle: 'Honorary Doctorate',
-      conferringInstitution: 'Lincoln University, Oakland',
+      conferringInstitution: 'Lincoln University, California, USA',
       year: '2024',
-      formattedLine: 'Honorary Doctorate — Lincoln University, Oakland (2024)',
+      formattedLine: 'Honorary Doctorate – Lincoln University, California, USA (2024)',
     },
     cardOverview:
-      'Institutional leader with more than two decades of experience in higher education governance, international university partnerships, and student academic pathways.',
+      'Institutional leader and recipient of an Honorary Doctorate from Lincoln University, California, USA (2024), bringing more than two decades of higher education leadership, international university partnerships, and strategic governance to Capitol Hill College.',
     leadershipProfile: [
-      'Mr. Pawan Bista brings more than two decades of experience in higher education leadership, international institutional partnerships, and student academic development. As Chairman of Capitol Hill College, he guides the institution’s long-term strategic direction with a global perspective focused on academic quality, ethical governance, and meaningful scholarly opportunities for students in Nepal.',
+      'Mr. Pawan Bista brings more than two decades of experience in higher education leadership, international institutional partnerships, and student academic development. In 2024, he was awarded an Honorary Doctorate by Lincoln University, California, USA, in recognition of his significant contributions to higher education governance, international student pathways, and institutional development. As Chairman of Capitol Hill College, he guides the institution’s long-term strategic direction with a global perspective focused on academic quality, ethical governance, and meaningful scholarly opportunities for students in Nepal.',
     ],
     professionalLeadership: [
       'Chairman — Capitol Hill College, Kathmandu, Nepal.',
@@ -187,7 +187,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
       'Cross-border academic collaboration and governance.',
     ],
     qualificationsAndRecognition: [
-      'Honorary Doctorate — Lincoln University, Oakland (2024).',
+      'Honorary Doctorate — Lincoln University, California, USA (2024).',
     ],
     sortOrder: 1,
   },

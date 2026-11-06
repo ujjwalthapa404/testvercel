@@ -404,7 +404,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             aria-current={activeView === 'alumni' ? 'page' : undefined}
             className={`${navLinkClass(activeView === 'alumni')} focus-visible:outline-white`}
           >
-            Alumni
+            Student Voices
           </button>
 
           {/* Clean Explore Dropdown housing Governance, Advisory, Faculty, Notices, FAQ & Contact */}
@@ -508,7 +508,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                       : 'text-[var(--color-ink)] hover:text-[var(--color-brand)]'
                   }`}
                 >
-                  Alumni &amp; Testimonials
+                  Student Voices &amp; Achievements
                 </button>
                 <button
                   type="button"
@@ -728,7 +728,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             aria-current={activeView === 'alumni' ? 'page' : undefined}
             className={mobileNavLinkClass(activeView === 'alumni')}
           >
-            Alumni &amp; Testimonials
+            Student Voices &amp; Achievements
           </button>
           <button
             type="button"
