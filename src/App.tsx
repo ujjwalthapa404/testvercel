@@ -34,6 +34,7 @@ import { AcademicProgramsPage } from './pages/AcademicProgramsPage';
 import { AcademicProgramDetailPage } from './pages/AcademicProgramDetailPage';
 import { CollegeImage } from './components/CollegeImage';
 import { HeroOverviewVideo } from './components/HeroOverviewVideo';
+import { PromoPopupModal } from './components/PromoPopupModal';
 import { FaqChatbot } from './components/FaqChatbot';
 import { ChatbotQuickAction } from './types/chatbot';
 import {
@@ -138,6 +139,7 @@ export default function App() {
   const [hasLoadedFirestoreFaqs, setHasLoadedFirestoreFaqs] = useState(false);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPromoPopupVisible, setIsPromoPopupVisible] = useState(false);
   const [programDivisionFilter, setProgramDivisionFilter] = useState<'all' | AcademicDivisionId>(
     'all'
   );
@@ -780,11 +782,11 @@ export default function App() {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+                  <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto max-w-full">
                     <div
                       role="group"
                       aria-label="Filter academic programs by affiliation"
-                      className="flex items-center gap-1 p-1 bg-white border border-[var(--color-hairline)] rounded-lg"
+                      className="flex flex-wrap sm:flex-nowrap items-center gap-1 p-1 bg-white border border-[var(--color-hairline)] rounded-lg max-w-full"
                     >
                       {(
                         [
@@ -1155,9 +1157,13 @@ export default function App() {
         onNavigateContact={() => navigateToContact()}
       />
 
+      {/* Scroll-Triggered Floating Promotional Image Popup */}
+      <PromoPopupModal onVisibilityChange={setIsPromoPopupVisible} />
+
       {/* Controlled Announcement Popup Modal */}
       <NoticePopupModal
         notice={popupNotice}
+        disabled={isPromoPopupVisible}
         onReadFullNotice={(slug) => navigateToNotices(slug)}
       />
 

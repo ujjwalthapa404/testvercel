@@ -231,7 +231,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-phy-1',
         name: 'Mr. Sagar Raj Khanal',
-        portraitUrl: '/images/leadership/sagar-raj-khanal.png',
+        portraitUrl: '/assets/aistudio/replace_principle_s_image_fba794c1.png',
       },
       { id: 'fac-phy-2', name: 'Sushant Pokhrel' },
       { id: 'fac-phy-3', name: 'Mr. Indra Pd. Chapagain' },

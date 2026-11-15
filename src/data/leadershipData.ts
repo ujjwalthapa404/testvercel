@@ -280,9 +280,9 @@ export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
     homepageSummaryRole: 'Academic Standards & Campus Administration',
     officeKicker: 'Office of the Principal · Academic Stewardship',
     category: 'executive',
-    portraitSrc: '/images/leadership/sagar-raj-khanal.png',
+    portraitSrc: '/assets/aistudio/replace_principle_s_image_fba794c1.png',
     portraitAlt: 'Mr. Sagar Raj Khanal, Principal of Capitol Hill College',
-    isCutoutPortrait: true,
+    portraitObjectPosition: 'center top',
     cardOverview:
       'As Principal of CAPITOL HILL COLLEGE, Mr. Sagar Raj Khanal oversees academic leadership, teaching standards, and holistic student development across campus. Working closely with faculty and academic departments, his office fosters a disciplined, supportive, and intellectually engaging learning environment across +2 Science, +2 Management, and undergraduate programs.',
     leadershipProfile: [
