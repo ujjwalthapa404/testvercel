@@ -1,19 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { ArrowRight, Download, Maximize2, Minimize2, X } from 'lucide-react';
 
 export const PROMO_POPUP_IMAGE_SRC =
-  '/assets/aistudio/college_landing_page_image_de70291b.jpeg';
+  '/assets/brochures/admissions-2026-brochure.jpeg';
 
-const DIRECTION_THRESHOLD_PX = 14;
-const MIN_TOP_OFFSET_PX = 20;
-const TOGGLE_COOLDOWN_MS = 240;
-const MANUAL_CLOSE_COOLDOWN_MS = 550;
+const BROCHURE_DOWNLOAD_FILENAME = 'Capitol-Hill-College-Admissions-2026-Brochure.jpeg';
+const SESSION_DISMISSED_KEY = 'chc_brochure_popup_dismissed_v1';
+const MOBILE_SCROLL_THRESHOLD_PX = 160;
+const DESKTOP_SCROLL_THRESHOLD_PX = 260;
+const REVEAL_DELAY_MS = 300;
 const CLOSE_ANIMATION_MS = 220;
 
 interface PromoPopupModalProps {
-  /** Called whenever the popup visibility changes so sibling announcement popups do not overlap */
+  /** Notifies parent so sibling announcement popups do not overlap while brochure modal is open */
   onVisibilityChange?: (isVisible: boolean) => void;
+  /** Optional callback to open the Admission Enquiry page cleanly from the brochure modal */
+  onOpenEnquiry?: () => void;
 }
 
 function getCurrentScrollY(): number {
@@ -27,38 +30,77 @@ function getCurrentScrollY(): number {
   );
 }
 
+function getIntendedScrollThreshold(): number {
+  if (typeof window === 'undefined') return DESKTOP_SCROLL_THRESHOLD_PX;
+  const maxScrollable = Math.max(
+    0,
+    document.documentElement.scrollHeight - window.innerHeight
+  );
+  const baseThreshold =
+    window.innerWidth < 768 ? MOBILE_SCROLL_THRESHOLD_PX : DESKTOP_SCROLL_THRESHOLD_PX;
+  if (maxScrollable > 0 && maxScrollable < baseThreshold * 1.4) {
+    return Math.max(80, Math.round(maxScrollable * 0.2));
+  }
+  return baseThreshold;
+}
+
+function isDismissedInSession(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.sessionStorage.getItem(SESSION_DISMISSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function markDismissedInSession(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(SESSION_DISMISSED_KEY, '1');
+  } catch {
+    // Ignore storage errors in restricted browsing contexts
+  }
+}
+
 /**
- * Scroll-Direction-Driven Floating Promotional Popup (Bernhardt-inspired overlay).
- * - Scrolling DOWNWARDS triggers and keeps the promotional popup visible.
- * - Scrolling UPWARDS smoothly hides the popup.
- * - Reversing back DOWNWARDS reveals the popup again continuously across all pages.
- * - Non-blocking viewport backdrop (`pointer-events-none` + `touch-pan-y` card) ensures
- *   visitors can freely continue scrolling down or scroll up on both desktop and mobile touch.
+ * Scroll-triggered Admissions Brochure Popup Modal.
+ * - Triggers reliably on desktop, tablet, and mobile once the visitor scrolls past the hero.
+ * - Appears at most once per browsing session so returning visitors are not interrupted repeatedly.
+ * - Provides working Brochure Download, Full-View inspection toggle, and Admission Enquiry actions.
+ * - Dismisses cleanly via the top-right × button, backdrop click, or Escape key.
  */
 export const PromoPopupModal: React.FC<PromoPopupModalProps> = ({
   onVisibilityChange,
+  onOpenEnquiry,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [dismissedForSession, setDismissedForSession] = useState<boolean>(() =>
+    isDismissedInSession()
+  );
+  const [isOpen, setIsOpen] = useState(false);
   const [isEntered, setIsEntered] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isExpandedView, setIsExpandedView] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
 
-  const isVisibleRef = useRef(false);
-  const lastScrollYRef = useRef<number>(0);
-  const accumulatedDeltaRef = useRef<number>(0);
-  const lastToggleAtRef = useRef<number>(0);
-  const manualCooldownUntilRef = useRef<number>(0);
-  const unmountTimerRef = useRef<number | null>(null);
+  const hasTriggeredRef = useRef(false);
+  const revealTimerRef = useRef<number | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
   const enterTimerRef = useRef<number | null>(null);
   const enterRafRef = useRef<number | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    onVisibilityChange?.(isMounted && isEntered);
-  }, [isMounted, isEntered, onVisibilityChange]);
+    onVisibilityChange?.(isOpen);
+  }, [isOpen, onVisibilityChange]);
 
-  const clearAnimationTimers = useCallback(() => {
-    if (unmountTimerRef.current !== null) {
-      window.clearTimeout(unmountTimerRef.current);
-      unmountTimerRef.current = null;
+  const clearTimers = useCallback(() => {
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
     }
     if (enterTimerRef.current !== null) {
       window.clearTimeout(enterTimerRef.current);
@@ -70,225 +112,265 @@ export const PromoPopupModal: React.FC<PromoPopupModalProps> = ({
     }
   }, []);
 
-  const showPopup = useCallback(() => {
-    if (imageFailed || isVisibleRef.current) return;
-
-    // Avoid overlapping if another blocking modal (e.g., profile dossier / lightbox) is open
-    const blockingDialog = document.querySelector(
-      '[role="dialog"][aria-modal="true"]:not([data-promo-popup="true"])'
-    );
-    if (blockingDialog) return;
-
-    clearAnimationTimers();
-    isVisibleRef.current = true;
-    lastToggleAtRef.current = performance.now();
-
-    setIsEntered(false);
-    setIsMounted(true);
-
-    const triggerEnter = () => {
-      setIsEntered(true);
-    };
-
-    enterRafRef.current = window.requestAnimationFrame(() => {
-      enterRafRef.current = window.requestAnimationFrame(triggerEnter);
-    });
-    enterTimerRef.current = window.setTimeout(triggerEnter, 40);
-  }, [clearAnimationTimers, imageFailed]);
-
-  const hidePopup = useCallback(
-    (isManualClose = false) => {
-      if (!isVisibleRef.current && !isMounted) return;
-
-      clearAnimationTimers();
-      isVisibleRef.current = false;
-      const now = performance.now();
-      lastToggleAtRef.current = now;
-      if (isManualClose) {
-        manualCooldownUntilRef.current = now + MANUAL_CLOSE_COOLDOWN_MS;
-      }
-
-      setIsEntered(false);
-
-      const reducedMotion =
-        typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      unmountTimerRef.current = window.setTimeout(
-        () => {
-          unmountTimerRef.current = null;
-          if (!isVisibleRef.current) {
-            setIsMounted(false);
-          }
-        },
-        reducedMotion ? 10 : CLOSE_ANIMATION_MS
-      );
-    },
-    [clearAnimationTimers, isMounted]
-  );
-
-  /* Continuous bidirectional scroll-direction detection across desktop & mobile touch */
+  /* Scroll-position trigger across desktop mouse/trackpad and mobile touch scrolling */
   useEffect(() => {
-    if (typeof window === 'undefined' || imageFailed) {
+    if (dismissedForSession || hasTriggeredRef.current || imageFailed || typeof window === 'undefined') {
       return undefined;
     }
 
-    lastScrollYRef.current = getCurrentScrollY();
-    accumulatedDeltaRef.current = 0;
+    const cleanupListeners = () => {
+      window.removeEventListener('scroll', checkScrollPosition);
+      document.removeEventListener('scroll', checkScrollPosition, { capture: true });
+      window.removeEventListener('touchmove', checkScrollPosition);
+      window.removeEventListener('touchend', checkScrollPosition);
+      window.visualViewport?.removeEventListener('scroll', checkScrollPosition);
+    };
 
-    const handlePageScroll = (event?: Event) => {
-      // Only respond to primary document/window scrolling, not nested inner scrollboxes
+    const scheduleReveal = () => {
+      if (hasTriggeredRef.current || revealTimerRef.current !== null) return;
+
+      revealTimerRef.current = window.setTimeout(() => {
+        revealTimerRef.current = null;
+        if (hasTriggeredRef.current) return;
+
+        // Avoid stacking on top of another active blocking modal (e.g., profile modal or lightbox)
+        const existingDialog = document.querySelector(
+          '[role="dialog"][aria-modal="true"]:not([data-brochure-popup="true"])'
+        );
+        if (existingDialog) return;
+
+        hasTriggeredRef.current = true;
+        cleanupListeners();
+        setIsClosing(false);
+        setIsEntered(false);
+        setIsExpandedView(false);
+        setIsOpen(true);
+      }, REVEAL_DELAY_MS);
+    };
+
+    function checkScrollPosition(event?: Event) {
+      if (hasTriggeredRef.current) return;
       const target = event?.target;
       if (
         target &&
         target !== window &&
         target !== document &&
         target !== document.documentElement &&
-        target !== document.body
+        target !== document.body &&
+        target !== window.visualViewport
       ) {
         return;
       }
 
-      const currentY = getCurrentScrollY();
-      const prevY = lastScrollYRef.current;
-      const delta = currentY - prevY;
-      lastScrollYRef.current = currentY;
-
-      // Ignore 0px noise
-      if (delta === 0) return;
-
-      const now = performance.now();
-
-      // Always hide cleanly when visitor reaches the very top of the page
-      if (currentY <= MIN_TOP_OFFSET_PX) {
-        accumulatedDeltaRef.current = 0;
-        if (isVisibleRef.current) {
-          hidePopup(false);
-        }
-        return;
+      if (getCurrentScrollY() >= getIntendedScrollThreshold()) {
+        scheduleReveal();
       }
+    }
 
-      // Accumulate directional distance; reset accumulator cleanly on direction reversal
-      if (
-        (delta > 0 && accumulatedDeltaRef.current < 0) ||
-        (delta < 0 && accumulatedDeltaRef.current > 0)
-      ) {
-        accumulatedDeltaRef.current = delta;
-      } else {
-        accumulatedDeltaRef.current += delta;
-      }
+    if (getCurrentScrollY() >= getIntendedScrollThreshold()) {
+      scheduleReveal();
+    }
 
-      // Scrolling DOWNWARDS -> Reveal popup (respecting cooldown & minimum top offset)
-      if (accumulatedDeltaRef.current >= DIRECTION_THRESHOLD_PX) {
-        accumulatedDeltaRef.current = 0;
-        if (
-          !isVisibleRef.current &&
-          now >= manualCooldownUntilRef.current &&
-          now - lastToggleAtRef.current >= TOGGLE_COOLDOWN_MS
-        ) {
-          showPopup();
-        }
-        return;
-      }
-
-      // Scrolling UPWARDS -> Smoothly hide popup
-      if (accumulatedDeltaRef.current <= -DIRECTION_THRESHOLD_PX) {
-        accumulatedDeltaRef.current = 0;
-        if (
-          isVisibleRef.current &&
-          now - lastToggleAtRef.current >= TOGGLE_COOLDOWN_MS
-        ) {
-          hidePopup(false);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handlePageScroll, { passive: true });
-    document.addEventListener('scroll', handlePageScroll, { passive: true, capture: true });
-    window.visualViewport?.addEventListener('scroll', handlePageScroll, { passive: true });
+    window.addEventListener('scroll', checkScrollPosition, { passive: true });
+    document.addEventListener('scroll', checkScrollPosition, { passive: true, capture: true });
+    window.addEventListener('touchmove', checkScrollPosition, { passive: true });
+    window.addEventListener('touchend', checkScrollPosition, { passive: true });
+    window.visualViewport?.addEventListener('scroll', checkScrollPosition, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handlePageScroll);
-      document.removeEventListener('scroll', handlePageScroll, { capture: true });
-      window.visualViewport?.removeEventListener('scroll', handlePageScroll);
-      clearAnimationTimers();
+      cleanupListeners();
+      if (revealTimerRef.current !== null) {
+        window.clearTimeout(revealTimerRef.current);
+        revealTimerRef.current = null;
+      }
     };
-  }, [clearAnimationTimers, hidePopup, imageFailed, showPopup]);
+  }, [dismissedForSession, imageFailed]);
 
-  /* Escape key support when popup is visible */
+  const handleClose = useCallback(() => {
+    if (!isOpen || isClosing) return;
+
+    setIsClosing(true);
+    setIsEntered(false);
+    markDismissedInSession();
+
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
+    const reducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    closeTimerRef.current = window.setTimeout(
+      () => {
+        closeTimerRef.current = null;
+        setIsOpen(false);
+        setIsClosing(false);
+        setIsExpandedView(false);
+        setDismissedForSession(true);
+      },
+      reducedMotion ? 10 : CLOSE_ANIMATION_MS
+    );
+  }, [isOpen, isClosing]);
+
+  const handleApplyEnquiry = useCallback(() => {
+    handleClose();
+    onOpenEnquiry?.();
+  }, [handleClose, onOpenEnquiry]);
+
+  /* Smooth entrance animation, Escape key handling, and accessible focus */
   useEffect(() => {
-    if (!isMounted) return undefined;
+    if (!isOpen) return undefined;
+
+    const triggerEnter = () => {
+      setIsEntered(true);
+      closeButtonRef.current?.focus({ preventScroll: true });
+    };
+
+    enterRafRef.current = window.requestAnimationFrame(() => {
+      enterRafRef.current = window.requestAnimationFrame(triggerEnter);
+    });
+    enterTimerRef.current = window.setTimeout(triggerEnter, 50);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isVisibleRef.current) {
+      if (event.key === 'Escape') {
         event.preventDefault();
-        hidePopup(true);
+        handleClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
+      if (enterRafRef.current !== null) {
+        window.cancelAnimationFrame(enterRafRef.current);
+        enterRafRef.current = null;
+      }
+      if (enterTimerRef.current !== null) {
+        window.clearTimeout(enterTimerRef.current);
+        enterTimerRef.current = null;
+      }
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMounted, hidePopup]);
+  }, [isOpen, handleClose]);
 
-  if (!isMounted || imageFailed || typeof document === 'undefined') {
+  useEffect(() => clearTimers, [clearTimers]);
+
+  if (!isOpen || imageFailed || typeof document === 'undefined') {
     return null;
   }
+
+  const visibleState = isEntered && !isClosing;
 
   return createPortal(
     <div
       role="dialog"
-      aria-modal="false"
-      data-promo-popup="true"
-      aria-label="CAPITOL HILL COLLEGE Admissions 2026 Promotional Notice"
-      className={`fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center p-5 sm:p-8 transition-opacity duration-250 ease-out ${
-        isEntered ? 'opacity-100' : 'opacity-0'
+      aria-modal="true"
+      data-brochure-popup="true"
+      aria-label="CAPITOL HILL COLLEGE Admissions 2026 Brochure"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-[2px] transition-opacity duration-250 ease-out ${
+        visibleState ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Subtle non-blocking atmospheric dimming backdrop */}
       <div
-        aria-hidden="true"
-        className={`fixed inset-0 bg-black/45 backdrop-blur-[1.5px] pointer-events-none transition-opacity duration-250 ease-out ${
-          isEntered ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
-
-      {/* Interactive Promotional Image Card (touch-pan-y preserves native vertical touch scrolling) */}
-      <div
-        className={`relative pointer-events-auto touch-pan-y w-fit max-w-[calc(100vw-2.5rem)] sm:max-w-[440px] md:max-w-[490px] transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu ${
-          isEntered
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu ${
+          isExpandedView
+            ? 'max-w-[calc(100vw-2rem)] sm:max-w-[680px]'
+            : 'max-w-[340px] sm:max-w-[440px] md:max-w-[470px]'
+        } ${
+          visibleState
             ? 'opacity-100 scale-100 translate-y-0'
-            : 'opacity-0 scale-95 translate-y-3'
+            : 'opacity-0 scale-95 translate-y-2'
         }`}
       >
-        {/* Top-Right Close (×) Button */}
+        {/* Top-Right Close (×) Control */}
         <button
+          ref={closeButtonRef}
           type="button"
-          onClick={() => hidePopup(true)}
-          aria-label="Close promotional popup"
+          onClick={handleClose}
+          aria-label="Close brochure popup"
           title="Close"
-          className="absolute -top-3 -right-3 sm:-top-3.5 sm:-right-3.5 z-10 inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-[var(--color-primary-ink)] border border-[var(--color-hairline)] shadow-[0_8px_24px_rgba(0,0,0,0.32)] hover:bg-[var(--color-brand)] hover:text-white hover:border-[var(--color-brand)] active:scale-95 transition-all duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
+          className="absolute -top-3 -right-3 sm:-top-3.5 sm:-right-3.5 z-10 inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-[var(--color-primary-ink)] border border-[var(--color-hairline)] shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:bg-[var(--color-brand)] hover:text-white hover:border-[var(--color-brand)] active:scale-95 transition-all duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-white"
         >
           <X className="w-5 h-5" strokeWidth={2.25} aria-hidden="true" />
         </button>
 
-        {/* Crisp Framed Promotional Image Keeping Original Proportions */}
-        <div className="rounded-2xl bg-white p-1.5 sm:p-2 border border-white/90 shadow-[0_28px_72px_-14px_rgba(0,0,0,0.52)] overflow-hidden">
-          <div className="rounded-xl overflow-hidden bg-white">
-            <img
-              src={PROMO_POPUP_IMAGE_SRC}
-              alt="CAPITOL HILL COLLEGE Admissions Open 2026 — +2 Programs, BBS & MBS at CHC Campus, Teku, Kathmandu"
-              loading="eager"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              onError={() => {
-                setImageFailed(true);
-                isVisibleRef.current = false;
-                setIsMounted(false);
-              }}
-              className="w-auto max-w-full h-auto max-h-[72dvh] sm:max-h-[80dvh] block mx-auto select-none touch-pan-y"
-            />
+        {/* Framed Brochure Card with Action Bar */}
+        <div className="rounded-2xl bg-white border border-white/90 shadow-[0_28px_72px_-14px_rgba(0,0,0,0.52)] overflow-hidden flex flex-col max-h-[90dvh]">
+          {/* Scrollable Brochure Visual Viewport */}
+          <div
+            className={`bg-neutral-50 p-1.5 sm:p-2 ${
+              isExpandedView ? 'overflow-y-auto overscroll-contain' : 'overflow-hidden'
+            }`}
+          >
+            <div className="rounded-xl overflow-hidden bg-white">
+              <img
+                src={PROMO_POPUP_IMAGE_SRC}
+                alt="CAPITOL HILL COLLEGE Admissions Open 2026 Brochure — +2 Science, Management, Law, Humanities, BBS & MBS at CHC Campus, Teku, Kathmandu"
+                loading="eager"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={() => {
+                  setImageFailed(true);
+                  setIsOpen(false);
+                }}
+                className={`block mx-auto select-none ${
+                  isExpandedView
+                    ? 'w-full h-auto'
+                    : 'w-auto max-w-full h-auto max-h-[62dvh] sm:max-h-[68dvh]'
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Brochure Download, View Toggle & Admission Enquiry Action Bar */}
+          <div className="px-3.5 sm:px-4 py-3 bg-white border-t border-[var(--color-hairline)] flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div className="flex items-center gap-2">
+              <a
+                href={PROMO_POPUP_IMAGE_SRC}
+                download={BROCHURE_DOWNLOAD_FILENAME}
+                onClick={() => markDismissedInSession()}
+                className="inline-flex items-center justify-center gap-1.5 min-h-10 px-3.5 py-2 text-xs font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors whitespace-nowrap shrink-0"
+              >
+                <Download className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>Download Brochure</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setIsExpandedView((prev) => !prev)}
+                aria-label={isExpandedView ? 'Fit brochure to screen' : 'View brochure full size'}
+                className="inline-flex items-center justify-center gap-1.5 min-h-10 px-3 py-2 text-xs font-medium text-[var(--color-primary-ink)] bg-[var(--color-canvas)] hover:bg-neutral-200/75 border border-[var(--color-hairline)] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                {isExpandedView ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>Fit View</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>View Full</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {onOpenEnquiry && (
+              <button
+                type="button"
+                onClick={handleApplyEnquiry}
+                className="inline-flex items-center justify-center gap-1.5 min-h-10 px-3 py-2 text-xs font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                <span>Admission Enquiry</span>
+                <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              </button>
+            )}
           </div>
         </div>
       </div>

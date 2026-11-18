@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 
 /**
- * Official asset paths for the Homepage Hero Overview Video.
- * To replace the sample video with actual Capitol Hill College campus footage later,
- * simply overwrite `public/videos/college-overview.mp4` (and optionally
- * `public/images/college-overview-poster.jpg`) without changing any code.
+ * Official local asset paths for the Homepage Hero Overview Video.
+ * To update the campus overview video later, overwrite `public/assets/campus/campus-overview-video.mp4`
+ * and `public/assets/campus/campus-overview-poster.jpg` without changing any component code.
  */
-export const HERO_OVERVIEW_VIDEO_SRC = '/videos/college-overview.mp4';
-export const HERO_OVERVIEW_POSTER_SRC = '/images/college-overview-poster.jpg';
+export const HERO_OVERVIEW_VIDEO_SRC = '/assets/campus/campus-overview-video.mp4';
+export const HERO_OVERVIEW_POSTER_SRC = '/assets/campus/campus-overview-poster.jpg';
 
 export const HeroOverviewVideo: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);

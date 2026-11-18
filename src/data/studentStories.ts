@@ -123,7 +123,7 @@ export const STUDENT_VOICES_HERO_CONTENT = {
   primaryCtaLabel: 'Explore Student Stories',
   secondaryCtaLabel: 'Admission Enquiry',
   heroImage: {
-    src: '/images/official/ca1.jpg',
+    src: '/assets/gallery/farewell-program-cohort-gathering.jpg',
     alt: 'Students and academic cohort gathered at CAPITOL HILL COLLEGE in Teku, Kathmandu',
     caption:
       'Student cohort and faculty gathered during an official CAPITOL HILL COLLEGE program at Teku, Kathmandu.',

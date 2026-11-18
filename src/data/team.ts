@@ -75,7 +75,7 @@ export const TEAM_HERO_CONTENT = {
   supportingText: 'Meet our dedicated faculty and staff committed to excellence.',
   introStatement:
     'Our dedicated and highly qualified team serve as exemplary role models.',
-  campusBackdropUrl: '/images/official/building.png',
+  campusBackdropUrl: '/assets/campus/teku-campus-building.png',
   campusBackdropAlt:
     'CAPITOL HILL COLLEGE academic building in Teku, Kathmandu',
 } as const;
@@ -216,7 +216,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-nep-1',
         name: 'Mr. Bhola Nath Regmi',
-        portraitUrl: '/images/official/bholo.jpg',
+        portraitUrl: '/assets/faculty/bhola-nath-regmi-nepali.jpg',
       },
       { id: 'fac-nep-2', name: 'Ms. Rekha Pawan' },
     ],
@@ -231,7 +231,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-phy-1',
         name: 'Mr. Sagar Raj Khanal',
-        portraitUrl: '/assets/aistudio/replace_principle_s_image_fba794c1.png',
+        portraitUrl: '/assets/leadership/principal-sagar-raj-khanal.jpeg',
       },
       { id: 'fac-phy-2', name: 'Sushant Pokhrel' },
       { id: 'fac-phy-3', name: 'Mr. Indra Pd. Chapagain' },
@@ -247,7 +247,7 @@ export const FACULTY_DEPARTMENTS: AcademicDepartment[] = [
       {
         id: 'fac-chem-1',
         name: 'Dr. Tej Narayan Poudel',
-        portraitUrl: '/images/official/tej.jpg',
+        portraitUrl: '/assets/faculty/tej-narayan-poudel-chemistry.jpg',
       },
       { id: 'fac-chem-2', name: 'Dr. D.R. Paudel' },
       { id: 'fac-chem-3', name: 'Mr. Basanta Aidi' },
@@ -340,20 +340,4 @@ export const GENERAL_STAFF_MEMBERS: GeneralStaffMember[] = [
   { id: 'staff-5', name: 'Ms. Sunita Paudeni', sortOrder: 5 },
 ];
 
-/**
- * Extracts up to two clean initials from a person's name after stripping honorifics
- * (e.g., "Mr. Pawan Bista" -> "PB", "Dr. Tej Narayan Poudel" -> "TP", "Sushant Pokhrel" -> "SP").
- */
-export function getPersonInitials(fullName: string): string {
-  const withoutHonorific = fullName
-    .replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)\s+/i, '')
-    .trim();
-  const parts = withoutHonorific
-    .split(/\s+/)
-    .map((p) => p.replace(/[^A-Za-z]/g, ''))
-    .filter(Boolean);
-
-  if (parts.length === 0) return 'CH';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-}
+export { getPersonInitials } from '../utils/person';

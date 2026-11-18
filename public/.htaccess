@@ -1,0 +1,37 @@
+# Capitol Hill College — Apache / LiteSpeed cPanel SPA Configuration
+# Automatically copied to dist/.htaccess by Vite during production build.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Serve existing files and directories directly (assets, favicon, media, etc.)
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Route all client-side React SPA paths to index.html
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Security headers (safe for shared cPanel Apache / LiteSpeed environments)
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Ensure index.html is always revalidated on new deployments
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+
+  # Long-term caching for hashed bundles and static media
+  <FilesMatch "\.(js|css|png|jpg|jpeg|webp|svg|ico|mp4|woff2)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
+
+# Gzip compression for text assets
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>

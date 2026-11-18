@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Award, FileText, GraduationCap } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
-import {
-  PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS,
-  PRINCIPAL_PORTRAIT_BG_CLASS,
-} from '../../utils/portraitFraming';
+import { getPersonInitials } from '../../utils/person';
 
 export type LeadershipCardVariant = 'featured' | 'executive' | 'standard';
 
@@ -18,16 +15,6 @@ interface LeadershipCardProps {
   ) => void;
 }
 
-function getInitials(fullName: string): string {
-  const cleaned = fullName
-    .replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|Er\.)\s+/i, '')
-    .trim();
-  const parts = cleaned.split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'CH';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-}
-
 export const LeadershipCard: React.FC<LeadershipCardProps> = ({
   member,
   variant = 'standard',
@@ -35,7 +22,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
   const showPortrait = Boolean(member.portraitSrc) && !imageFailed;
-  const initials = getInitials(member.fullName);
+  const initials = getPersonInitials(member.fullName);
 
   const handleOpenDossier = (e: React.MouseEvent<HTMLElement>) => {
     onSelectProfile(member, e.currentTarget, 'dossier');
@@ -57,11 +44,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               aria-label={`View full leadership profile of ${member.fullName}`}
               className="block w-full h-full text-left overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
             >
-              <div
-                className={`aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[460px] w-full overflow-hidden relative ${
-                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
-                }`}
-              >
+              <div className="aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[460px] w-full overflow-hidden relative bg-neutral-200">
                 {showPortrait ? (
                   <img
                     src={member.portraitSrc}
@@ -70,15 +53,11 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                     referrerPolicy="no-referrer"
                     onError={() => setImageFailed(true)}
                     style={
-                      !member.isCutoutPortrait && member.portraitObjectPosition
+                      member.portraitObjectPosition
                         ? { objectPosition: member.portraitObjectPosition }
                         : undefined
                     }
-                    className={
-                      member.isCutoutPortrait
-                        ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
-                        : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
-                    }
+                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -233,11 +212,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               aria-label={`View profile of ${member.fullName}`}
               className="block w-full h-full text-left overflow-hidden cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
             >
-              <div
-                className={`aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[380px] w-full overflow-hidden relative ${
-                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
-                }`}
-              >
+              <div className="aspect-[4/5] lg:aspect-auto lg:h-full lg:min-h-[380px] w-full overflow-hidden relative bg-neutral-200">
                 {showPortrait ? (
                   <img
                     src={member.portraitSrc}
@@ -246,15 +221,11 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                     referrerPolicy="no-referrer"
                     onError={() => setImageFailed(true)}
                     style={
-                      !member.isCutoutPortrait && member.portraitObjectPosition
+                      member.portraitObjectPosition
                         ? { objectPosition: member.portraitObjectPosition }
                         : undefined
                     }
-                    className={
-                      member.isCutoutPortrait
-                        ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
-                        : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
-                    }
+                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -317,23 +288,43 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
                 {member.cardOverview ?? member.leadershipProfile[0]}
               </p>
 
-              {member.coreStrengths && member.coreStrengths.length > 0 && (
+              {member.professionalExperience && member.professionalExperience.length > 0 ? (
                 <div className="mt-5 pt-5 border-t border-[var(--color-hairline)]">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)] mb-2.5">
-                    Institutional Stewardship &amp; Focus
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)] mb-3">
+                    Professional Experience &amp; Roles
                   </p>
-                  <ul className="space-y-1.5 text-sm text-[var(--color-ink)]">
-                    {member.coreStrengths.slice(0, 3).map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-[var(--color-ink)]">
+                    {member.professionalExperience.map((role) => (
+                      <li key={role} className="flex items-start gap-2.5">
                         <span
                           aria-hidden="true"
                           className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
                         />
-                        <span>{item}</span>
+                        <span>{role}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
+              ) : (
+                member.coreStrengths &&
+                member.coreStrengths.length > 0 && (
+                  <div className="mt-5 pt-5 border-t border-[var(--color-hairline)]">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)] mb-2.5">
+                      Institutional Stewardship &amp; Focus
+                    </p>
+                    <ul className="space-y-1.5 text-sm text-[var(--color-ink)]">
+                      {member.coreStrengths.slice(0, 3).map((item) => (
+                        <li key={item} className="flex items-start gap-2.5">
+                          <span
+                            aria-hidden="true"
+                            className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                          />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
               )}
             </div>
 
@@ -379,11 +370,7 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
         aria-label={`View profile of ${member.fullName}`}
         className="block w-full text-left overflow-hidden bg-[var(--color-canvas)] border-b border-[var(--color-hairline)] cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--color-brand)] focus-visible:-outline-offset-2"
       >
-        <div
-          className={`aspect-[4/5] w-full overflow-hidden ${
-            member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
-          }`}
-        >
+        <div className="aspect-[4/5] w-full overflow-hidden bg-neutral-200">
           {showPortrait ? (
             <img
               src={member.portraitSrc}
@@ -392,15 +379,11 @@ export const LeadershipCard: React.FC<LeadershipCardProps> = ({
               referrerPolicy="no-referrer"
               onError={() => setImageFailed(true)}
               style={
-                !member.isCutoutPortrait && member.portraitObjectPosition
+                member.portraitObjectPosition
                   ? { objectPosition: member.portraitObjectPosition }
                   : undefined
               }
-              className={
-                member.isCutoutPortrait
-                  ? PRINCIPAL_PORTRAIT_4X5_HOVER_IMG_CLASS
-                  : 'w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]'
-              }
+              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-6">

@@ -28,8 +28,7 @@ export interface LeadershipMessageEntry {
   institution: string;
   portraitSrc: string;
   portraitAlt: string;
-  /** True ONLY for transparent-background cutout portraits */
-  isCutoutPortrait?: boolean;
+  portraitObjectPosition?: string;
   /** Optional concise verified institutional highlights shown beneath the nameplate */
   institutionalHighlights?: string[];
   salutation: string;
@@ -55,7 +54,7 @@ function toMessageEntry(member: LeadershipMemberProfile): LeadershipMessageEntry
     institution: 'CAPITOL HILL COLLEGE',
     portraitSrc: member.portraitSrc ?? '',
     portraitAlt: member.portraitAlt,
-    isCutoutPortrait: member.isCutoutPortrait,
+    portraitObjectPosition: member.portraitObjectPosition,
     institutionalHighlights: msg.institutionalHighlights,
     salutation: msg.salutation,
     openingParagraphs: msg.openingParagraphs,

@@ -6,10 +6,7 @@ import {
   LeadershipMessageEntry,
   PRINCIPAL_MESSAGE,
 } from '../data/leadershipMessages';
-import {
-  PRINCIPAL_PORTRAIT_4X5_IMG_CLASS,
-  PRINCIPAL_PORTRAIT_BG_CLASS,
-} from '../utils/portraitFraming';
+import { getPersonInitials } from '../utils/person';
 
 interface LeadershipMessagesSectionProps {
   onNavigateLeadership?: () => void;
@@ -21,35 +18,25 @@ interface PortraitFrameProps {
 
 const PortraitFrame: React.FC<PortraitFrameProps> = ({ entry }) => {
   const [imgFailed, setImgFailed] = useState(false);
-
-  const initials = entry.leaderName
-    .replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|Er\.)\s+/i, '')
-    .trim()
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+  const initials = getPersonInitials(entry.leaderName);
 
   return (
     <div className="bg-white border border-[var(--color-hairline)] rounded-xl overflow-hidden">
-      <div
-        className={`relative w-full aspect-[4/5] overflow-hidden ${
-          entry.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-white'
-        }`}
-      >
+      <div className="relative w-full aspect-[4/5] overflow-hidden bg-white">
         {!imgFailed ? (
           <img
             src={entry.portraitSrc}
             alt={entry.portraitAlt}
             loading="lazy"
             decoding="async"
+            referrerPolicy="no-referrer"
             onError={() => setImgFailed(true)}
-            className={
-              entry.isCutoutPortrait
-                ? PRINCIPAL_PORTRAIT_4X5_IMG_CLASS
-                : 'w-full h-full object-cover object-top select-none'
+            style={
+              entry.portraitObjectPosition
+                ? { objectPosition: entry.portraitObjectPosition }
+                : undefined
             }
+            className="w-full h-full object-cover object-top select-none"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -151,7 +138,7 @@ export const LeadershipMessagesSection: React.FC<LeadershipMessagesSectionProps>
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            {/* Left Portrait Column — Clean Transparent Cutout on Subtle Neutral Backdrop */}
+            {/* Left Portrait Column */}
             <div className="lg:col-span-4 max-w-sm lg:max-w-none w-full mx-auto">
               <PortraitFrame entry={PRINCIPAL_MESSAGE} />
             </div>

@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Award, GraduationCap, X } from 'lucide-react';
 import { LeadershipMemberProfile } from '../../data/leadershipData';
-import {
-  PRINCIPAL_PORTRAIT_4X5_IMG_CLASS,
-  PRINCIPAL_PORTRAIT_BG_CLASS,
-} from '../../utils/portraitFraming';
+import { getPersonInitials } from '../../utils/person';
 
 export type ProfileModalTab = 'dossier' | 'message';
 
@@ -12,16 +9,6 @@ interface LeadershipProfileModalProps {
   member: LeadershipMemberProfile | null;
   initialTab?: ProfileModalTab;
   onClose: () => void;
-}
-
-function getInitials(fullName: string): string {
-  const cleaned = fullName
-    .replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|Er\.)\s+/i, '')
-    .trim();
-  const parts = cleaned.split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'CH';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
 export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
@@ -100,7 +87,7 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
   }
 
   const showPortrait = Boolean(member.portraitSrc) && !imageFailed;
-  const initials = getInitials(member.fullName);
+  const initials = getPersonInitials(member.fullName);
   const hasMessage = Boolean(member.officialMessage);
 
   return (
@@ -146,26 +133,19 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Left Column: Formal Portrait & Institutional Summary */}
             <div className="lg:col-span-5 bg-[var(--color-canvas)]/65 border-b lg:border-b-0 lg:border-r border-[var(--color-hairline)] p-6 sm:p-8 flex flex-col">
-              <div
-                className={`aspect-[4/5] w-full max-w-sm mx-auto lg:max-w-none rounded-lg overflow-hidden border border-[var(--color-hairline)] ${
-                  member.isCutoutPortrait ? PRINCIPAL_PORTRAIT_BG_CLASS : 'bg-neutral-200'
-                }`}
-              >
+              <div className="aspect-[4/5] w-full max-w-sm mx-auto lg:max-w-none rounded-lg overflow-hidden border border-[var(--color-hairline)] bg-neutral-200">
                 {showPortrait ? (
                   <img
                     src={member.portraitSrc}
                     alt={member.portraitAlt}
+                    referrerPolicy="no-referrer"
                     onError={() => setImageFailed(true)}
                     style={
-                      !member.isCutoutPortrait && member.portraitObjectPosition
+                      member.portraitObjectPosition
                         ? { objectPosition: member.portraitObjectPosition }
                         : undefined
                     }
-                    className={
-                      member.isCutoutPortrait
-                        ? PRINCIPAL_PORTRAIT_4X5_IMG_CLASS
-                        : 'w-full h-full object-cover object-top'
-                    }
+                    className="w-full h-full object-cover object-top"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-[var(--color-primary-ink)] text-white p-8">
@@ -196,9 +176,9 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                   )}
                 </div>
 
-                {member.academicDistinction && (
+                {member.academicDistinction && member.academicDistinction.conferringInstitution && (
                   <p className="mt-1 font-display text-sm font-semibold text-[var(--color-brand)]">
-                    {member.academicDistinction.degreeTitle} – {member.academicDistinction.conferringInstitution} ({member.academicDistinction.year})
+                    {member.academicDistinction.formattedLine}
                   </p>
                 )}
 
@@ -211,14 +191,23 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                   <div className="mt-4 bg-white border border-[var(--color-brand)]/25 rounded-lg px-4 py-3">
                     <p className="font-sans text-[10.5px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand)] flex items-center gap-1.5">
                       <Award className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Academic Distinction &amp; Recognition</span>
+                      <span>
+                        {member.academicDistinction.conferringInstitution
+                          ? 'Academic Distinction & Recognition'
+                          : 'Academic Qualification'}
+                      </span>
                     </p>
                     <p className="mt-1 font-display text-base font-bold text-[var(--color-primary-ink)]">
                       {member.academicDistinction.degreeTitle}
                     </p>
-                    <p className="mt-0.5 text-xs text-[var(--color-ink)] font-medium">
-                      Conferred by {member.academicDistinction.conferringInstitution} · {member.academicDistinction.year}
-                    </p>
+                    {member.academicDistinction.conferringInstitution && (
+                      <p className="mt-0.5 text-xs text-[var(--color-ink)] font-medium">
+                        Conferred by {member.academicDistinction.conferringInstitution}
+                        {member.academicDistinction.year
+                          ? ` · ${member.academicDistinction.year}`
+                          : ''}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -268,10 +257,17 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                   )}
                 </div>
 
-                {member.academicDistinction && (
+                {member.academicDistinction && member.academicDistinction.conferringInstitution && (
                   <p className="mt-1 font-display text-sm sm:text-base font-semibold text-[var(--color-brand)] tracking-wide flex flex-wrap items-center gap-x-2">
-                    <span>{member.academicDistinction.degreeTitle} – {member.academicDistinction.conferringInstitution}</span>
-                    <span className="font-mono text-xs font-normal text-[var(--color-muted)]">({member.academicDistinction.year})</span>
+                    <span>
+                      {member.academicDistinction.degreeTitle} –{' '}
+                      {member.academicDistinction.conferringInstitution}
+                    </span>
+                    {member.academicDistinction.year && (
+                      <span className="font-mono text-xs font-normal text-[var(--color-muted)]">
+                        ({member.academicDistinction.year})
+                      </span>
+                    )}
                   </p>
                 )}
 
@@ -285,14 +281,23 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                   <div className="mt-5 bg-gradient-to-r from-[var(--color-brand-soft)] via-white to-[var(--color-canvas)]/80 border border-[var(--color-brand)]/25 rounded-xl p-4 sm:p-5 shadow-2xs">
                     <p className="font-sans text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand)] flex items-center gap-1.5">
                       <Award className="w-4 h-4 shrink-0" aria-hidden="true" />
-                      <span>Academic Distinction &amp; Recognition</span>
+                      <span>
+                        {member.academicDistinction.conferringInstitution
+                          ? 'Academic Distinction & Recognition'
+                          : 'Academic Qualification'}
+                      </span>
                     </p>
                     <p className="mt-1.5 font-display text-lg sm:text-xl font-bold tracking-tight text-[var(--color-primary-ink)]">
                       {member.academicDistinction.degreeTitle}
                     </p>
-                    <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink)] font-medium leading-relaxed">
-                      Conferred by {member.academicDistinction.conferringInstitution} ({member.academicDistinction.year})
-                    </p>
+                    {member.academicDistinction.conferringInstitution && (
+                      <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink)] font-medium leading-relaxed">
+                        Conferred by {member.academicDistinction.conferringInstitution}
+                        {member.academicDistinction.year
+                          ? ` (${member.academicDistinction.year})`
+                          : ''}
+                      </p>
+                    )}
                   </div>
                 )}
               </header>
@@ -426,6 +431,35 @@ export const LeadershipProfileModal: React.FC<LeadershipProfileModalProps> = ({
                               className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
                             />
                             <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {/* Section 2b: Professional Experience & Roles */}
+                  {member.professionalExperience && member.professionalExperience.length > 0 && (
+                    <section
+                      aria-labelledby="modal-section-professional-experience"
+                      className="pt-6 border-t border-[var(--color-hairline)]"
+                    >
+                      <h3
+                        id="modal-section-professional-experience"
+                        className="font-sans text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-brand)] mb-4"
+                      >
+                        Professional Experience &amp; Roles
+                      </h3>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                        {member.professionalExperience.map((role) => (
+                          <li
+                            key={role}
+                            className="text-sm sm:text-[15px] text-[var(--color-ink)] leading-relaxed flex items-start gap-2.5"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] shrink-0"
+                            />
+                            <span>{role}</span>
                           </li>
                         ))}
                       </ul>

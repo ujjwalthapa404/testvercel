@@ -12,12 +12,12 @@
 export type LeadershipCategory = 'board' | 'executive';
 
 export interface AcademicDistinction {
-  /** Formal distinction label (e.g., 'Honorary Doctorate') */
+  /** Formal distinction or academic degree label (e.g., 'Honorary Doctorate', 'MSc in Physics') */
   degreeTitle: string;
-  /** Conferring institution and location (e.g., 'Lincoln University, California, USA') */
-  conferringInstitution: string;
-  /** Year conferred (e.g., '2024') */
-  year: string;
+  /** Optional conferring institution and location (e.g., 'Lincoln University, California, USA') */
+  conferringInstitution?: string;
+  /** Optional year conferred (e.g., '2024') */
+  year?: string;
   /** Canonical formatted distinction string */
   formattedLine: string;
 }
@@ -67,9 +67,7 @@ export interface LeadershipMemberProfile {
   portraitAlt: string;
   /** Optional CSS object-position override (defaults to 'center top') */
   portraitObjectPosition?: string;
-  /** True ONLY for transparent-background portrait cutouts (renders on subtle neutral studio ground) */
-  isCutoutPortrait?: boolean;
-  /** Optional featured academic distinction highlighted with refined institutional typography */
+  /** Optional featured academic distinction or qualification highlighted with refined typography */
   academicDistinction?: AcademicDistinction;
   /** Concise 1-2 sentence institutional introduction shown on the Leadership page */
   cardOverview?: string;
@@ -77,6 +75,8 @@ export interface LeadershipMemberProfile {
   leadershipProfile: string[];
   /** Formal institutional & governance appointments ('Professional Leadership' in modal) */
   professionalLeadership?: string[];
+  /** Verified professional experience, advisory roles, and domain specializations */
+  professionalExperience?: string[];
   /** Key areas of strategic focus ('Core Strengths' in modal) */
   coreStrengths?: string[];
   /** Academic degrees, honorary doctorates & recognition ('Qualifications & Academic Recognition') */
@@ -161,7 +161,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     officeKicker: 'Office of the Chairman · Board of Directors',
     category: 'board',
     isFeaturedChair: true,
-    portraitSrc: '/images/leadership/pawan-bista.jpg',
+    portraitSrc: '/assets/leadership/chairman-pawan-bista.jpg',
     portraitAlt: 'Mr. Pawan Bista, Chairman of Capitol Hill College',
     portraitObjectPosition: 'center 15%',
     academicDistinction: {
@@ -201,7 +201,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     homepageSummaryRole: 'Executive Governance & Institutional Strategy',
     officeKicker: 'Office of the CEO & Director · Board of Directors',
     category: 'board',
-    portraitSrc: '/assets/aistudio/Ceo_and_director_e2a88a5e.jpeg',
+    portraitSrc: '/assets/leadership/ceo-director-nischal-gautam.jpeg',
     portraitAlt: 'Mr. Nischal Gautam, CEO & Director of Capitol Hill College',
     portraitObjectPosition: 'center top',
     academicDistinction: {
@@ -219,7 +219,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
     professionalLeadership: [
       'Chief Executive Officer (CEO) & Director — Capitol Hill College, Teku, Kathmandu.',
       'Former Faculty Member of Finance (Bachelor’s & Master’s levels) and Program Coordinator (four years in the academic sector).',
-      'Former Group General Manager and Head of Employee — Techno Biomed and its group companies.',
+      'Former Group General Manager and Head of Employee — Corporate Group and its group companies.',
     ],
     qualificationsAndRecognition: [
       'MBA Finance – Pokhara University Topper (2022 AD; University Dean’s List).',
@@ -242,7 +242,7 @@ export const BOARD_OF_DIRECTORS: LeadershipMemberProfile[] = [
       salutation: 'Welcome to Capitol Hill College.',
       openingParagraphs: [
         "Looking back at my own journey—from walking these very corridors as a +2 Management student in the 2012–2014 batch and graduating as the stream's highest scorer, to now returning to lead the institution as its Chief Executive Officer—fills me with a profound sense of pride and gratitude. Capitol Hill has always been far more than an academic institution to me; it is where my foundational understanding of leadership, discipline, and ambition was shaped.",
-        'My educational pursuits further deepened my commitment to academic rigor. I went on to complete my MBA in Finance from Pokhara University, graduating as the MBA Finance – Pokhara University Topper for the year 2022 AD and earning a place on the prestigious University Dean’s List. Bridging theory with practice, I spent four years immersed in the academic sector as a faculty member of Finance for Bachelor’s and Master’s level students, as well as serving as a Program Coordinator. Additionally, I bring extensive corporate exposure from my tenure as Group General Manager and Head of Employee at Techno Biomed and its group companies. This unique blend of advanced financial scholarship, administrative experience, and corporate leadership allows me to steer Capitol Hill College with a dynamic perspective that directly aligns education with modern industry demands.',
+        'My educational pursuits further deepened my commitment to academic rigor. I went on to complete my MBA in Finance from Pokhara University, graduating as the MBA Finance – Pokhara University Topper for the year 2022 AD and earning a place on the prestigious University Dean’s List. Bridging theory with practice, I spent four years immersed in the academic sector as a faculty member of Finance for Bachelor’s and Master’s level students, as well as serving as a Program Coordinator. Additionally, I bring extensive corporate exposure from my tenure as Group General Manager and Head of Employee at Corporate Group and its group companies. This unique blend of advanced financial scholarship, administrative experience, and corporate leadership allows me to steer Capitol Hill College with a dynamic perspective that directly aligns education with modern industry demands.',
       ],
       subsections: [
         {
@@ -280,9 +280,13 @@ export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
     homepageSummaryRole: 'Academic Standards & Campus Administration',
     officeKicker: 'Office of the Principal · Academic Stewardship',
     category: 'executive',
-    portraitSrc: '/assets/aistudio/replace_principle_s_image_fba794c1.png',
+    portraitSrc: '/assets/leadership/principal-sagar-raj-khanal.jpeg',
     portraitAlt: 'Mr. Sagar Raj Khanal, Principal of Capitol Hill College',
     portraitObjectPosition: 'center top',
+    academicDistinction: {
+      degreeTitle: 'MSc in Physics',
+      formattedLine: 'MSc in Physics',
+    },
     cardOverview:
       'As Principal of CAPITOL HILL COLLEGE, Mr. Sagar Raj Khanal oversees academic leadership, teaching standards, and holistic student development across campus. Working closely with faculty and academic departments, his office fosters a disciplined, supportive, and intellectually engaging learning environment across +2 Science, +2 Management, and undergraduate programs.',
     leadershipProfile: [
@@ -293,6 +297,15 @@ export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
       'Principal — Capitol Hill College, Teku, Kathmandu, Nepal.',
       'Senior Faculty Member, Department of Physics — Capitol Hill College.',
     ],
+    professionalExperience: [
+      '25 Years of Teaching Experience',
+      'Book Writer',
+      'PSC Advisor',
+      'Social Worker',
+      'Career Counsellor',
+      'Expert in BE, CEE and TSC Examinations',
+    ],
+    qualificationsAndRecognition: ['MSc in Physics'],
     coreStrengths: [
       'Academic leadership and NEB / Tribhuvan University curriculum standards.',
       'Teaching quality, faculty coordination, and structured evaluation systems.',
@@ -303,6 +316,12 @@ export const EXECUTIVE_LEADERSHIP: LeadershipMemberProfile[] = [
       sectionKicker: 'Office of the Principal · Academic Stewardship',
       sectionHeading: 'Message from the Principal',
       campusLocationLine: 'CAPITOL HILL COLLEGE, Teku, Kathmandu',
+      institutionalHighlights: [
+        'MSc in Physics',
+        '25 Years of Teaching Experience',
+        'Book Writer · PSC Advisor · Career Counsellor',
+        'Social Worker · Expert in BE, CEE and TSC Examinations',
+      ],
       salutation: 'Dear Prospective Students, Parents and Guardians,',
       openingParagraphs: [
         'It is a privilege to welcome you to Capitol Hill College in Teku, Kathmandu. Since our establishment in 2005, Capitol Hill College has remained steadfast in its commitment to delivering disciplined, practical, and forward-looking education grounded in strong academic values.',

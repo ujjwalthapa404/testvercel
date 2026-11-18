@@ -39,11 +39,10 @@ export interface SocialLinkItem {
 }
 
 /**
- * Official Capitol Hill College image assets hosted locally under `public/images/official/`
- * so campus photography and crest branding never break on DNS cutover.
+ * Official Capitol Hill College branding and facility assets hosted locally under `public/assets/`.
  */
 export const COLLEGE_LOGO_ASSET = {
-  src: '/images/official/logo-3-120x116.png',
+  src: '/assets/branding/capitol-hill-college-logo.png',
   alt: 'CAPITOL HILL COLLEGE official crest logo',
   width: 120,
   height: 116,
@@ -71,7 +70,7 @@ export const FACILITIES_HERO_CONTENT = {
   description:
     "Discover the learning spaces, academic resources and campus experiences at Capitol Hill College that support students' intellectual, physical and personal development.",
   heroImage: {
-    src: '/images/official/building.png',
+    src: '/assets/campus/teku-campus-building.png',
     alt: 'Exterior view of the CAPITOL HILL COLLEGE main academic building in Teku, Kathmandu',
     caption: 'CAPITOL HILL COLLEGE academic block in Teku, Kathmandu',
     figureNumber: 'Fig. 01',
@@ -103,7 +102,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
       'Accessible urban campus in Teku, Kathmandu',
     ],
     image: {
-      src: '/images/official/building.png',
+      src: '/assets/campus/teku-campus-building.png',
       alt: 'CAPITOL HILL COLLEGE campus building and academic infrastructure in Teku, Kathmandu',
       caption: 'Main campus infrastructure and classroom wing at Teku, Kathmandu',
       figureNumber: 'Fig. 01',
@@ -128,7 +127,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
     verificationNote:
       'Published campus schedule lists library access from 6:00 AM to 5:00 PM on working days (subject to term-wise administrative confirmation).',
     image: {
-      src: '/images/official/library1.png',
+      src: '/assets/facilities/campus-library.png',
       alt: 'Students studying among bookshelves inside the CAPITOL HILL COLLEGE library',
       caption: 'Reference shelves and quiet reading environment inside the college library',
       figureNumber: 'Fig. 02',
@@ -172,7 +171,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
       },
     ],
     image: {
-      src: '/images/official/lab.jpg',
+      src: '/assets/facilities/computer-and-science-lab.jpg',
       alt: 'Students conducting supervised practical work inside a CAPITOL HILL COLLEGE laboratory',
       caption: 'Dedicated laboratory workspace supporting hands-on scientific and technical learning',
       figureNumber: 'Fig. 03',
@@ -194,7 +193,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
       'Student leadership & collaborative event organizing',
     ],
     image: {
-      src: '/images/official/college-students-eca-2026.jpg',
+      src: '/assets/facilities/student-eca-cca-activities.jpg',
       alt: 'CAPITOL HILL COLLEGE students participating in extracurricular and co-curricular campus activities',
       caption: 'Students collaborating during campus extracurricular and co-curricular events',
       figureNumber: 'Fig. 04',
@@ -216,7 +215,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
       'Reasonable student-friendly pricing',
     ],
     image: {
-      src: '/images/official/cafe.png',
+      src: '/assets/facilities/campus-cafeteria.png',
       alt: 'Interior of the CAPITOL HILL COLLEGE self-service student cafeteria',
       caption: 'On-campus self-service cafeteria space for daily refreshments and conversation',
       figureNumber: 'Fig. 05',
@@ -238,7 +237,7 @@ export const FACILITIES_LIST: FacilityRecord[] = [
       'Focus on teamwork, discipline & student leadership',
     ],
     image: {
-      src: '/images/official/sport.png',
+      src: '/assets/facilities/campus-sports-activities.png',
       alt: 'CAPITOL HILL COLLEGE students participating in campus sports and athletic competitions',
       caption: 'Team athletics and sporting activities fostering discipline and camaraderie',
       figureNumber: 'Fig. 06',

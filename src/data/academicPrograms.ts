@@ -189,7 +189,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE grade eligibility, active subject-combination groups, class shift timings, and current-session fee or scholarship details should be confirmed directly with the Capitol Hill College Admissions Office.',
     image: {
-      src: '/images/official/c1-scaled.jpg',
+      src: '/assets/gallery/classroom-lecture-session.jpg',
       alt: 'CAPITOL HILL COLLEGE students attending an interactive classroom session in Teku, Kathmandu',
       caption: 'Interactive classroom learning at CAPITOL HILL COLLEGE, Teku, Kathmandu.',
     },
@@ -313,7 +313,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE grade requirements, available optional subject pairings, shift schedules, and current tuition or scholarship provisions should be verified with the Capitol Hill College Admissions Desk.',
     image: {
-      src: '/images/official/uiz2-scaled.jpg',
+      src: '/assets/gallery/quiz-competition-stage-teams.jpg',
       alt: 'CAPITOL HILL COLLEGE students participating in an academic quiz and discussion program',
       caption: 'Academic dialogue, quizzes, and student engagement at CAPITOL HILL COLLEGE.',
     },
@@ -431,7 +431,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Current-session SEE GPA cutoffs, entrance test requirements, laboratory schedules, and merit scholarship criteria must be confirmed with the Capitol Hill College Admissions Office.',
     image: {
-      src: '/images/official/science.jpg',
+      src: '/assets/gallery/science-practical-lab-experiment.jpg',
       alt: 'CAPITOL HILL COLLEGE +2 Science students performing supervised laboratory practicals',
       caption: 'Supervised +2 Science laboratory practical session at CAPITOL HILL COLLEGE.',
     },
@@ -548,7 +548,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'SEE eligibility criteria, exact Grade 11/12 NEB paper combinations, intake seats, and fee details for +2 Law should be verified directly with the Capitol Hill College Admissions Office.',
     image: {
-      src: '/images/official/library1.png',
+      src: '/assets/facilities/campus-library.png',
       alt: 'CAPITOL HILL COLLEGE academic library and reference study environment in Teku, Kathmandu',
       caption: 'Reference study and legal reading resources at CAPITOL HILL COLLEGE.',
     },
@@ -671,7 +671,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Applicants must hold 10+2 (NEB) or an equivalent qualification recognized by Tribhuvan University. Exact minimum grade requirements, TU registration deadlines, shift timings, and fee structures should be confirmed with the Admissions Office.',
     image: {
-      src: '/images/official/c3.jpg',
+      src: '/assets/gallery/classroom-academic-session.jpg',
       alt: 'Undergraduate business classroom lecture at CAPITOL HILL COLLEGE, Teku, Kathmandu',
       caption: 'Undergraduate BBS academic coursework at CAPITOL HILL COLLEGE.',
     },
@@ -793,7 +793,7 @@ export const ACADEMIC_PROGRAMS: readonly AcademicProgramRecord[] = [
     admissionVerificationNote:
       'Applicants require a recognized Bachelor’s degree (such as BBS, BBA, or equivalent) and must satisfy Tribhuvan University Faculty of Management entrance (CMAT) and intake rules. Please confirm active intake schedule, seat availability, class timings, and fee structure with Capitol Hill College administration.',
     image: {
-      src: '/images/official/building.png',
+      src: '/assets/campus/teku-campus-building.png',
       alt: 'CAPITOL HILL COLLEGE main campus building in Teku, Kathmandu',
       caption: 'CAPITOL HILL COLLEGE campus in Teku, Kathmandu — offering NEB and Tribhuvan University programs.',
     },
